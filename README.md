@@ -1,10 +1,10 @@
-# 🌸🧩 Gracie Patches
+# 🌸 Gracie Patches
 
 <p align="center">🌷 · 💐 · 🪻 · 🌼 · 🌸</p>
 
 > [!NOTE]
 >
-> *Just some patches I make in my free time, with a little help from AI.*
+> *Just some patches I make in my free time, with help from AI.*
 >
 > Personal project. Not affiliated with the official Morphe team.
 
