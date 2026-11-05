@@ -26,18 +26,87 @@ https://github.com/Ximena-Moonlight/gracie-patches
 ## 🩹 Patches list
 
 <!-- PATCHES_START -->
-> **[v1.0.26](https://github.com/Ximena-Moonlight/gracie-patches/releases/tag/v1.0.26)**&nbsp;&nbsp;·&nbsp;&nbsp;`main`&nbsp;&nbsp;·&nbsp;&nbsp;**11 patches** across **8 apps**
+> **[v1.0.8](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.8)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;7 patches total
+<details open>
+<summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
 
-| # | App | Patches | Version | Package |
-|---|-----|---------|---------|---------|
-| 1 | **n0widgets** | 2 | `3.3.1` | [`com.n0white.n0widgets`](https://play.google.com/store/apps/details?id=com.n0white.n0widgets) |
-| 2 | **Quick Settings** | 2 | `12.0.3-17888438` | [`it.simonesestito.ntiles`](https://play.google.com/store/apps/details?id=it.simonesestito.ntiles) |
-| 3 | **Screen Recording App** | 2 | `1.11` | [`de.twokit.screen.recording.app`](https://play.google.com/store/apps/details?id=de.twokit.screen.recording.app) |
-| 4 | **Orientation Control** | 1 | `7.10.3` | [`net.mm2d.android.orientationfaker`](https://play.google.com/store/apps/details?id=net.mm2d.android.orientationfaker) |
-| 5 | **SpaceX Cloner** | 1 | `1.0.7.9` | [`com.momoerica.cloner.gp`](https://play.google.com/store/apps/details?id=com.momoerica.cloner.gp) |
-| 6 | **Aesthetic Widgets** | 1 | `85.1.4` | [`com.remi.widget`](https://play.google.com/store/apps/details?id=com.remi.widget) |
-| 7 | **Color Widgets** | 1 | `1.8.5` | [`colorwidgets.ios.widget.topwidgets`](https://play.google.com/store/apps/details?id=colorwidgets.ios.widget.topwidgets) |
-| 8 | **ThemePik – Icon Changer** | 1 | `1.1.40` | [`com.eco.iconchanger.themes`](https://play.google.com/store/apps/details?id=com.eco.iconchanger.themes) |
+**Package name:** `net.mm2d.android.orientationfaker`
+
+**🌻 Supported versions:**
+
+| 7.10.3 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Disable Ads](#disable-ads) | Removes ads from Orientation Control. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Quick Settings&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Package name:** `it.simonesestito.ntiles`
+
+**🌻 Supported versions:**
+
+| 12.0.3-17888438 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Disable Pairip](#disable-pairip) | Skips the local PairIP license exit check so the app can keep running. |  |
+| [Hide Ads Preference](#hide-ads-preference) | Uses a local preference so interstitial and banner ads stay off. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Screen Recording App&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Package name:** `de.twokit.screen.recording.app`
+
+**🌻 Supported versions:**
+
+| 1.11 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Disable Pairip](#disable-pairip) | Skips the local Pairip license check so the app can keep running. |  |
+| [Pro Options](#pro-options) | Uses a local preference so optional Pro options stay available. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Aesthetic Widgets&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Package name:** `com.remi.widget`
+
+**🌻 Supported versions:**
+
+| 85.1.4 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Local Features](#local-features) | Uses a local preference so optional widget features stay available offline. |  |
+
+</details>
+
+<details open>
+<summary>🌼 Universal&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Clone app](#clone-app) | Changes the app package name and label so you can install several clones. Pick a clone number (1–50). Each number is a different package (app.clone1, app.clone2…). On update, re-apply the same number on each clone. | • Clone number<br>• Custom package (optional)<br>• Update permissions<br>• Update providers |
+
+</details>
+
 <!-- PATCHES_END -->
 
 ## How these patches are made
