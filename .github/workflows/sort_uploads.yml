@@ -3,8 +3,10 @@ name: Sort Uploads
 # Trabaja directo sobre la rama en la que se suben los archivos (en este proyecto, main). No abre pull requests.
 # Corre solo cuando se suben archivos a "Drop-Files" en main. También se puede lanzar a mano (Actions > Sort Uploads > Run workflow).
 # Cuando termina de colocar los archivos sin problemas, lanza solo el workflow Release.
-# Si hay un ZIP en "Drop-Files", lo abre y copia su contenido a la raíz del repositorio
-#    (no pisa archivos que ya existan y se salta .github/workflows, que GitHub no deja tocar a un robot).
+# Si hay un ZIP en "Drop-Files", lo abre, lo borra y coloca su contenido PISANDO lo que ya existe:
+#    - los archivos sueltos del ZIP (sin carpeta) se ordenan como siempre: por ROUTES.txt o por nombre.
+#    - los archivos que vienen con carpeta se copian a esa ruta.
+#    - se salta .github/workflows, que GitHub no deja tocar a un robot.
 # Si hay un "Drop-Files/DELETE.txt" (una ruta por línea), borra esos archivos del repositorio.
 on:
   push:
@@ -50,7 +52,8 @@ jobs:
           hubo_zip=0
           : > /tmp/informe.md
 
-          # Abrir los ZIP y copiar su contenido a la raíz (sin pisar lo que ya existe)
+          # Abrir los ZIP: lo que viene suelto (sin carpeta) pasa a Drop-Files para ordenarlo abajo;
+          # lo que viene con carpeta se copia a su ruta. Siempre pisa lo que ya existe. Luego se borra el ZIP.
           for z in "$INBOX"/*.zip; do
             [ -f "$z" ] || continue
             zname=$(basename "$z")
@@ -59,26 +62,37 @@ jobs:
               echo "- \`$zname\`: no se pudo abrir el ZIP." >> /tmp/informe.md
               pendientes=1; continue
             fi
+            rm -rf /tmp/zipx/__MACOSX
+            find /tmp/zipx -name '.DS_Store' -delete
             raiz=/tmp/zipx
             n_dirs=$(find /tmp/zipx -mindepth 1 -maxdepth 1 -type d | wc -l)
             n_files=$(find /tmp/zipx -mindepth 1 -maxdepth 1 -type f | wc -l)
             if [ "$n_dirs" -eq 1 ] && [ "$n_files" -eq 0 ]; then
-              raiz=$(find /tmp/zipx -mindepth 1 -maxdepth 1 -type d)
+              unica=$(find /tmp/zipx -mindepth 1 -maxdepth 1 -type d)
+              # Solo se quita la carpeta envoltorio si no es una carpeta del proyecto (ej. "patches")
+              if [ ! -e "$(basename "$unica")" ]; then
+                raiz="$unica"
+              fi
             fi
-            nuevos=0
+            sueltos=0
+            conruta=0
             while IFS= read -r -d '' rel; do
               rel=${rel#./}
-              case "$rel" in "$INBOX"/*) continue;; esac
-              if [ ! -e "$rel" ]; then
-                mkdir -p "$(dirname "$rel")"
-                cp -p "$raiz/$rel" "$rel"
-                nuevos=$((nuevos+1))
-              fi
-            done < <(cd "$raiz" && find . -type f -not -path './.github/workflows/*' -not -path './.git/*' -print0)
+              case "$rel" in "$INBOX"/*|.git/*|.github/workflows/*|/*|*..*) continue;; esac
+              case "$rel" in
+                */*)
+                  mkdir -p "$(dirname "$rel")"
+                  cp -p "$raiz/$rel" "$rel"
+                  conruta=$((conruta+1));;
+                *)
+                  cp -p "$raiz/$rel" "$INBOX/$rel"
+                  sueltos=$((sueltos+1));;
+              esac
+            done < <(cd "$raiz" && find . -type f -print0)
             rm -f "$z"
             hubo_zip=1
-            movidos=$((movidos+nuevos))
-            echo "- ZIP \`$zname\`: $nuevos archivos nuevos colocados en la raíz. Los que ya existían no se tocaron. \`.github/workflows\` se omite: súbelo a mano." >> /tmp/informe.md
+            movidos=$((movidos+conruta))
+            echo "- ZIP \`$zname\`: abierto y borrado. $sueltos archivos sueltos para ordenar y $conruta copiados a su carpeta. \`.github/workflows\` se omite: súbelo a mano." >> /tmp/informe.md
           done
           [ -f gradlew ] && chmod +x gradlew
 
@@ -144,7 +158,9 @@ jobs:
           # Si no queda nada pendiente, borrar también ROUTES.txt
           if [ "$pendientes" -eq 0 ] && [ -f "$ROUTES" ]; then rm "$ROUTES"; fi
 
-          if [ $((movidos+borrados)) -gt 0 ]; then
+          # Se sube todo lo que haya cambiado (incluido el ZIP borrado), aunque no se haya movido nada.
+          git add -A
+          if ! git diff --cached --quiet; then
             # chore = no crea versión (carga de plantilla). fix = crea una pre-versión al compilar.
             if [ "$hubo_zip" -eq 1 ]; then
               MSG="chore: cargar archivos del ZIP subido"
@@ -153,7 +169,6 @@ jobs:
             fi
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -A
             git commit -m "$MSG"
             git pull --rebase --autostash origin "$RAMA"
             git push origin "HEAD:refs/heads/$RAMA"
