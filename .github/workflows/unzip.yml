@@ -82,6 +82,7 @@ jobs:
             echo "- El ZIP no traía cambios respecto a main." >> /tmp/informe.md
           else
             git commit -m "chore: descomprimir ZIP subido en main"
+            git pull --rebase origin "$RAMA"
             git push origin "HEAD:refs/heads/$RAMA"
           fi
 
