@@ -5,8 +5,8 @@ patches {
     about {
         name = "Gracie's Patches"
         description = "Patches for apps I like"
-        source = "https://github.com/Ximena-Moonlight/gracie-patches"
-        author = "Ximena-Moonlight"
+        source = "https://github.com/Sabrina-Moonlight/gracie-patches"
+        author = "Sabrina-Moonlight"
         contact = "na"
         website = "na"
         license = "GPLv3"

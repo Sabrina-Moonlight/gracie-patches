@@ -2,28 +2,24 @@
 
 <p align="center">🌷 · 💐 · 🪻 · 🌼 · 🌸</p>
 
+A little garden of **[Morphe](https://morphe.software)** patches for the apps I open every single day. I started it to learn how patching works, and I keep adding to it as I go.
+
 > [!NOTE]
->
-> *Just some patches I make in my free time, with help from AI.*
->
-> Personal project. Not affiliated with the official Morphe team.
+> Unofficial and not made by the Morphe team. I build these with the help of AI and try them on my own phone, so something may not behave the same on yours.
 
-This is my personal collection of patches that I use with **[Morphe](https://morphe.software)**.  
-Hobby project for learning and for the apps I use every day.
+## 🌿 Add it to Morphe
 
-## How to use these patches
+Tap the button, or paste the link as a source in Morphe Manager:
 
-Tap the button, or add the link by hand in Morphe Manager:
-
-<a href="https://morphe.software/add-source?github=Ximena-Moonlight/gracie-patches">
+<a href="https://morphe.software/add-source?github=Sabrina-Moonlight/gracie-patches">
   <img src=".github/assets/add-to-morphe.svg" alt="Add to Morphe" height="48">
 </a>
 
 ```
-https://github.com/Ximena-Moonlight/gracie-patches
+https://github.com/Sabrina-Moonlight/gracie-patches
 ```
 
-## 🩹 Patches list
+## 🌷 Available patches
 
 <!-- PATCHES_START -->
 > **[v1.0.8](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.8)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;7 patches total
@@ -109,25 +105,25 @@ https://github.com/Ximena-Moonlight/gracie-patches
 
 <!-- PATCHES_END -->
 
-## How these patches are made
+## 🛠️ Behind the scenes
 
-With help from an AI, following the rules in [`AGENTS.md`](AGENTS.md) and the technical guide [`Morphe-Development-Guide.md`](Morphe-Development-Guide.md).
+The AI writes the changes, following the rules in [`AGENTS.md`](AGENTS.md) and the notes in [`Morphe-Development-Guide.md`](Morphe-Development-Guide.md). Then:
 
-Typical flow:
-1. The AI delivers the changed files.
-2. They are uploaded together to `Drop-Files/` on GitHub.
-3. **Sort Uploads** places them, then **Release** builds and publishes on its own.
+1. I upload the files to `Drop-Files/`.
+2. **Sort Uploads** puts each one in its place.
+3. **Release** builds the patches and publishes them by itself.
 
-## Building (usually not needed)
+## 🔧 Build it yourself
 
-The **Release** workflow builds everything on its own. Manual steps only if needed:
-- `./gradlew buildAndroid`
-- The `.mpp` ends up in `patches/build/libs/patches-*.mpp`
+You don't have to: **Release** already does it. But if you want to:
 
-See the [Morphe documentation](https://github.com/MorpheApp/morphe-documentation) for more details.
+- Run `./gradlew buildAndroid`
+- Your `.mpp` file will be in `patches/build/libs/patches-*.mpp`
 
-## License
+More details in the [Morphe documentation](https://github.com/MorpheApp/morphe-documentation).
 
-Gracie Patches is licensed under the [GNU General Public License v3.0](LICENSE). See also [NOTICE](NOTICE).
+## 📄 License
+
+Gracie Patches uses the [GNU General Public License v3.0](LICENSE). See also [NOTICE](NOTICE).
 
 <p align="center">🌸 · 💐 · 🪻 · 🌼 · 🌷</p>

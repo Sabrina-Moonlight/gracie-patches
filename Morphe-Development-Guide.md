@@ -215,5 +215,5 @@ The form without index is deprecated and will be removed.
 **Private vs public source in Morphe Manager**
 - If the GitHub repo is **private**, Morphe cannot download the `.mpp` → the source often shows as **Unnamed** and the red download error appears.
 - After making the repo **public**, delete the broken source in Morphe and add it again with:
-  `https://github.com/Ximena-Moonlight/gracie-patches`
+  `https://github.com/Sabrina-Moonlight/gracie-patches`
 - Or install the `.mpp` from Releases by hand (no source needed).
