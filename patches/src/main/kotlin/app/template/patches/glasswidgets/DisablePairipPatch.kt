@@ -16,7 +16,42 @@ private val GLASS_WIDGETS = Compatibility(
     targets = listOf(AppTarget(version = "1.0.2")),
 )
 
-/** ContentProvider runs before Application and also starts the license check. */
+// ── Pairip key-import gate ────────────────────────────────────────────────────
+
+/**
+ * KeyImportAppComponentFactory is the actual appComponentFactory in the manifest.
+ * When isEncryptionKeyPresent() = false it routes ALL components to placeholder
+ * stubs and boots KeyImportService to fetch the decryption key from the server.
+ * Returning true skips that phase entirely and routes to the real app components.
+ */
+private object KeyImportIsEncryptionKeyPresentFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/vmencryption/KeyImportAppComponentFactory;",
+    name = "isEncryptionKeyPresent",
+    returnType = "Z",
+    parameters = listOf(),
+    strings = listOf("Failed to check if encryption key is present."),
+)
+
+// ── VMRunner native lib ───────────────────────────────────────────────────────
+
+/**
+ * VMRunner.<clinit> calls System.loadLibrary("pairipcore") — the native lib
+ * whose JNI_OnLoad verifies APK signature and aborts if it doesn't match.
+ * This fires the moment any code first references VMRunner (e.g. the
+ * setContext call at the top of com.pairip.application.Application
+ * .attachBaseContext, before any other patch can intercept).
+ * Returning early prevents the .so from ever loading.
+ */
+private object VMRunnerStaticInitFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/VMRunner;",
+    name = "<clinit>",
+    returnType = "V",
+    parameters = listOf(),
+    strings = listOf("pairipcore"),
+)
+
+// ── Pairip license SDK ────────────────────────────────────────────────────────
+
 private object LicenseContentProviderOnCreateFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseContentProvider;",
     name = "onCreate",
@@ -24,7 +59,6 @@ private object LicenseContentProviderOnCreateFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
-/** Entry from Application.attachBaseContext and ContentProvider. */
 private object CheckLicenseFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "checkLicense",
@@ -33,7 +67,6 @@ private object CheckLicenseFingerprint : Fingerprint(
     strings = listOf("Cannot check license with null context."),
 )
 
-/** Real license work after checkLicense posts to the main thread. */
 private object InitializeLicenseCheckFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "initializeLicenseCheck",
@@ -41,7 +74,6 @@ private object InitializeLicenseCheckFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
-/** Opens Play Store / paywall when the check fails. */
 private object StartPaywallFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "startPaywallActivity",
@@ -49,7 +81,6 @@ private object StartPaywallFingerprint : Fingerprint(
     parameters = listOf("Landroid/app/PendingIntent;"),
 )
 
-/** Error dialog path that also closes the app. */
 private object StartErrorDialogFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "startErrorDialogActivity",
@@ -57,7 +88,6 @@ private object StartErrorDialogFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
-/** Activity that receives the paywall intent and sends the user to Play Store. */
 private object LicenseActivityOnStartFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseActivity;",
     name = "onStart",
@@ -65,7 +95,6 @@ private object LicenseActivityOnStartFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
-/** Sends the PendingIntent that opens Play Store. */
 private object ShowPaywallAndCloseAppFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseActivity;",
     name = "showPaywallAndCloseApp",
@@ -73,9 +102,6 @@ private object ShowPaywallAndCloseAppFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
-/**
- * Native VM bootstrap from CoreComponentFactory and ApplicationClass static init.
- */
 private object StartupLauncherFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/StartupLauncher;",
     name = "launch",
@@ -84,7 +110,6 @@ private object StartupLauncherFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
-/** Signature check throws after the APK is re-signed by the patcher. */
 private object VerifyIntegrityFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/SignatureCheck;",
     name = "verifyIntegrity",
@@ -93,36 +118,22 @@ private object VerifyIntegrityFingerprint : Fingerprint(
     strings = listOf("Apk signature is invalid."),
 )
 
-/**
- * KeyStoreManager reports whether the local encryption key exists.
- * Returning true skips the KeyImport flow that opens the store.
- */
-private object IsEncryptionKeyPresentFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/vmencryption/KeyStoreManager;",
-    name = "isEncryptionKeyPresent",
-    returnType = "Z",
-    parameters = listOf("I"),
-)
-
-/**
- * VM entry used for protected methods. Without a real key, decrypt crashes the process.
- * Returning null avoids the decrypt path so the app can stay open.
- */
-private object VmRunnerInvokeFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/VMRunner;",
-    name = "invoke",
-    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
-    returnType = "Ljava/lang/Object;",
-    parameters = listOf("Ljava/lang/String;", "[Ljava/lang/Object;"),
-)
-
-/** Extra license bind path (same idea as other apps in this repo). */
 private object BindToLicensingServiceFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "bindToLicensingService",
     returnType = "V",
     parameters = listOf("Z"),
     strings = listOf("Connecting to the main licensing service..."),
+)
+
+// ── VMRunner invoke path ──────────────────────────────────────────────────────
+
+private object VmRunnerInvokeFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/VMRunner;",
+    name = "invoke",
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf("Ljava/lang/String;", "[Ljava/lang/Object;"),
 )
 
 @Suppress("unused")
@@ -134,21 +145,26 @@ val disablePairipPatch = bytecodePatch(
     compatibleWith(GLASS_WIDGETS)
 
     execute {
+        // Skip key-import phase — factory always routes to real components.
+        KeyImportIsEncryptionKeyPresentFingerprint.method.returnEarly(true)
+
+        // Block native lib load — must come before setContext triggers classloading.
+        VMRunnerStaticInitFingerprint.method.returnEarly()
+
+        // Nop remaining Pairip entry and exit points.
         LicenseContentProviderOnCreateFingerprint.method.returnEarly(true)
         StartupLauncherFingerprint.method.returnEarly()
         VerifyIntegrityFingerprint.method.returnEarly()
 
         CheckLicenseFingerprint.method.returnEarly()
         InitializeLicenseCheckFingerprint.method.returnEarly()
+        BindToLicensingServiceFingerprint.method.returnEarly()
         StartPaywallFingerprint.method.returnEarly()
         StartErrorDialogFingerprint.method.returnEarly()
-        BindToLicensingServiceFingerprint.method.returnEarly()
 
         LicenseActivityOnStartFingerprint.method.returnEarly()
         ShowPaywallAndCloseAppFingerprint.method.returnEarly()
 
-        // Skip KeyImport → store path, and avoid decrypt crash without a real key.
-        IsEncryptionKeyPresentFingerprint.method.returnEarly(true)
         VmRunnerInvokeFingerprint.method.returnEarly(null)
     }
 }
