@@ -24,7 +24,6 @@ import app.morphe.patcher.util.returnEarly
 import app.template.patches.shared.DEX_FILE_SIZE_OFFSET
 import app.template.patches.shared.DEX_HEADER_SIZE
 import app.template.patches.shared.DEX_MAGIC
-import app.template.patches.shared.misc.pairip.GlassWidgetsCompat
 import app.template.patches.shared.misc.smali.descriptor
 import app.template.patches.shared.readInt
 import app.template.patches.shared.inputStreamFromBundledResource
