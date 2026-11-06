@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "patches": [
     {
       "name": "Clone app",
@@ -344,6 +344,38 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Local Premium",
+      "description": "Uses a local preference so premium widgets and no-ads stay available offline.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.saban.glassy.glasswidgets.themes",
+          "name": "Glassix: Glass Widgets & Theme",
+          "description": null,
+          "apkFileType": "APKS_REQUIRED",
+          "appIconColor": "#00BCD4",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.3",
+              "versionCodes": {
+                "ARM64_V8A": 103,
+                "ARMEABI_V7A": 103,
+                "X86_64": 103,
+                "X86": 103
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
