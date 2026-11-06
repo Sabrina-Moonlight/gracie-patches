@@ -17,18 +17,11 @@ internal val COLOR_WIDGETS = Compatibility(
     ),
 )
 
-/**
- * SharedPreferences key "is_vip".
- * Returning true keeps premium widgets and disables banner ads offline.
- */
 private object IsVipFingerprint : Fingerprint(
     returnType = "Z",
     strings = listOf("is_vip"),
 )
 
-/**
- * Product id / preference name used by BillingRepo for VIP status.
- */
 private object ColorWidgetsPremiumFingerprint : Fingerprint(
     returnType = "Z",
     strings = listOf("color_widgets_premium"),
