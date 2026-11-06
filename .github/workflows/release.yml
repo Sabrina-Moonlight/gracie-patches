@@ -28,7 +28,7 @@ jobs:
           java-version: '21'
 
       # Versión nueva: la más alta entre gradle.properties y (última etiqueta vX.Y.Z + 1 en el último número).
-      # Solo cambia gradle.properties dentro de esta ejecución; no se sube nada al repositorio.
+      # La versión se escribe en gradle.properties y se guarda en main al final del job, para que el siguiente release siempre suba de número.
       - name: Calcular versión
         id: ver
         run: |
@@ -113,7 +113,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add README.md patches-list.json patches-bundle.json
+          git add README.md patches-list.json patches-bundle.json gradle.properties
           if git diff --cached --quiet; then
             echo "Nada que guardar"
           else
