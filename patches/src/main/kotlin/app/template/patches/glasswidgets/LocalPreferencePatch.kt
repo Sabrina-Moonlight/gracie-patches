@@ -13,13 +13,12 @@ private val GLASS_WIDGETS = Compatibility(
     packageName = "com.jndapp.glass.widgets",
     apkFileType = ApkFileType.APK,
     appIconColor = 0x00BCD4,
-    targets = listOf(AppTarget(version = "1.0.2")),
+    targets = listOf(AppTarget(version = "1.0.2", versionCode = 12)),
 )
 
 /**
  * Method a(Context) in i74: reads SharedPreferences key from "premium_prefs".
- * Local flag used for optional widget features.
- * Returning true keeps those features available offline.
+ * Returning true keeps optional widget features available offline.
  */
 private object PremiumUnlockedFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
