@@ -6,7 +6,6 @@ import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
-import com.android.tools.smali.dexlib2.AccessFlags
 
 private val GLASS_WIDGETS = Compatibility(
     name = "Glass Widgets",
@@ -75,15 +74,14 @@ private object ShowPaywallAndCloseAppFingerprint : Fingerprint(
 
 /**
  * Native VM bootstrap from CoreComponentFactory.
- * Method is public static synchronized — SYNCHRONIZED flag required.
+ * Only class + name + isStatic: the program name string is a field, not a const in this method.
  */
 private object StartupLauncherFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/StartupLauncher;",
     name = "launch",
-    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC, AccessFlags.SYNCHRONIZED),
+    isStatic = true,
     returnType = "V",
     parameters = listOf(),
-    strings = listOf("pc3G1FUBD9UGlVle"),
 )
 
 /** Signature check throws after the APK is re-signed by the patcher. */
