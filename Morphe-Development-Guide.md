@@ -217,3 +217,128 @@ The form without index is deprecated and will be removed.
 - After making the repo **public**, delete the broken source in Morphe and add it again with:
   `https://github.com/Sabrina-Moonlight/gracie-patches`
 - Or install the `.mpp` from Releases by hand (no source needed).
+
+## 15. Patterns from mature patch projects (practical notes)
+
+These notes summarize how larger community patch sets stay stable across apps. They are technical habits, not product rules. Prefer them when a simple `returnEarly` is not enough.
+
+### 15.1 Split shared logic from app-specific patches
+
+- Put reusable work under something like `patches/.../shared/misc/<topic>/`.
+- Keep one small patch per app under `patches/.../<app>/` that only sets `compatibleWith` and `dependsOn(...)`.
+- Shared patches should accept several apps via `compatibleWith(...)` lists, or stay internal and be pulled in with `dependsOn`.
+
+This avoids copy-pasting the same license or integrity logic into every app folder.
+
+### 15.2 Chain patches with `dependsOn`
+
+When a fix needs more than one step, make the order explicit:
+
+```kotlin
+dependsOn(
+    restoreManifestEntryPatch,   // resources / AndroidManifest
+    skipLocalCheckPatch,         // bytecode
+    clearNativeRuntimePatch,     // raw resources under lib/
+)
+```
+
+Resource patches (manifest, `lib/`, assets) often must run before bytecode that assumes the restored entry points. If the app still opens a store screen or exits on launch, check whether a required step is missing from the chain.
+
+### 15.3 Manifest entry points
+
+Some packs replace the real `android:name` on `<application>` and/or `android:appComponentFactory` with temporary classes that run local checks first.
+
+Useful approach seen in the wild:
+
+1. Read the **original** class names from constants still present in the dex (string fields on a known class).
+2. In a `resourcePatch`, write those names back into `AndroidManifest.xml`.
+3. Remove temporary components whose names share a fixed prefix.
+
+Always verify the restored names against the decompiled constants for **that** version. Do not hardcode class names that only existed in an older build.
+
+### 15.4 `versionCode` in compatibility
+
+Prefer:
+
+```kotlin
+AppTarget(version = "1.0.2", versionCode = 12)
+```
+
+when the patch loads tables or files named like `com.example.app-12.stubs`. Matching only the marketing version string is weaker if two builds share the same label.
+
+### 15.5 Bundled tables under `resources/`
+
+Mature sets keep per-app data next to the code:
+
+```
+patches/src/main/resources/<topic>/
+  com.example.app-12.stubs
+  com.example.app-12.tsv
+```
+
+Load them at patch time (classpath resource stream). Name files with `packageName-versionCode` so one shared patch can serve many apps without branching on package strings in Kotlin.
+
+### 15.6 When `returnEarly` is enough — and when it is not
+
+| Situation | Usually enough |
+|-----------|----------------|
+| Boolean/int gate (“is premium”, “are ads enabled”) | `returnEarly(true/false)` |
+| Void method that only starts a local check or opens a URL | `returnEarly()` |
+| Method body was replaced by a call into a local VM / encrypted helper | **Not enough** — need restored instructions or a safe stub body |
+| Native library aborts after re-sign (integrity inside `.so`) | **Not enough** — remove or replace that library under `lib/<abi>/` |
+| App component factory still points at a temporary bootstrap | **Not enough** — fix the manifest first |
+
+Rule of thumb: if the app still closes **immediately** on open after you stubbed the Java/Kotlin checks, look for a native runtime or a component factory still in the temporary path.
+
+### 15.7 Neutralising virtualized / forwarded methods
+
+Some builds turn real methods into thin wrappers that call a local runner. Patterns that reduce crashes:
+
+1. List the wrappers (from a known table or by scanning calls to the runner class).
+2. Replace the body with a typed safe return (`return-void`, `const/4 v0, 0` + `return v0`, `return-object v0`, etc.).
+3. Optionally restore full bodies later from recovered dex + a method table (larger effort).
+
+Always match **return type** and register width (`return-wide` for `J`/`D`). A wrong return opcode crashes at runtime even if the patch compiles.
+
+### 15.8 Fingerprints: keep them stable and local
+
+- Prefer `object NameFingerprint : Fingerprint(...)` so failures print a clear name.
+- Put shared fingerprints in `Fingerprints.kt` next to the shared patch.
+- Prefer `strings` / `methodCall` on **library** APIs over app class names.
+- Use `runCatching { fingerprint.method.returnEarly() }` only for optional paths; required paths should fail loudly with `PatchException` so the Release log shows what broke.
+
+### 15.9 Raw resource patches for `lib/` and assets
+
+```kotlin
+rawResourcePatch {
+    execute {
+        get("lib").listFiles()?.filter { it.isDirectory }?.forEach { abiDir ->
+            abiDir.resolve("libSomeRuntime.so").takeIf { it.exists() }?.delete()
+        }
+    }
+}
+```
+
+Use this for files that are not XML. Confirm the ABI folders that actually ship in the APK/APKS before assuming `arm64-v8a` alone is enough.
+
+### 15.10 APK vs APKS
+
+Some targets need split packages (`ApkFileType.APKS_REQUIRED`). If Manager applies cleanly on a single APK but the install is incomplete, check whether the upstream target was defined as APKS and whether native libs live only in a split.
+
+### 15.11 Checklist before declaring an app “done”
+
+1. Fingerprint matches on the **exact** version you ship (smali or jadx of that build).
+2. `compatibleWith` lists the right `version` / `versionCode`.
+3. Any multi-step fix is ordered with `dependsOn`.
+4. Manifest entry points restored if they were temporary.
+5. No leftover native runtime that checks the signing certificate at process start.
+6. Premium/ads gates verified with a real open of the app, not only a green compile.
+7. Names and descriptions stay neutral and short (what the toggle does in the UI).
+
+### 15.12 What to copy from other projects — and what not to
+
+**Copy ideas:** shared folders, `dependsOn` chains, resource tables keyed by versionCode, manifest restore from dex constants, safe stub bodies for thin VM wrappers.
+
+**Do not copy blindly:** hardcoded offsets, keys, or class names from another app; whole files that pull half a monorepo of unrelated apps; patch names or descriptions that overclaim.
+
+When porting, bring the **smallest** set of files that make one app stable, then grow the shared module as the next app needs the same tool.
