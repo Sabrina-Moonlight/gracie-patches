@@ -18,10 +18,12 @@ private val GLASS_WIDGETS = Compatibility(
 
 /**
  * LicenseClient.checkLicense(Context).
- * Called by Pairip at start (Application.attachBaseContext).
+ * Called from Application.attachBaseContext.
  * Fixed log string → stable fingerprint.
  */
 private object CheckLicenseFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
+    name = "checkLicense",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "V",
     parameters = listOf("Landroid/content/Context;"),
@@ -29,14 +31,40 @@ private object CheckLicenseFingerprint : Fingerprint(
 )
 
 /**
- * private bindToLicensingService(Z): fixed log string.
- * Extra path coverage.
+ * LicenseClient.initializeLicenseCheck().
+ * Real work starts here after checkLicense posts to the main thread.
  */
-private object BindToLicensingServiceFingerprint : Fingerprint(
+private object InitializeLicenseCheckFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
+    name = "initializeLicenseCheck",
+    accessFlags = listOf(AccessFlags.PUBLIC),
+    returnType = "V",
+    parameters = listOf(),
+)
+
+/**
+ * LicenseClient.startPaywallActivity(PendingIntent).
+ * Opens Play Store / paywall when the license check fails.
+ */
+private object StartPaywallFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
+    name = "startPaywallActivity",
     accessFlags = listOf(AccessFlags.PRIVATE),
     returnType = "V",
-    parameters = listOf("Z"),
-    strings = listOf("Connecting to the main licensing service..."),
+    parameters = listOf("Landroid/app/PendingIntent;"),
+)
+
+/**
+ * SignatureCheck.verifyIntegrity(Context).
+ * Throws if the APK signature no longer matches after patching.
+ */
+private object VerifyIntegrityFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/SignatureCheck;",
+    name = "verifyIntegrity",
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    returnType = "V",
+    parameters = listOf("Landroid/content/Context;"),
+    strings = listOf("Apk signature is invalid."),
 )
 
 @Suppress("unused")
@@ -49,6 +77,8 @@ val disablePairipPatch = bytecodePatch(
 
     execute {
         CheckLicenseFingerprint.method.returnEarly()
-        BindToLicensingServiceFingerprint.method.returnEarly()
+        InitializeLicenseCheckFingerprint.method.returnEarly()
+        StartPaywallFingerprint.method.returnEarly()
+        VerifyIntegrityFingerprint.method.returnEarly()
     }
 }
