@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.32](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.32)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
+> **[v1.0.33](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.33)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -41,7 +41,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 </details>
 
 <details open>
-<summary>🌸 Color Widgets - iWidgets&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<summary>🌸 Color Widgets - iWidgets&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
 **Package name:** `colorwidgets.ios.widget.topwidgets`
@@ -53,8 +53,9 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Disable Integrity](#disable-integrity) | Skips the keep-signal integrity check so the app can run after patching. |  |
+| [Disable Integrity](#disable-integrity) | Skips keep-signal load and integrity error paths so the app can run after patching. |  |
 | [Local Premium](#local-premium) | Uses a local preference so premium widgets and no-ads stay available offline. |  |
+| [Spoof Signature](#spoof-signature) | Makes the app see the original Play Store signature after patching. |  |
 
 </details>
 
