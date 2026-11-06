@@ -1,25 +1,11 @@
 package app.template.patches.glasswidgets
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.patch.ApkFileType
-import app.morphe.patcher.patch.AppTarget
-import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
+import app.template.patches.shared.misc.pairip.GLASS_WIDGETS
 import com.android.tools.smali.dexlib2.AccessFlags
 
-private val GLASS_WIDGETS = Compatibility(
-    name = "Glass Widgets",
-    packageName = "com.jndapp.glass.widgets",
-    apkFileType = ApkFileType.APK,
-    appIconColor = 0x00BCD4,
-    targets = listOf(AppTarget(version = "1.0.2", versionCode = 12)),
-)
-
-/**
- * Method a(Context) in i74: reads SharedPreferences key from "premium_prefs".
- * Returning true keeps optional widget features available offline.
- */
 private object PremiumUnlockedFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "Z",
@@ -36,6 +22,6 @@ val localPreferencePatch = bytecodePatch(
     compatibleWith(GLASS_WIDGETS)
 
     execute {
-        PremiumUnlockedFingerprint.method.returnEarly(true)
+        runCatching { PremiumUnlockedFingerprint.method.returnEarly(true) }
     }
 }

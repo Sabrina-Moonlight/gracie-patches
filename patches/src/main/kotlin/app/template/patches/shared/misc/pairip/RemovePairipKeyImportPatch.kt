@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2026 hxreborn
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
 package app.template.patches.shared.misc.pairip
 
 import app.morphe.patcher.patch.PatchException
@@ -5,6 +9,7 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import com.android.tools.smali.dexlib2.iface.value.StringEncodedValue
 import org.w3c.dom.Element
+import org.w3c.dom.Node
 
 private const val KEY_IMPORT_CONSTANTS_CLASS = "Lcom/pairip/vmencryption/KeyImportConstants;"
 private const val KEY_IMPORT_APPLICATION = "com.pairip.vmencryption.KeyImportApplication"
