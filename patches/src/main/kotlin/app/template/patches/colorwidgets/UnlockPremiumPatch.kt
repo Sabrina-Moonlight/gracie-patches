@@ -1,7 +1,6 @@
 package app.template.patches.colorwidgets
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.patch.ApkFileType
 import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
@@ -19,59 +18,45 @@ internal val COLOR_WIDGETS = Compatibility(
 )
 
 /**
- * Paywall activity. Closing it on create stops the "Unlock All Features" screen.
- */
-private object SubscribeOnCreateFingerprint : Fingerprint(
-    definingClass = "Lcolorwidgets/ios/widget/topwidgets/ui/activity/subscribe3/SubscribeActivity3;",
-    name = "onCreate",
-    returnType = "V",
-    parameters = listOf("Landroid/os/Bundle;"),
-)
-
-/**
- * Any method that loads the is_vip preference key.
- * Boolean ones are forced to true (VIP active).
+ * Local cache key written when the app believes the user is VIP.
+ * Boolean-returning methods that touch this key are forced to true.
  */
 private object IsVipKeyFingerprint : Fingerprint(
     strings = listOf("is_vip"),
 )
 
 /**
- * Product / entitlement id used for premium.
+ * Play product / entitlement id for premium.
  */
 private object PremiumProductFingerprint : Fingerprint(
     strings = listOf("color_widgets_premium"),
 )
 
 /**
- * Log path when VIP is active (banner ads off).
- * Ensures the VIP branch is taken where this helper is used.
+ * Path that writes the local VIP cache as true after a successful check.
  */
-private object UserIsVipFingerprint : Fingerprint(
-    strings = listOf("User is VIP, disabling banner ads"),
+private object UpdateIsVipCacheFingerprint : Fingerprint(
+    strings = listOf("updateIsVipCache true"),
+)
+
+/**
+ * Server subscription result log: "subscribe result: isVip: …"
+ * Used when the app applies the server answer locally.
+ */
+private object SubscribeResultIsVipFingerprint : Fingerprint(
+    strings = listOf("subscribe result: isVip: "),
 )
 
 @Suppress("unused")
 val unlockPremiumPatch = bytecodePatch(
     name = "Local Premium",
-    description = "Skips the paywall and treats is_vip / premium product as active offline.",
+    description = "Forces local VIP cache gates to true. Server subscription check may still limit some features.",
     default = true,
 ) {
     compatibleWith(COLOR_WIDGETS)
 
     execute {
-        // Close paywall immediately.
-        runCatching {
-            SubscribeOnCreateFingerprint.method.addInstructions(
-                0,
-                """
-                    invoke-virtual {p0}, Landroid/app/Activity;->finish()V
-                    return-void
-                """,
-            )
-        }
-
-        // Force boolean gates that read is_vip.
+        // Boolean methods that read is_vip → always true
         runCatching {
             IsVipKeyFingerprint.matchAll().forEach { match ->
                 val ret = match.method.returnType
@@ -81,7 +66,7 @@ val unlockPremiumPatch = bytecodePatch(
             }
         }
 
-        // Force boolean gates that mention the premium product id.
+        // Boolean methods that mention the premium product id → always true
         runCatching {
             PremiumProductFingerprint.matchAll().forEach { match ->
                 val ret = match.method.returnType
@@ -91,15 +76,22 @@ val unlockPremiumPatch = bytecodePatch(
             }
         }
 
-        // Ads helper that branches on VIP.
+        // Prefer the "cache = true" write path when it is a gate
         runCatching {
-            UserIsVipFingerprint.matchAll().forEach { match ->
+            UpdateIsVipCacheFingerprint.matchAll().forEach { match ->
                 val ret = match.method.returnType
                 if (ret == "Z" || ret == "Ljava/lang/Boolean;") {
                     match.method.returnEarly(true)
-                } else if (ret == "V") {
-                    // void helpers: skip body so they cannot re-enable ads from a false VIP flag
-                    match.method.returnEarly()
+                }
+            }
+        }
+
+        // Server result applicator: if it returns boolean, force VIP
+        runCatching {
+            SubscribeResultIsVipFingerprint.matchAll().forEach { match ->
+                val ret = match.method.returnType
+                if (ret == "Z" || ret == "Ljava/lang/Boolean;") {
+                    match.method.returnEarly(true)
                 }
             }
         }
