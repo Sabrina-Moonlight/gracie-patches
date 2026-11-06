@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.30](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.30)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;13 patches total
+> **[v1.0.31](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.31)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;14 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -127,6 +127,23 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
 | [Local Features](#local-features) | Uses a local preference so optional widget features stay available offline. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Color Widgets - iWidgets&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Package name:** `colorwidgets.ios.widget.topwidgets`
+
+**🌻 Supported versions:**
+
+| 1.8.5 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Local Premium](#local-premium) | Uses a local preference so premium widgets and no-ads stay available offline. |  |
 
 </details>
 

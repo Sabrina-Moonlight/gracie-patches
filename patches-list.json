@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "patches": [
     {
       "name": "Clone app",
@@ -344,6 +344,38 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Local Premium",
+      "description": "Uses a local preference so premium widgets and no-ads stay available offline.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "colorwidgets.ios.widget.topwidgets",
+          "name": "Color Widgets - iWidgets",
+          "description": null,
+          "apkFileType": "APKS_REQUIRED",
+          "appIconColor": "#FF6B9D",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.8.5",
+              "versionCodes": {
+                "ARM64_V8A": 105,
+                "ARMEABI_V7A": 105,
+                "X86_64": 105,
+                "X86": 105
+              },
+              "isExperimental": false,
+              "minSdk": 32,
               "description": null
             }
           ]
