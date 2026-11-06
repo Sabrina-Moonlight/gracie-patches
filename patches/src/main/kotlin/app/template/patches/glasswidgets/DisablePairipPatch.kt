@@ -20,7 +20,6 @@ private val GLASS_WIDGETS = Compatibility(
 private object LicenseContentProviderOnCreateFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseContentProvider;",
     name = "onCreate",
-    accessFlags = listOf(AccessFlags.PUBLIC),
     returnType = "Z",
     parameters = listOf(),
 )
@@ -29,16 +28,15 @@ private object LicenseContentProviderOnCreateFingerprint : Fingerprint(
 private object CheckLicenseFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "checkLicense",
-    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "V",
     parameters = listOf("Landroid/content/Context;"),
+    strings = listOf("Cannot check license with null context."),
 )
 
 /** Real license work after checkLicense posts to the main thread. */
 private object InitializeLicenseCheckFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "initializeLicenseCheck",
-    accessFlags = listOf(AccessFlags.PUBLIC),
     returnType = "V",
     parameters = listOf(),
 )
@@ -47,7 +45,6 @@ private object InitializeLicenseCheckFingerprint : Fingerprint(
 private object StartPaywallFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "startPaywallActivity",
-    accessFlags = listOf(AccessFlags.PRIVATE),
     returnType = "V",
     parameters = listOf("Landroid/app/PendingIntent;"),
 )
@@ -56,7 +53,6 @@ private object StartPaywallFingerprint : Fingerprint(
 private object StartErrorDialogFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "startErrorDialogActivity",
-    accessFlags = listOf(AccessFlags.PRIVATE),
     returnType = "V",
     parameters = listOf(),
 )
@@ -65,7 +61,6 @@ private object StartErrorDialogFingerprint : Fingerprint(
 private object LicenseActivityOnStartFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseActivity;",
     name = "onStart",
-    accessFlags = listOf(AccessFlags.PUBLIC),
     returnType = "V",
     parameters = listOf(),
 )
@@ -74,27 +69,30 @@ private object LicenseActivityOnStartFingerprint : Fingerprint(
 private object ShowPaywallAndCloseAppFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseActivity;",
     name = "showPaywallAndCloseApp",
-    accessFlags = listOf(AccessFlags.PRIVATE),
     returnType = "V",
     parameters = listOf(),
 )
 
-/** Native VM bootstrap from CoreComponentFactory. */
+/**
+ * Native VM bootstrap from CoreComponentFactory.
+ * Method is public static synchronized — SYNCHRONIZED flag required.
+ */
 private object StartupLauncherFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/StartupLauncher;",
     name = "launch",
-    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC, AccessFlags.SYNCHRONIZED),
     returnType = "V",
     parameters = listOf(),
+    strings = listOf("pc3G1FUBD9UGlVle"),
 )
 
 /** Signature check throws after the APK is re-signed by the patcher. */
 private object VerifyIntegrityFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/SignatureCheck;",
     name = "verifyIntegrity",
-    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "V",
     parameters = listOf("Landroid/content/Context;"),
+    strings = listOf("Apk signature is invalid."),
 )
 
 @Suppress("unused")
@@ -106,18 +104,15 @@ val disablePairipPatch = bytecodePatch(
     compatibleWith(GLASS_WIDGETS)
 
     execute {
-        // Earliest hooks
         LicenseContentProviderOnCreateFingerprint.method.returnEarly(true)
         StartupLauncherFingerprint.method.returnEarly()
         VerifyIntegrityFingerprint.method.returnEarly()
 
-        // License client
         CheckLicenseFingerprint.method.returnEarly()
         InitializeLicenseCheckFingerprint.method.returnEarly()
         StartPaywallFingerprint.method.returnEarly()
         StartErrorDialogFingerprint.method.returnEarly()
 
-        // Paywall UI
         LicenseActivityOnStartFingerprint.method.returnEarly()
         ShowPaywallAndCloseAppFingerprint.method.returnEarly()
     }
