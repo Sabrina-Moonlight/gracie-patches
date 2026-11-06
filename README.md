@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.20](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.20)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;11 patches total
+> **[v1.0.21](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.21)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;13 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -41,7 +41,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 </details>
 
 <details open>
-<summary>🌸 Glass Widgets&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<summary>🌸 Glass Widgets&nbsp;&nbsp;•&nbsp;&nbsp;4 patches</summary>
 <br>
 
 **Package name:** `com.jndapp.glass.widgets`
@@ -53,8 +53,10 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Disable Pairip](#disable-pairip) | Skips the local Pairip license check so the app can keep running. |  |
+| [Disable Pairip](#disable-pairip) | Skips the local Pairip checks so the app can keep running offline. |  |
 | [Local Preference](#local-preference) | Uses a local preference so optional widget features stay available offline. |  |
+| [Remove Pairip Protection](#remove-pairip-protection) | Skips the local license check entry point. |  |
+| [Remove Pairip Virtualization](#remove-pairip-virtualization) | Skips the local VM runtime and neutralises virtualized method stubs. |  |
 
 </details>
 
