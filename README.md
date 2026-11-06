@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.13](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.13)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;11 patches total
+> **[v1.0.14](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.14)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;11 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
