@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.22",
+  "version": "1.0.24",
   "patches": [
     {
       "name": "Clone app",
@@ -127,7 +127,7 @@
     },
     {
       "name": "Disable Pairip",
-      "description": "Skips the local Pairip checks so the app can keep running offline.",
+      "description": "Restores the normal app entry and recovers offline method bodies so the app can keep running.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -135,11 +135,23 @@
           "packageName": "com.jndapp.glass.widgets",
           "name": "Glass Widgets",
           "description": null,
-          "apkFileType": "APK",
+          "apkFileType": "APKS_REQUIRED",
           "appIconColor": "#00BCD4",
           "signatures": null,
           "formFactor": "MOBILE",
           "targets": [
+            {
+              "version": "1.0.10",
+              "versionCodes": {
+                "ARM64_V8A": 11,
+                "ARMEABI_V7A": 11,
+                "X86_64": 11,
+                "X86": 11
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            },
             {
               "version": "1.0.2",
               "versionCodes": {
@@ -149,7 +161,7 @@
                 "X86": 12
               },
               "isExperimental": false,
-              "minSdk": null,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -159,7 +171,7 @@
     },
     {
       "name": "Disable Pairip",
-      "description": "Skips the local Pairip license check so the app can keep running.",
+      "description": "Skips the local license and integrity checks so the app can keep running offline.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -186,7 +198,7 @@
     },
     {
       "name": "Disable Pairip",
-      "description": "Skips the local PairIP license exit check so the app can keep running.",
+      "description": "Skips the local license and integrity checks so the app can keep running offline.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -213,7 +225,7 @@
     },
     {
       "name": "Disable Pairip",
-      "description": "Skips the local Pairip license check so the app can keep running.",
+      "description": "Skips the local license and integrity checks so the app can keep running offline.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -222,7 +234,7 @@
           "name": "Screen Recording App",
           "description": null,
           "apkFileType": "APK",
-          "appIconColor": "#E53935",
+          "appIconColor": "#E91E63",
           "signatures": null,
           "formFactor": "MOBILE",
           "targets": [
@@ -302,11 +314,23 @@
           "packageName": "com.jndapp.glass.widgets",
           "name": "Glass Widgets",
           "description": null,
-          "apkFileType": "APK",
+          "apkFileType": "APKS_REQUIRED",
           "appIconColor": "#00BCD4",
           "signatures": null,
           "formFactor": "MOBILE",
           "targets": [
+            {
+              "version": "1.0.10",
+              "versionCodes": {
+                "ARM64_V8A": 11,
+                "ARMEABI_V7A": 11,
+                "X86_64": 11,
+                "X86": 11
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            },
             {
               "version": "1.0.2",
               "versionCodes": {
@@ -316,7 +340,7 @@
                 "X86": 12
               },
               "isExperimental": false,
-              "minSdk": null,
+              "minSdk": 32,
               "description": null
             }
           ]
@@ -388,43 +412,23 @@
           "packageName": "com.jndapp.glass.widgets",
           "name": "Glass Widgets",
           "description": null,
-          "apkFileType": "APK",
+          "apkFileType": "APKS_REQUIRED",
           "appIconColor": "#00BCD4",
           "signatures": null,
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "1.0.2",
+              "version": "1.0.10",
               "versionCodes": {
-                "ARM64_V8A": 12,
-                "ARMEABI_V7A": 12,
-                "X86_64": 12,
-                "X86": 12
+                "ARM64_V8A": 11,
+                "ARMEABI_V7A": 11,
+                "X86_64": 11,
+                "X86": 11
               },
               "isExperimental": false,
-              "minSdk": null,
+              "minSdk": 32,
               "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Remove Pairip Virtualization",
-      "description": "Skips the local VM runtime and neutralises virtualized method stubs.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.jndapp.glass.widgets",
-          "name": "Glass Widgets",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#00BCD4",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
+            },
             {
               "version": "1.0.2",
               "versionCodes": {
@@ -434,7 +438,7 @@
                 "X86": 12
               },
               "isExperimental": false,
-              "minSdk": null,
+              "minSdk": 32,
               "description": null
             }
           ]

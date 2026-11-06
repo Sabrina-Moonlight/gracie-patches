@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.22](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.22)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;13 patches total
+> **[v1.0.24](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.24)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;12 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -41,22 +41,21 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 </details>
 
 <details open>
-<summary>🌸 Glass Widgets&nbsp;&nbsp;•&nbsp;&nbsp;4 patches</summary>
+<summary>🌸 Glass Widgets&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
 **Package name:** `com.jndapp.glass.widgets`
 
 **🌻 Supported versions:**
 
-| 1.0.2 |
-| :---: |
+| 1.0.10 | 1.0.2 |
+| :---: | :---: |
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Disable Pairip](#disable-pairip) | Skips the local Pairip checks so the app can keep running offline. |  |
+| [Disable Pairip](#disable-pairip) | Restores the normal app entry and recovers offline method bodies so the app can keep running. |  |
 | [Local Preference](#local-preference) | Uses a local preference so optional widget features stay available offline. |  |
 | [Remove Pairip Protection](#remove-pairip-protection) | Skips the local license check entry point. |  |
-| [Remove Pairip Virtualization](#remove-pairip-virtualization) | Skips the local VM runtime and neutralises virtualized method stubs. |  |
 
 </details>
 
@@ -73,7 +72,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Disable Pairip](#disable-pairip) | Skips the local Pairip license check so the app can keep running. |  |
+| [Disable Pairip](#disable-pairip) | Skips the local license and integrity checks so the app can keep running offline. |  |
 | [Local Preference](#local-preference) | Uses a local preference so optional widget features stay available offline. |  |
 
 </details>
@@ -91,7 +90,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Disable Pairip](#disable-pairip) | Skips the local PairIP license exit check so the app can keep running. |  |
+| [Disable Pairip](#disable-pairip) | Skips the local license and integrity checks so the app can keep running offline. |  |
 | [Hide Ads Preference](#hide-ads-preference) | Uses a local preference so interstitial and banner ads stay off. |  |
 
 </details>
@@ -109,7 +108,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Disable Pairip](#disable-pairip) | Skips the local Pairip license check so the app can keep running. |  |
+| [Disable Pairip](#disable-pairip) | Skips the local license and integrity checks so the app can keep running offline. |  |
 | [Pro Options](#pro-options) | Uses a local preference so optional Pro options stay available. |  |
 
 </details>
