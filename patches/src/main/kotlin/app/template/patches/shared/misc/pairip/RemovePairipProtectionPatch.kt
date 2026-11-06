@@ -7,9 +7,6 @@ package app.template.patches.shared.misc.pairip
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
 
-/**
- * Skips the local Pairip license check entry so the app does not open a store paywall.
- */
 val removePairipProtectionPatch = bytecodePatch(
     name = "Remove Pairip Protection",
     description = "Skips the local license check entry point.",

@@ -4,10 +4,6 @@ import app.morphe.patcher.patch.ApkFileType
 import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 
-/**
- * Glass Widgets targets used by the shared Pairip removal chain.
- * APKS_REQUIRED: install from the split package set, not a single thin APK.
- */
 internal val GLASS_WIDGETS = Compatibility(
     name = "Glass Widgets",
     packageName = "com.jndapp.glass.widgets",

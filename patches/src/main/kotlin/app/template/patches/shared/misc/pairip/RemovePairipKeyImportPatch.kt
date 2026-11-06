@@ -9,7 +9,6 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import com.android.tools.smali.dexlib2.iface.value.StringEncodedValue
 import org.w3c.dom.Element
-import org.w3c.dom.Node
 
 private const val KEY_IMPORT_CONSTANTS_CLASS = "Lcom/pairip/vmencryption/KeyImportConstants;"
 private const val KEY_IMPORT_APPLICATION = "com.pairip.vmencryption.KeyImportApplication"
@@ -50,10 +49,6 @@ private fun Element.removeFromParent() {
     parentNode?.removeChild(this)
 }
 
-/**
- * Restores the real application class and component factory from Pairip key-import stubs
- * and removes temporary KeyImport components from the manifest.
- */
 val removePairipKeyImportPatch = resourcePatch {
     dependsOn(readKeyImportOriginalsPatch)
 
