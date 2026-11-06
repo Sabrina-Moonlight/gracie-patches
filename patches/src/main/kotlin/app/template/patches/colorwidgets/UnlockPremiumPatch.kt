@@ -7,7 +7,7 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
 
-private val COLOR_WIDGETS = Compatibility(
+internal val COLOR_WIDGETS = Compatibility(
     name = "Color Widgets - iWidgets",
     packageName = "colorwidgets.ios.widget.topwidgets",
     apkFileType = ApkFileType.APKS_REQUIRED,
@@ -28,7 +28,6 @@ private object IsVipFingerprint : Fingerprint(
 
 /**
  * Product id / preference name used by BillingRepo for VIP status.
- * Extra match so the patch still finds a gate if the first one moves.
  */
 private object ColorWidgetsPremiumFingerprint : Fingerprint(
     returnType = "Z",
