@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.34](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.34)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
+> **[v1.0.35](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.35)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -54,7 +54,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
 | [Disable Integrity](#disable-integrity) | Skips keep-signal load and integrity error paths so the app can run after patching. |  |
-| [Local Premium](#local-premium) | Skips the paywall and treats is_vip / premium product as active offline. |  |
+| [Local Premium](#local-premium) | Forces local VIP cache gates to true. Server subscription check may still limit some features. |  |
 | [Spoof Signature](#spoof-signature) | Makes the app see the original Play Store signature after patching. |  |
 
 </details>
