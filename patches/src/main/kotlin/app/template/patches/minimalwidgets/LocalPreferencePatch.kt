@@ -17,15 +17,14 @@ private val MINIMAL_WIDGETS = Compatibility(
 )
 
 /**
- * Method a(Context) in ed3: reads SharedPreferences key "premium_unlocked".
- * Local flag used for optional widget features.
+ * Local preference gate used for optional widget features.
  * Returning true keeps those features available offline.
  */
 private object PremiumUnlockedFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "Z",
     parameters = listOf("Landroid/content/Context;"),
-    strings = listOf("premium_prefs", "premium_unlocked"),
+    strings = listOf("premium_prefs", "install_check_prefs"),
 )
 
 @Suppress("unused")

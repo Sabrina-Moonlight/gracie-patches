@@ -18,8 +18,8 @@ private val MINIMAL_WIDGETS = Compatibility(
 
 /**
  * LicenseClient.checkLicense(Context).
- * Called by Pairip at start (Application.attachBaseContext).
- * Fixed log string → stable fingerprint.
+ * Called at start from Application.attachBaseContext.
+ * Fixed log string → stable fingerprint across minor builds.
  */
 private object CheckLicenseFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
@@ -30,7 +30,7 @@ private object CheckLicenseFingerprint : Fingerprint(
 
 /**
  * private bindToLicensingService(Z): fixed log string.
- * Extra path coverage.
+ * Extra path coverage when the service bind still runs.
  */
 private object BindToLicensingServiceFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PRIVATE),
@@ -39,16 +39,34 @@ private object BindToLicensingServiceFingerprint : Fingerprint(
     strings = listOf("Connecting to the main licensing service..."),
 )
 
+private object VerifyIntegrityFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/SignatureCheck;",
+    name = "verifyIntegrity",
+    returnType = "V",
+    parameters = listOf("Landroid/content/Context;"),
+    strings = listOf("Apk signature is invalid."),
+)
+
+private object StartupLauncherFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/StartupLauncher;",
+    name = "launch",
+    isStatic = true,
+    returnType = "V",
+    parameters = listOf(),
+)
+
 @Suppress("unused")
 val disablePairipPatch = bytecodePatch(
     name = "Disable Pairip",
-    description = "Skips the local Pairip license check so the app can keep running.",
+    description = "Skips the local license and integrity checks so the app can keep running offline.",
     default = true,
 ) {
     compatibleWith(MINIMAL_WIDGETS)
 
     execute {
         CheckLicenseFingerprint.method.returnEarly()
-        BindToLicensingServiceFingerprint.method.returnEarly()
+        runCatching { BindToLicensingServiceFingerprint.method.returnEarly() }
+        runCatching { VerifyIntegrityFingerprint.method.returnEarly() }
+        runCatching { StartupLauncherFingerprint.method.returnEarly() }
     }
 }

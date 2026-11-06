@@ -16,10 +16,7 @@ private val QUICK_SETTINGS = Compatibility(
     targets = listOf(AppTarget(version = "12.0.3-17888438")),
 )
 
-/**
- * LicenseClient.initializeLicenseCheck().
- * PairIP entry point. Early return skips the local check so the app can keep running.
- */
+/** Pairip entry after Application attaches the base context. */
 private object InitializeLicenseCheckFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "initializeLicenseCheck",
@@ -28,10 +25,7 @@ private object InitializeLicenseCheckFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
-/**
- * LicenseClient.connectToLicensingService() (private).
- * Fixed log string. Extra path coverage.
- */
+/** Private connect path; fixed log string for a stable match. */
 private object ConnectToLicensingServiceFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     accessFlags = listOf(AccessFlags.PRIVATE),
@@ -40,10 +34,26 @@ private object ConnectToLicensingServiceFingerprint : Fingerprint(
     strings = listOf("Connecting to the licensing service..."),
 )
 
+private object VerifyIntegrityFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/SignatureCheck;",
+    name = "verifyIntegrity",
+    returnType = "V",
+    parameters = listOf("Landroid/content/Context;"),
+    strings = listOf("Apk signature is invalid."),
+)
+
+private object StartupLauncherFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/StartupLauncher;",
+    name = "launch",
+    isStatic = true,
+    returnType = "V",
+    parameters = listOf(),
+)
+
 @Suppress("unused")
 val disablePairipPatch = bytecodePatch(
     name = "Disable Pairip",
-    description = "Skips the local PairIP license exit check so the app can keep running.",
+    description = "Skips the local license and integrity checks so the app can keep running offline.",
     default = true,
 ) {
     compatibleWith(QUICK_SETTINGS)
@@ -51,5 +61,7 @@ val disablePairipPatch = bytecodePatch(
     execute {
         InitializeLicenseCheckFingerprint.method.returnEarly()
         ConnectToLicensingServiceFingerprint.method.returnEarly()
+        runCatching { VerifyIntegrityFingerprint.method.returnEarly() }
+        runCatching { StartupLauncherFingerprint.method.returnEarly() }
     }
 }

@@ -17,9 +17,8 @@ private val AESTHETIC_WIDGETS = Compatibility(
 )
 
 /**
- * Method j() in yd/e: reads SharedPreferences key "has_active_purchase".
- * Local flag used for optional features.
- * Returning true keeps those features available offline.
+ * Reads SharedPreferences key "has_active_purchase".
+ * Returning true keeps optional features available offline.
  */
 private object HasActivePurchaseFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),

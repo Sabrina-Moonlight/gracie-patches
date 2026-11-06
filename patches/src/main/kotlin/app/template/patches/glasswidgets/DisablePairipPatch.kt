@@ -85,7 +85,7 @@ private object VerifyIntegrityFingerprint : Fingerprint(
 @Suppress("unused")
 val disablePairipPatch = bytecodePatch(
     name = "Disable Pairip",
-    description = "Skips the local Pairip checks so the app can keep running offline.",
+    description = "Restores the normal app entry, skips local checks, and neutralises the offline runtime so the app can keep running.",
     default = true,
 ) {
     compatibleWith(GLASS_WIDGETS)
