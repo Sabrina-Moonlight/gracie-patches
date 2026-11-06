@@ -24,7 +24,7 @@ private object PremiumUnlockedFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "Z",
     parameters = listOf("Landroid/content/Context;"),
-    strings = listOf("premium_prefs", "install_check_prefs"),
+    strings = listOf("premium_prefs", "premium_unlocked"),
 )
 
 @Suppress("unused")
