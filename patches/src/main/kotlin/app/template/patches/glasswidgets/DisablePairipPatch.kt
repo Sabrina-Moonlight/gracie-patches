@@ -6,6 +6,7 @@ import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
+import com.android.tools.smali.dexlib2.AccessFlags
 
 private val GLASS_WIDGETS = Compatibility(
     name = "Glass Widgets",
@@ -73,8 +74,7 @@ private object ShowPaywallAndCloseAppFingerprint : Fingerprint(
 )
 
 /**
- * Native VM bootstrap from CoreComponentFactory.
- * Only class + name + isStatic: the program name string is a field, not a const in this method.
+ * Native VM bootstrap from CoreComponentFactory and ApplicationClass static init.
  */
 private object StartupLauncherFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/StartupLauncher;",
@@ -95,8 +95,7 @@ private object VerifyIntegrityFingerprint : Fingerprint(
 
 /**
  * KeyStoreManager reports whether the local encryption key exists.
- * When false, AppComponentFactory swaps real components for KeyImportActivity,
- * which then sends a PendingIntent to the store.
+ * Returning true skips the KeyImport flow that opens the store.
  */
 private object IsEncryptionKeyPresentFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/vmencryption/KeyStoreManager;",
@@ -105,20 +104,25 @@ private object IsEncryptionKeyPresentFingerprint : Fingerprint(
     parameters = listOf("I"),
 )
 
-/** Key import screen that can open the store when the key is missing. */
-private object KeyImportActivityOnCreateFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/vmencryption/KeyImportActivity;",
-    name = "onCreate",
-    returnType = "V",
-    parameters = listOf("Landroid/os/Bundle;"),
+/**
+ * VM entry used for protected methods. Without a real key, decrypt crashes the process.
+ * Returning null avoids the decrypt path so the app can stay open.
+ */
+private object VmRunnerInvokeFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/VMRunner;",
+    name = "invoke",
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf("Ljava/lang/String;", "[Ljava/lang/Object;"),
 )
 
-/** Sends the store PendingIntent from the key-import flow. */
-private object KeyImportLaunchPendingIntentFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/vmencryption/KeyImportActivity;",
-    name = "launchPendingIntent",
+/** Extra license bind path (same idea as other apps in this repo). */
+private object BindToLicensingServiceFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
+    name = "bindToLicensingService",
     returnType = "V",
-    parameters = listOf("Landroid/app/PendingIntent;"),
+    parameters = listOf("Z"),
+    strings = listOf("Connecting to the main licensing service..."),
 )
 
 @Suppress("unused")
@@ -138,13 +142,13 @@ val disablePairipPatch = bytecodePatch(
         InitializeLicenseCheckFingerprint.method.returnEarly()
         StartPaywallFingerprint.method.returnEarly()
         StartErrorDialogFingerprint.method.returnEarly()
+        BindToLicensingServiceFingerprint.method.returnEarly()
 
         LicenseActivityOnStartFingerprint.method.returnEarly()
         ShowPaywallAndCloseAppFingerprint.method.returnEarly()
 
-        // Key-import path also opens the store when the encryption key is absent.
+        // Skip KeyImport → store path, and avoid decrypt crash without a real key.
         IsEncryptionKeyPresentFingerprint.method.returnEarly(true)
-        KeyImportActivityOnCreateFingerprint.method.returnEarly()
-        KeyImportLaunchPendingIntentFingerprint.method.returnEarly()
+        VmRunnerInvokeFingerprint.method.returnEarly(null)
     }
 }
