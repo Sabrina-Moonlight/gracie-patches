@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "patches": [
     {
       "name": "Clone app",
@@ -115,6 +115,33 @@
           "targets": [
             {
               "version": "7.10.3",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Pairip",
+      "description": "Skips the local Pairip license check so the app can keep running.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.jndapp.minimal.widgets",
+          "name": "Minimal Widgets",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#607D8B",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2.2.11",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
