@@ -63,7 +63,7 @@ jobs:
             python3 .github/scripts/generate_patches_readme.py "$GITHUB_REPOSITORY" "main" patches-list.json README.md || true
           fi
 
-          MPP=$(ls patches/build/libs/patches-*.mpp | head -1)
+          MPP=$(ls patches/build/libs/patches-*.mpp | grep -v javadoc | head -1)
           MPP_NAME=$(basename "$MPP")
           # ISO-8601 con T (como hxreborn / Heval). Nunca usar fecha con ':' entre día y hora.
           CREATED=$(date -u +"%Y-%m-%dT%H:%M:%S")
@@ -87,7 +87,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.ver.outputs.version }}
         run: |
-          MPP=$(ls patches/build/libs/patches-*.mpp | head -1)
+          MPP=$(ls patches/build/libs/patches-*.mpp | grep -v javadoc | head -1)
           if gh release view "v$VERSION" >/dev/null 2>&1; then
             gh release delete "v$VERSION" --yes --cleanup-tag || true
           fi
