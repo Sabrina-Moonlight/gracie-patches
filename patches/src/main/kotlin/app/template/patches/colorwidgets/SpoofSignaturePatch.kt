@@ -1,20 +1,19 @@
 package app.template.patches.colorwidgets
 
 import app.morphe.patcher.Fingerprint
-import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
-import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
-import app.morphe.util.indexOfFirstStringInstructionOrThrow
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 
 private const val SPOOF_CLASS = "Lapp/template/extension/shared/SpoofSignature;"
 private const val ANDROID_APPLICATION = "Landroid/app/Application;"
 private const val APPLICATION_CLASS = "Lcolorwidgets/ios/widget/topwidgets/BaseApp;"
 
 private const val PACKAGE_NAME = "colorwidgets.ios.widget.topwidgets"
+
 private const val CERTIFICATE =
     "MIIFiTCCA3GgAwIBAgIVAJQrYCof2242WZjd3H1OMCarwGqNMA0GCSqGSIb3DQEB" +
     "CwUAMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQH" +
@@ -48,25 +47,12 @@ private const val CERTIFICATE =
     "Gnktl3NGxD0HvUipKwCxfPAOLw+gvAA3MAn4UPU="
 
 private object SpoofClinitFingerprint : Fingerprint(
+    definingClass = SPOOF_CLASS,
+    name = "<clinit>",
     accessFlags = listOf(AccessFlags.STATIC, AccessFlags.CONSTRUCTOR),
-    parameters = emptyList(),
-    custom = { method, classDef ->
-        classDef.type == SPOOF_CLASS &&
-            method.implementation?.instructions
-                ?.any {
-                    val ref = (it as? com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction)
-                        ?.reference
-                    (ref as? com.android.tools.smali.dexlib2.iface.reference.StringReference)
-                        ?.string == "<package-name>"
-                } == true
-    },
+    returnType = "V",
+    strings = listOf("<package-name>", "<certificate>"),
 )
-
-private fun MutableMethod.replaceString(placeholder: String, value: String) {
-    val index = indexOfFirstStringInstructionOrThrow(placeholder)
-    val register = getInstruction<OneRegisterInstruction>(index).registerA
-    replaceInstruction(index, "const-string v, """)
-}
 
 @Suppress("unused")
 val spoofSignaturePatch = bytecodePatch(
@@ -79,19 +65,28 @@ val spoofSignaturePatch = bytecodePatch(
     extendWith("extensions/extension.mpe")
 
     execute {
-        // Seed package name + original cert into the extension static init.
-        val clinit = SpoofClinitFingerprint.method
-        clinit.replaceString("<package-name>", PACKAGE_NAME)
-        clinit.replaceString("<certificate>", CERTIFICATE)
+        SpoofClinitFingerprint.method.apply {
+            val instructions = implementation?.instructions?.toList() ?: return@apply
+            instructions.forEachIndexed { i, instr ->
+                val ref = (instr as? ReferenceInstruction)?.reference as? StringReference
+                    ?: return@forEachIndexed
+                val reg = (instr as? OneRegisterInstruction)?.registerA ?: return@forEachIndexed
+                when (ref.string) {
+                    "<package-name>" ->
+                        replaceInstruction(i, "const-string v$reg, \"$PACKAGE_NAME\"")
+                    "<certificate>" ->
+                        replaceInstruction(i, "const-string v$reg, \"$CERTIFICATE\"")
+                }
+            }
+        }
 
-        // BaseApp (or the class just above Application) must extend SpoofSignature.
         var classDef = mutableClassDefBy(APPLICATION_CLASS)
         val walked = mutableSetOf(classDef.type)
         while (classDef.superclass != ANDROID_APPLICATION) {
             val superclass = classDef.superclass
                 ?: error("Application hierarchy ended before android.app.Application")
             if (!walked.add(superclass)) {
-                error("Application hierarchy loops at ")
+                error("Application hierarchy loops at $superclass")
             }
             classDef = mutableClassDefBy(superclass)
         }
