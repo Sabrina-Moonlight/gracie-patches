@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "patches": [
     {
       "name": "Clone app",
@@ -140,18 +140,6 @@
           "signatures": null,
           "formFactor": "MOBILE",
           "targets": [
-            {
-              "version": "1.0.10",
-              "versionCodes": {
-                "ARM64_V8A": 11,
-                "ARMEABI_V7A": 11,
-                "X86_64": 11,
-                "X86": 11
-              },
-              "isExperimental": false,
-              "minSdk": 32,
-              "description": null
-            },
             {
               "version": "1.0.2",
               "versionCodes": {
@@ -320,18 +308,6 @@
           "formFactor": "MOBILE",
           "targets": [
             {
-              "version": "1.0.10",
-              "versionCodes": {
-                "ARM64_V8A": 11,
-                "ARMEABI_V7A": 11,
-                "X86_64": 11,
-                "X86": 11
-              },
-              "isExperimental": false,
-              "minSdk": 32,
-              "description": null
-            },
-            {
               "version": "1.0.2",
               "versionCodes": {
                 "ARM64_V8A": 12,
@@ -417,18 +393,6 @@
           "signatures": null,
           "formFactor": "MOBILE",
           "targets": [
-            {
-              "version": "1.0.10",
-              "versionCodes": {
-                "ARM64_V8A": 11,
-                "ARMEABI_V7A": 11,
-                "X86_64": 11,
-                "X86": 11
-              },
-              "isExperimental": false,
-              "minSdk": 32,
-              "description": null
-            },
             {
               "version": "1.0.2",
               "versionCodes": {
