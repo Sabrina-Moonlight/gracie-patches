@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.11](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.11)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;9 patches total
+> **[v1.0.12](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.12)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;11 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -37,6 +37,24 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
 | [Disable Ads](#disable-ads) | Removes ads from Orientation Control. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Glass Widgets&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Package name:** `com.jndapp.glass.widgets`
+
+**🌻 Supported versions:**
+
+| 1.0.2 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Disable Pairip](#disable-pairip) | Skips the local Pairip license check so the app can keep running. |  |
+| [Local Preference](#local-preference) | Uses a local preference so optional widget features stay available offline. |  |
 
 </details>
 
