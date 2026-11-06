@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "patches": [
     {
       "name": "Clone app",
@@ -118,38 +118,6 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable Integrity",
-      "description": "Skips keep-signal load and integrity error paths so the app can run after patching.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "colorwidgets.ios.widget.topwidgets",
-          "name": "Color Widgets - iWidgets",
-          "description": null,
-          "apkFileType": "APKS_REQUIRED",
-          "appIconColor": "#FF6B9D",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.8.5",
-              "versionCodes": {
-                "ARM64_V8A": 105,
-                "ARMEABI_V7A": 105,
-                "X86_64": 105,
-                "X86": 105
-              },
-              "isExperimental": false,
-              "minSdk": 32,
               "description": null
             }
           ]
@@ -385,38 +353,6 @@
     },
     {
       "name": "Local Premium",
-      "description": "Forces local VIP cache gates to true. Server subscription check may still limit some features.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "colorwidgets.ios.widget.topwidgets",
-          "name": "Color Widgets - iWidgets",
-          "description": null,
-          "apkFileType": "APKS_REQUIRED",
-          "appIconColor": "#FF6B9D",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.8.5",
-              "versionCodes": {
-                "ARM64_V8A": 105,
-                "ARMEABI_V7A": 105,
-                "X86_64": 105,
-                "X86": 105
-              },
-              "isExperimental": false,
-              "minSdk": 32,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Local Premium",
       "description": "Uses a local preference so premium widgets and no-ads stay available offline.",
       "default": true,
       "category": null,
@@ -496,38 +432,6 @@
                 "ARMEABI_V7A": 12,
                 "X86_64": 12,
                 "X86": 12
-              },
-              "isExperimental": false,
-              "minSdk": 32,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Spoof Signature",
-      "description": "Makes the app see the original Play Store signature after patching.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "colorwidgets.ios.widget.topwidgets",
-          "name": "Color Widgets - iWidgets",
-          "description": null,
-          "apkFileType": "APKS_REQUIRED",
-          "appIconColor": "#FF6B9D",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.8.5",
-              "versionCodes": {
-                "ARM64_V8A": 105,
-                "ARMEABI_V7A": 105,
-                "X86_64": 105,
-                "X86": 105
               },
               "isExperimental": false,
               "minSdk": 32,

@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.35](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.35)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
+> **[v1.0.36](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.36)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;13 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -37,25 +37,6 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
 | [Disable Ads](#disable-ads) | Removes ads from Orientation Control. |  |
-
-</details>
-
-<details open>
-<summary>🌸 Color Widgets - iWidgets&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
-<br>
-
-**Package name:** `colorwidgets.ios.widget.topwidgets`
-
-**🌻 Supported versions:**
-
-| 1.8.5 |
-| :---: |
-
-| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
-|----------|----------------|-----------|
-| [Disable Integrity](#disable-integrity) | Skips keep-signal load and integrity error paths so the app can run after patching. |  |
-| [Local Premium](#local-premium) | Forces local VIP cache gates to true. Server subscription check may still limit some features. |  |
-| [Spoof Signature](#spoof-signature) | Makes the app see the original Play Store signature after patching. |  |
 
 </details>
 
