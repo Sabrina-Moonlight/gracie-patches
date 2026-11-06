@@ -93,6 +93,34 @@ private object VerifyIntegrityFingerprint : Fingerprint(
     strings = listOf("Apk signature is invalid."),
 )
 
+/**
+ * KeyStoreManager reports whether the local encryption key exists.
+ * When false, AppComponentFactory swaps real components for KeyImportActivity,
+ * which then sends a PendingIntent to the store.
+ */
+private object IsEncryptionKeyPresentFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/vmencryption/KeyStoreManager;",
+    name = "isEncryptionKeyPresent",
+    returnType = "Z",
+    parameters = listOf("I"),
+)
+
+/** Key import screen that can open the store when the key is missing. */
+private object KeyImportActivityOnCreateFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/vmencryption/KeyImportActivity;",
+    name = "onCreate",
+    returnType = "V",
+    parameters = listOf("Landroid/os/Bundle;"),
+)
+
+/** Sends the store PendingIntent from the key-import flow. */
+private object KeyImportLaunchPendingIntentFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/vmencryption/KeyImportActivity;",
+    name = "launchPendingIntent",
+    returnType = "V",
+    parameters = listOf("Landroid/app/PendingIntent;"),
+)
+
 @Suppress("unused")
 val disablePairipPatch = bytecodePatch(
     name = "Disable Pairip",
@@ -113,5 +141,10 @@ val disablePairipPatch = bytecodePatch(
 
         LicenseActivityOnStartFingerprint.method.returnEarly()
         ShowPaywallAndCloseAppFingerprint.method.returnEarly()
+
+        // Key-import path also opens the store when the encryption key is absent.
+        IsEncryptionKeyPresentFingerprint.method.returnEarly(true)
+        KeyImportActivityOnCreateFingerprint.method.returnEarly()
+        KeyImportLaunchPendingIntentFingerprint.method.returnEarly()
     }
 }
