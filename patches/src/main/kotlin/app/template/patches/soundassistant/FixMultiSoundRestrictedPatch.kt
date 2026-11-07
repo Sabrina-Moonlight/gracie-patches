@@ -23,7 +23,6 @@ private val SOUND_ASSISTANT = Compatibility(
     targets = listOf(AppTarget(version = "8.5.00.2")),
 )
 
-// Force-update check
 private object ForceUpdateCheckFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "Z",
@@ -31,7 +30,6 @@ private object ForceUpdateCheckFingerprint : Fingerprint(
     strings = listOf("Force update check: OneUI=", "SAT version : "),
 )
 
-// Restricted multi-sound list
 private object RestrictedDecisionFingerprint : Fingerprint(
     strings = listOf("restrictedPackageForMultiSound"),
 )
@@ -45,19 +43,22 @@ val fixMultiSoundRestrictedPatch = bytecodePatch(
     compatibleWith(SOUND_ASSISTANT)
 
     execute {
-        // 1. Disable force-update that closes the app
+        // 1. Disable force-update
         runCatching {
             ForceUpdateCheckFingerprint.method.returnEarly(false)
         }
 
-        // 2. Local signature spoof: force Signature.equals to always return true
+        // 2. Local signature spoof: force Signature.equals -> true
         runCatching {
             val providerClass = "Lcom/samsung/systemui/volumestar/provider/VolumeStarContentProvider;"
             val methods = classDefBy(providerClass).methods
-            methods.forEach { method ->
-                if (method.name != "call") return@forEach
-                val impl = method.implementation ?: return@forEach
-                val instructions: List<Instruction> = ArrayList(impl.instructions)
+            for (method in methods) {
+                if (method.name != "call") continue
+                val impl = method.implementation ?: continue
+                val instructions = ArrayList<Instruction>()
+                for (insn in impl.instructions) {
+                    instructions.add(insn)
+                }
                 var i = 0
                 val n = instructions.size
                 while (i < n) {
@@ -88,11 +89,14 @@ val fixMultiSoundRestrictedPatch = bytecodePatch(
             }
         }
 
-        // 3. Multi-sound: force restricted contains to false + empty the list load
+        // 3. Multi-sound restricted list
         RestrictedDecisionFingerprint.matchAll().forEach { match ->
             val method = match.method
             val impl = method.implementation ?: return@forEach
-            val instructions: List<Instruction> = ArrayList(impl.instructions)
+            val instructions = ArrayList<Instruction>()
+            for (insn in impl.instructions) {
+                instructions.add(insn)
+            }
             var i = 0
             val n = instructions.size
             while (i < n) {
