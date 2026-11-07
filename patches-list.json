@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.71",
+  "version": "1.0.72",
   "patches": [
     {
       "name": "Clone app",
@@ -213,38 +213,6 @@
     },
     {
       "name": "Disable Pairip",
-      "description": "Skips the local license check so the app can keep running offline.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.widgetvibes.pixelwidgets",
-          "name": "Pixel Widgets",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#4285F4",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.16",
-              "versionCodes": {
-                "ARM64_V8A": 17,
-                "ARMEABI_V7A": 17,
-                "X86_64": 17,
-                "X86": 17
-              },
-              "isExperimental": false,
-              "minSdk": 32,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable Pairip",
       "description": "Skips the local license and integrity checks so the app can keep running offline.",
       "default": true,
       "category": null,
@@ -440,38 +408,6 @@
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Local Preference",
-      "description": "Forces local premium preference and RevenueCat entitlement so all features stay available offline.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.widgetvibes.pixelwidgets",
-          "name": "Pixel Widgets",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#4285F4",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.16",
-              "versionCodes": {
-                "ARM64_V8A": 17,
-                "ARMEABI_V7A": 17,
-                "X86_64": 17,
-                "X86": 17
-              },
-              "isExperimental": false,
-              "minSdk": 32,
               "description": null
             }
           ]

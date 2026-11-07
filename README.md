@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.71](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.71)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;18 patches total
+> **[v1.0.72](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.72)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -92,24 +92,6 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 |----------|----------------|-----------|
 | [Disable Pairip](#disable-pairip) | Skips the local license and integrity checks so the app can keep running offline. |  |
 | [Hide Ads Preference](#hide-ads-preference) | Uses a local preference so interstitial and banner ads stay off. |  |
-
-</details>
-
-<details open>
-<summary>🌸 Pixel Widgets&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
-<br>
-
-**Package name:** `com.widgetvibes.pixelwidgets`
-
-**🌻 Supported versions:**
-
-| 1.0.16 |
-| :---: |
-
-| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
-|----------|----------------|-----------|
-| [Disable Pairip](#disable-pairip) | Skips the local license check so the app can keep running offline. |  |
-| [Local Preference](#local-preference) | Forces local premium preference and RevenueCat entitlement so all features stay available offline. |  |
 
 </details>
 
