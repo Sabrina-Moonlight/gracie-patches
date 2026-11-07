@@ -16,23 +16,59 @@ private val THEMEZY = Compatibility(
     targets = listOf(AppTarget(version = "1.0.9", versionCode = 9)),
 )
 
-/**
- * MaxInterstitialAd / MaxRewardedAd show and load entry points.
- * Fixed UI-thread log strings keep the match stable.
- */
-private object ShowAdFingerprint : Fingerprint(
+// AppLovin MAX interstitial
+private object MaxInterstitialShowFingerprint : Fingerprint(
+    definingClass = "Lcom/applovin/mediation/ads/MaxInterstitialAd;",
+    name = "showAd",
+    returnType = "V",
+)
+
+private object MaxInterstitialLoadFingerprint : Fingerprint(
+    definingClass = "Lcom/applovin/mediation/ads/MaxInterstitialAd;",
+    name = "loadAd",
+    returnType = "V",
+)
+
+// AppLovin MAX rewarded (the ones that ask before applying)
+private object MaxRewardedShowFingerprint : Fingerprint(
+    definingClass = "Lcom/applovin/mediation/ads/MaxRewardedAd;",
+    name = "showAd",
+    returnType = "V",
+)
+
+private object MaxRewardedLoadFingerprint : Fingerprint(
+    definingClass = "Lcom/applovin/mediation/ads/MaxRewardedAd;",
+    name = "loadAd",
+    returnType = "V",
+)
+
+// isReady → always false so UI thinks no ad is ready
+private object MaxInterstitialIsReadyFingerprint : Fingerprint(
+    definingClass = "Lcom/applovin/mediation/ads/MaxInterstitialAd;",
+    name = "isReady",
+    returnType = "Z",
+)
+
+private object MaxRewardedIsReadyFingerprint : Fingerprint(
+    definingClass = "Lcom/applovin/mediation/ads/MaxRewardedAd;",
+    name = "isReady",
+    returnType = "Z",
+)
+
+// Fallback by fixed log strings (in case class names shift)
+private object ShowAdStringFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC),
     returnType = "V",
     strings = listOf("showAd must be called on the main UI thread."),
 )
 
-private object LoadAdFingerprint : Fingerprint(
+private object LoadAdStringFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC),
     returnType = "V",
     strings = listOf("loadAd must be called on the main UI thread."),
 )
 
-private object ShowInterstitialFingerprint : Fingerprint(
+private object ShowInterstitialStringFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC),
     returnType = "V",
     strings = listOf("showInterstitial must be called on the main UI thread."),
@@ -47,8 +83,14 @@ val hideAdsPatch = bytecodePatch(
     compatibleWith(THEMEZY)
 
     execute {
-        runCatching { ShowAdFingerprint.method.returnEarly() }
-        runCatching { LoadAdFingerprint.method.returnEarly() }
-        runCatching { ShowInterstitialFingerprint.method.returnEarly() }
+        runCatching { MaxInterstitialShowFingerprint.method.returnEarly() }
+        runCatching { MaxInterstitialLoadFingerprint.method.returnEarly() }
+        runCatching { MaxRewardedShowFingerprint.method.returnEarly() }
+        runCatching { MaxRewardedLoadFingerprint.method.returnEarly() }
+        runCatching { MaxInterstitialIsReadyFingerprint.method.returnEarly(false) }
+        runCatching { MaxRewardedIsReadyFingerprint.method.returnEarly(false) }
+        runCatching { ShowAdStringFingerprint.method.returnEarly() }
+        runCatching { LoadAdStringFingerprint.method.returnEarly() }
+        runCatching { ShowInterstitialStringFingerprint.method.returnEarly() }
     }
 }
