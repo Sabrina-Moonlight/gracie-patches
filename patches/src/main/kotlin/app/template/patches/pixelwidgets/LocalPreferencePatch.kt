@@ -8,6 +8,7 @@ import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
 import com.android.tools.smali.dexlib2.AccessFlags
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 
@@ -34,13 +35,29 @@ private object IsFeatureLockedFingerprint : Fingerprint(
 /**
  * EntitlementInfo constructor (Ls50).
  * Field m is isActive. Force it true after the original write.
- * This is what Flutter/RevenueCat reads for "premium".
  */
 private object EntitlementInfoConstructorFingerprint : Fingerprint(
     definingClass = "Ls50;",
     name = "<init>",
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.CONSTRUCTOR),
-    strings = listOf(),
+    parameters = listOf(
+        "Ljava/lang/String;",
+        "Z",
+        "Z",
+        "Ln81;",
+        "Ljava/util/Date;",
+        "Ljava/util/Date;",
+        "Ljava/util/Date;",
+        "Lfx1;",
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Z",
+        "Ljava/util/Date;",
+        "Ljava/util/Date;",
+        "Ln31;",
+        "Lorg/json/JSONObject;",
+        "Lz92;",
+    ),
 )
 
 @Suppress("unused")
@@ -57,7 +74,7 @@ val localPreferencePatch = bytecodePatch(
 
         // 2. Every EntitlementInfo is created with isActive = true
         val ctor = EntitlementInfoConstructorFingerprint.method
-        val instructions = ctor.implementation!!.instructions
+        val instructions: List<Instruction> = ctor.implementation!!.instructions
         for (i in instructions.indices) {
             val insn = instructions[i]
             if (insn is ReferenceInstruction) {
@@ -67,7 +84,6 @@ val localPreferencePatch = bytecodePatch(
                     ref.name == "m" &&
                     ref.type == "Z"
                 ) {
-                    // Right after the original iput-boolean of isActive, force true
                     ctor.addInstructions(
                         i + 1,
                         """
