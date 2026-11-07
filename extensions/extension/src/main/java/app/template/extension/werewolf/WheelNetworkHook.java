@@ -10,26 +10,37 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * Only rewrites /rewards/goldenWheelSpin responses.
- * All other traffic is left untouched (safe on app startup).
+ * Rewrites goldenWheelSpin responses only.
+ * Tries a response shape aligned with SET_GOLDEN_WHEEL_REWARD_* keys.
  */
 @SuppressWarnings("unused")
 public final class WheelNetworkHook implements Interceptor {
 
-    private static final String SPIN_PATH = "goldenWheelSpin";
     private static final MediaType JSON =
             MediaType.parse("application/json; charset=utf-8");
 
-    private static final String SPIN_OK = "{"
-            + "\"success\":true,"
-            + "\"granted\":true,"
+    // Shape based on client keys: REWARD_ITEM / REWARD_GRANTED / gold amounts on the wheel UI
+    private static final String SPIN_OK =
+            "{"
             + "\"rewardGranted\":true,"
+            + "\"granted\":true,"
+            + "\"success\":true,"
+            + "\"item\":{"
+            +   "\"type\":\"gold\","
+            +   "\"amount\":30,"
+            +   "\"goldAmount\":30,"
+            +   "\"name\":\"gold\""
+            + "},"
+            + "\"reward\":{"
+            +   "\"type\":\"gold\","
+            +   "\"amount\":30,"
+            +   "\"goldAmount\":30"
+            + "},"
             + "\"type\":\"gold\","
             + "\"amount\":30,"
             + "\"goldAmount\":30,"
-            + "\"reward\":{\"type\":\"gold\",\"amount\":30},"
-            + "\"item\":{\"type\":\"gold\",\"amount\":30},"
-            + "\"nextAvailableTime\":0"
+            + "\"nextAvailableTime\":0,"
+            + "\"rewardNextAvailableTime\":0"
             + "}";
 
     private WheelNetworkHook() {
@@ -48,17 +59,21 @@ public final class WheelNetworkHook implements Interceptor {
         Response response = chain.proceed(request);
 
         try {
-            String path = request.url().encodedPath();
-            if (path == null || !path.contains(SPIN_PATH)) {
+            String url = request.url().toString();
+            if (!url.contains("goldenWheelSpin")) {
                 return response;
             }
 
+            MediaType mediaType = JSON;
             ResponseBody oldBody = response.body();
             if (oldBody != null) {
+                if (oldBody.contentType() != null) {
+                    mediaType = oldBody.contentType();
+                }
                 oldBody.close();
             }
 
-            ResponseBody newBody = ResponseBody.create(SPIN_OK, JSON);
+            ResponseBody newBody = ResponseBody.create(SPIN_OK, mediaType);
             return response.newBuilder()
                     .code(200)
                     .message("OK")

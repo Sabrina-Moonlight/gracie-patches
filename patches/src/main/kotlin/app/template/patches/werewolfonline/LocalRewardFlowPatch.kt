@@ -58,7 +58,6 @@ val localRewardFlowPatch = bytecodePatch(
     extendWith("extensions/extension.mpe")
 
     execute {
-        // Network: install interceptor just before return of createClientBuilder()
         val builderMethod = CreateClientBuilderFingerprint.method
         val returnIndex = builderMethod.instructions.indexOfLast { it.opcode == Opcode.RETURN_OBJECT }
         if (returnIndex < 0) {
@@ -87,7 +86,6 @@ val localRewardFlowPatch = bytecodePatch(
             """,
         )
 
-        // Ads: grant on show without real UI
         ShowOnUiThreadFingerprint.method.addInstructions(
             0,
             """
