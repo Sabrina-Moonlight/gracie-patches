@@ -1,7 +1,6 @@
 package app.template.extension.werewolf;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -21,7 +20,6 @@ public final class WheelNetworkHook implements Interceptor {
     private static final MediaType JSON =
             MediaType.parse("application/json; charset=utf-8");
 
-    // Best-effort success body. If the client expects other fields, adjust later.
     private static final String SPIN_OK = "{"
             + "\"success\":true,"
             + "\"granted\":true,"
@@ -37,7 +35,6 @@ public final class WheelNetworkHook implements Interceptor {
     private WheelNetworkHook() {
     }
 
-    /** Injection: add this interceptor to the RN OkHttp builder. */
     public static OkHttpClient.Builder install(OkHttpClient.Builder builder) {
         if (builder == null) {
             return null;
@@ -51,8 +48,8 @@ public final class WheelNetworkHook implements Interceptor {
         Response response = chain.proceed(request);
 
         try {
-            String url = request.url().encodedPath();
-            if (url == null || !url.contains(SPIN_PATH)) {
+            String path = request.url().encodedPath();
+            if (path == null || !path.contains(SPIN_PATH)) {
                 return response;
             }
 
@@ -68,7 +65,6 @@ public final class WheelNetworkHook implements Interceptor {
                     .body(newBody)
                     .build();
         } catch (Throwable t) {
-            // Never crash the app for a bad rewrite
             return response;
         }
     }

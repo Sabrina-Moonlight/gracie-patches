@@ -19,9 +19,6 @@ private val WOLVESVILLE = Compatibility(
     targets = listOf(AppTarget(version = "2.7.188", versionCode = 4194949)),
 )
 
-/**
- * OkHttpClientProvider.createClientBuilder() — install interceptor before return.
- */
 private object CreateClientBuilderFingerprint : Fingerprint(
     definingClass = "Lcom/facebook/react/modules/network/OkHttpClientProvider;",
     name = "createClientBuilder",
@@ -29,9 +26,6 @@ private object CreateClientBuilderFingerprint : Fingerprint(
     parameters = listOf(),
 )
 
-/**
- * createClientBuilder(Context, int)
- */
 private object CreateClientBuilderContextFingerprint : Fingerprint(
     definingClass = "Lcom/facebook/react/modules/network/OkHttpClientProvider;",
     name = "createClientBuilder",
@@ -39,9 +33,6 @@ private object CreateClientBuilderContextFingerprint : Fingerprint(
     parameters = listOf("Landroid/content/Context;", "I"),
 )
 
-/**
- * show UI-thread lambda — local ad reward without UI.
- */
 private object ShowOnUiThreadFingerprint : Fingerprint(
     definingClass = "Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule;",
     name = "show\$lambda\$2",
@@ -56,22 +47,6 @@ private object ShowOnUiThreadFingerprint : Fingerprint(
     ),
 )
 
-private fun installInterceptorBeforeReturn(fingerprint: Fingerprint) {
-    val method = fingerprint.method
-    val returnIndex = method.instructions.indexOfLast { it.opcode == Opcode.RETURN_OBJECT }
-    if (returnIndex < 0) {
-        throw IllegalStateException("RETURN_OBJECT not found in createClientBuilder")
-    }
-    val reg = method.getInstruction<OneRegisterInstruction>(returnIndex).registerA
-    method.addInstructions(
-        returnIndex,
-        """
-            invoke-static {v$reg}, Lapp/template/extension/werewolf/WheelNetworkHook;->install(Lokhttp3/OkHttpClient${'$'}Builder;)Lokhttp3/OkHttpClient${'$'}Builder;
-            move-result-object v$reg
-        """,
-    )
-}
-
 @Suppress("unused")
 val localRewardFlowPatch = bytecodePatch(
     name = "Local reward flow",
@@ -83,9 +58,34 @@ val localRewardFlowPatch = bytecodePatch(
     extendWith("extensions/extension.mpe")
 
     execute {
-        // Network: only attach interceptor at the end of builder creation (hxreborn style)
-        installInterceptorBeforeReturn(CreateClientBuilderFingerprint)
-        installInterceptorBeforeReturn(CreateClientBuilderContextFingerprint)
+        // Network: install interceptor just before return of createClientBuilder()
+        val builderMethod = CreateClientBuilderFingerprint.method
+        val returnIndex = builderMethod.instructions.indexOfLast { it.opcode == Opcode.RETURN_OBJECT }
+        if (returnIndex < 0) {
+            throw IllegalStateException("RETURN_OBJECT not found in createClientBuilder")
+        }
+        val reg = builderMethod.getInstruction<OneRegisterInstruction>(returnIndex).registerA
+        builderMethod.addInstructions(
+            returnIndex,
+            """
+                invoke-static {v$reg}, Lapp/template/extension/werewolf/WheelNetworkHook;->install(Lokhttp3/OkHttpClient${'$'}Builder;)Lokhttp3/OkHttpClient${'$'}Builder;
+                move-result-object v$reg
+            """,
+        )
+
+        val builderCtxMethod = CreateClientBuilderContextFingerprint.method
+        val returnIndexCtx = builderCtxMethod.instructions.indexOfLast { it.opcode == Opcode.RETURN_OBJECT }
+        if (returnIndexCtx < 0) {
+            throw IllegalStateException("RETURN_OBJECT not found in createClientBuilder(Context,I)")
+        }
+        val regCtx = builderCtxMethod.getInstruction<OneRegisterInstruction>(returnIndexCtx).registerA
+        builderCtxMethod.addInstructions(
+            returnIndexCtx,
+            """
+                invoke-static {v$regCtx}, Lapp/template/extension/werewolf/WheelNetworkHook;->install(Lokhttp3/OkHttpClient${'$'}Builder;)Lokhttp3/OkHttpClient${'$'}Builder;
+                move-result-object v$regCtx
+            """,
+        )
 
         // Ads: grant on show without real UI
         ShowOnUiThreadFingerprint.method.addInstructions(
