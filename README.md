@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.51](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.51)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
+> **[v1.0.52](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.52)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;17 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -163,6 +163,23 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
 | [Local Premium](#local-premium) | Uses a local preference so premium widgets and no-ads stay available offline. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Wolvesville&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Package name:** `com.werewolfapps.online`
+
+**🌻 Supported versions:**
+
+| 2.7.188 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Local reward flow](#local-reward-flow) | Confirms the reward as soon as a rewarded ad is requested, without showing a real ad. |  |
 
 </details>
 
