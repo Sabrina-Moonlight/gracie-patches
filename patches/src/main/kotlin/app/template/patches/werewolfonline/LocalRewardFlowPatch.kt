@@ -17,8 +17,7 @@ private val WOLVESVILLE = Compatibility(
 
 /**
  * FullScreenAdModule.show(requestId, adUnitId, showOptions, promise)
- * When the app asks to show a rewarded ad, we grant the reward at once
- * and resolve the promise so the gold / spin is given without a real ad.
+ * Grant reward at once and resolve the promise; no real ad is shown.
  */
 private object FullScreenShowFingerprint : Fingerprint(
     definingClass = "Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule;",
@@ -34,7 +33,7 @@ private object FullScreenShowFingerprint : Fingerprint(
 
 /**
  * FullScreenAdModule.load(requestId, adUnitId, adRequestOptions)
- * Skip the real network load and tell the app the ad is ready.
+ * Tell the app the ad is ready without a network load.
  */
 private object FullScreenLoadFingerprint : Fingerprint(
     definingClass = "Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule;",
@@ -56,38 +55,40 @@ val localRewardFlowPatch = bytecodePatch(
     compatibleWith(WOLVESVILLE)
 
     execute {
-        // load: send "loaded" and return. No real ad is requested.
-        // p1 = requestId (I), p2 = adUnitId (String)
+        // load: p0=this, p1=requestId (I), p2=adUnitId (String)
         FullScreenLoadFingerprint.method.addInstructions(
             0,
             """
                 invoke-static {}, Lcom/facebook/react/bridge/Arguments;->createMap()Lcom/facebook/react/bridge/WritableMap;
-                move-result-object v0
-                const-string v1, "google_mobile_ads_rewarded_event"
+                move-result-object v5
+                const-string v0, "google_mobile_ads_rewarded_event"
+                move v1, p1
                 const-string v2, "loaded"
-                const/4 v3, 0x0
-                invoke-static {v1, p1, v2, p2, v3, v0}, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsCommon;->sendAdEvent(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Lcom/facebook/react/bridge/WritableMap;Lcom/facebook/react/bridge/WritableMap;)V
+                move-object v3, p2
+                const/4 v4, 0x0
+                invoke-static/range {v0 .. v5}, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsCommon;->sendAdEvent(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Lcom/facebook/react/bridge/WritableMap;Lcom/facebook/react/bridge/WritableMap;)V
                 return-void
             """,
         )
 
-        // show: send rewarded_earned_reward, resolve promise, return.
-        // p1 = requestId, p2 = adUnitId, p4 = Promise
+        // show: p0=this, p1=requestId, p2=adUnitId, p3=options, p4=promise
         FullScreenShowFingerprint.method.addInstructions(
             0,
             """
                 invoke-static {}, Lcom/facebook/react/bridge/Arguments;->createMap()Lcom/facebook/react/bridge/WritableMap;
-                move-result-object v0
-                const-string v1, "type"
-                const-string v2, "gold"
-                invoke-interface {v0, v1, v2}, Lcom/facebook/react/bridge/WritableMap;->putString(Ljava/lang/String;Ljava/lang/String;)V
-                const-string v1, "amount"
-                const/4 v2, 0x1
-                invoke-interface {v0, v1, v2}, Lcom/facebook/react/bridge/WritableMap;->putInt(Ljava/lang/String;I)V
-                const-string v1, "google_mobile_ads_rewarded_event"
+                move-result-object v5
+                const-string v0, "type"
+                const-string v1, "gold"
+                invoke-interface {v5, v0, v1}, Lcom/facebook/react/bridge/WritableMap;->putString(Ljava/lang/String;Ljava/lang/String;)V
+                const-string v0, "amount"
+                const/4 v1, 0x1
+                invoke-interface {v5, v0, v1}, Lcom/facebook/react/bridge/WritableMap;->putInt(Ljava/lang/String;I)V
+                const-string v0, "google_mobile_ads_rewarded_event"
+                move v1, p1
                 const-string v2, "rewarded_earned_reward"
-                const/4 v3, 0x0
-                invoke-static {v1, p1, v2, p2, v3, v0}, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsCommon;->sendAdEvent(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Lcom/facebook/react/bridge/WritableMap;Lcom/facebook/react/bridge/WritableMap;)V
+                move-object v3, p2
+                const/4 v4, 0x0
+                invoke-static/range {v0 .. v5}, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsCommon;->sendAdEvent(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Lcom/facebook/react/bridge/WritableMap;Lcom/facebook/react/bridge/WritableMap;)V
                 const/4 v0, 0x0
                 invoke-interface {p4, v0}, Lcom/facebook/react/bridge/Promise;->resolve(Ljava/lang/Object;)V
                 return-void
