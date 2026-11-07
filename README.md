@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.60](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.60)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;17 patches total
+> **[v1.0.61](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.61)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;18 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -96,6 +96,24 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 </details>
 
 <details open>
+<summary>🌸 Pixel Widgets&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Package name:** `com.widgetvibes.pixelwidgets`
+
+**🌻 Supported versions:**
+
+| 1.0.16 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Disable Pairip](#disable-pairip) | Skips the local license check so the app can keep running offline. |  |
+| [Local Preference](#local-preference) | Uses a local preference so optional widget features stay available offline. |  |
+
+</details>
+
+<details open>
 <summary>🌸 Screen Recording App&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
@@ -163,23 +181,6 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
 | [Local Premium](#local-premium) | Uses a local preference so premium widgets and no-ads stay available offline. |  |
-
-</details>
-
-<details open>
-<summary>🌸 Wolvesville&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
-<br>
-
-**Package name:** `com.werewolfapps.online`
-
-**🌻 Supported versions:**
-
-| 2.7.188 |
-| :---: |
-
-| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
-|----------|----------------|-----------|
-| [Local reward flow](#local-reward-flow) | Local ad reward + rewrite goldenWheelSpin API response only. |  |
 
 </details>
 
