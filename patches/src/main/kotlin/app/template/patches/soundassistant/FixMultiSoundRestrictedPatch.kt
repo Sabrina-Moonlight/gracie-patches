@@ -35,16 +35,10 @@ private object RestrictedDecisionFingerprint : Fingerprint(
     strings = listOf("restrictedPackageForMultiSound"),
 )
 
-// Signature comparison inside VolumeStarContentProvider (GET_SIGNATURES = 0x40)
-private object SignatureCompareFingerprint : Fingerprint(
-    strings = listOf(), // will match by method shape if needed
-    // We use the string from the provider or the constant
-)
-
 @Suppress("unused")
 val fixMultiSoundRestrictedPatch = bytecodePatch(
     name = "Fix Multi Sound Restricted",
-    description = "Disables force-update exit, forces multi-sound restricted checks to allow, and softens signature comparison so the app stays open after re-signing.",
+    description = "Disables force-update exit and forces multi-sound restricted checks to allow so ads no longer pause audio.",
     default = true,
 ) {
     compatibleWith(SOUND_ASSISTANT)
