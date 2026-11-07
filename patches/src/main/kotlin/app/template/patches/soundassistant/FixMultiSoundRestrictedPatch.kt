@@ -7,6 +7,7 @@ import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
+import app.template.patches.shared.misc.signature.spoofSignature
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
@@ -34,74 +35,27 @@ private object RestrictedDecisionFingerprint : Fingerprint(
     strings = listOf("restrictedPackageForMultiSound"),
 )
 
-// call(String, String, Bundle) – signature comparison lives here
-private object VolumeStarCallFingerprint : Fingerprint(
-    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
-    returnType = "Landroid/os/Bundle;",
-    parameters = listOf(
-        "Ljava/lang/String;",
-        "Ljava/lang/String;",
-        "Landroid/os/Bundle;",
-    ),
-)
-
 @Suppress("unused")
 val fixMultiSoundRestrictedPatch = bytecodePatch(
     name = "Fix Multi Sound Restricted",
-    description = "Local signature spoof + disable force-update + allow multi-sound for all packages.",
+    description = "Full signature spoof + disable force-update + allow multi-sound for all packages. Requires the stock APK.",
     default = true,
 ) {
     compatibleWith(SOUND_ASSISTANT)
 
+    // Merge the extension that contains SpoofSignature
+    extendWith("extensions/extension.mpe")
+
     execute {
-        // 1. Disable force-update
+        // 1. Full certificate spoof (Application extends SpoofSignature)
+        spoofSignature("Lcom/samsung/android/soundassistant/SoundAssistantApp;")
+
+        // 2. Disable force-update dialog
         runCatching {
             ForceUpdateCheckFingerprint.method.returnEarly(false)
         }
 
-        // 2. Local signature spoof: force Signature.equals -> true
-        runCatching {
-            VolumeStarCallFingerprint.matchAll().forEach { match ->
-                val method = match.method
-                if (method.definingClass != "Lcom/samsung/systemui/volumestar/provider/VolumeStarContentProvider;") {
-                    return@forEach
-                }
-                val impl = method.implementation ?: return@forEach
-                val instructions = ArrayList<Instruction>()
-                for (insn in impl.instructions) {
-                    instructions.add(insn)
-                }
-                var i = 0
-                val n = instructions.size
-                while (i < n) {
-                    val insn = instructions[i]
-                    if (insn.opcode == Opcode.INVOKE_VIRTUAL && insn is ReferenceInstruction) {
-                        val ref = insn.reference
-                        if (ref is MethodReference &&
-                            ref.definingClass == "Landroid/content/pm/Signature;" &&
-                            ref.name == "equals" &&
-                            ref.returnType == "Z"
-                        ) {
-                            if (i + 1 < n) {
-                                val next = instructions[i + 1]
-                                if (next.opcode.name.startsWith("move-result") && next is OneRegisterInstruction) {
-                                    val reg = next.registerA
-                                    method.addInstructions(
-                                        i + 2,
-                                        """
-                                            const/4 v$reg, 0x1
-                                        """,
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    i++
-                }
-            }
-        }
-
-        // 3. Multi-sound restricted list
+        // 3. Multi-sound: force restricted contains to false
         RestrictedDecisionFingerprint.matchAll().forEach { match ->
             val method = match.method
             val impl = method.implementation ?: return@forEach

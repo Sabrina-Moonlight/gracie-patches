@@ -1,0 +1,86 @@
+package app.template.patches.shared.misc.signature
+
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
+import app.morphe.patcher.patch.BytecodePatchContext
+import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.proxy.mutableTypes.MutableClass
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
+import java.util.Base64
+
+internal const val SPOOF_SIGNATURE_CLASS = "Lapp/template/extension/shared/SpoofSignature;"
+
+private const val ANDROID_APPLICATION_CLASS = "Landroid/app/Application;"
+private const val PACKAGE_NAME_PLACEHOLDER = "<package-name>"
+private const val CERTIFICATE_PLACEHOLDER = "<certificate>"
+
+/**
+ * Injects the original signing certificate into SpoofSignature and
+ * makes the given Application class extend it.
+ * Requires the stock (not re-signed) APK so the original certificate is available.
+ */
+internal fun BytecodePatchContext.spoofSignature(applicationClass: String) {
+    val certificates = packageMetadata.signingCertificates
+    if (certificates.isNullOrEmpty()) {
+        throw PatchException(
+            "No signing certificate found. Use the original (stock) APK, not a re-signed one.",
+        )
+    }
+    val certificate = certificates.first()
+    val certBase64 = Base64.getEncoder().encodeToString(certificate.encoded)
+
+    val clinit = mutableClassDefBy(SPOOF_SIGNATURE_CLASS)
+        .methods.single { it.name == "<clinit>" }
+
+    clinit.replaceString(PACKAGE_NAME_PLACEHOLDER, packageMetadata.packageName)
+    clinit.replaceString(CERTIFICATE_PLACEHOLDER, certBase64)
+
+    applicationRoot(applicationClass).setSuperClass(SPOOF_SIGNATURE_CLASS)
+}
+
+private fun MutableMethod.replaceString(placeholder: String, value: String) {
+    val instructions = implementation?.instructions ?: throw PatchException("No implementation")
+    var index = -1
+    var reg = 0
+    for ((i, insn) in instructions.withIndex()) {
+        if (insn is ReferenceInstruction) {
+            val ref = insn.reference
+            if (ref is StringReference && ref.string == placeholder) {
+                index = i
+                if (insn is OneRegisterInstruction) {
+                    reg = insn.registerA
+                }
+                break
+            }
+        }
+    }
+    if (index < 0) {
+        throw PatchException("Placeholder \"$placeholder\" not found in SpoofSignature")
+    }
+    // Escape quotes in value for smali
+    val escaped = value.replace("\\", "\\\\").replace("\"", "\\\"")
+    replaceInstruction(index, "const-string v$reg, \"$escaped\"")
+}
+
+private fun BytecodePatchContext.applicationRoot(applicationClass: String): MutableClass {
+    var classDef = mutableClassDefBy(applicationClass)
+    val walked = mutableSetOf(classDef.type)
+
+    while (classDef.superclass != ANDROID_APPLICATION_CLASS) {
+        val superclass = classDef.superclass
+            ?: throw PatchException("Application hierarchy ended before android.app.Application")
+        if (!walked.add(superclass)) {
+            throw PatchException("Application hierarchy loops at $superclass")
+        }
+        classDef = mutableClassDefBy(superclass)
+    }
+
+    if (classDef.type == SPOOF_SIGNATURE_CLASS) {
+        throw PatchException("Application hierarchy already extends SpoofSignature")
+    }
+
+    return classDef
+}
