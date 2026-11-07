@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.41](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.41)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;14 patches total
+> **[v1.0.42](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.42)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;14 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -126,7 +126,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Fix Multi Sound Restricted](#fix-multi-sound-restricted) | Disables force-update exit and forces multi-sound restricted checks to allow so ads no longer pause audio. |  |
+| [Fix Multi Sound Restricted](#fix-multi-sound-restricted) | Local signature spoof + disable force-update + allow multi-sound for all packages. |  |
 
 </details>
 
