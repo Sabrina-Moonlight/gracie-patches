@@ -35,8 +35,6 @@ val disablePairipPatch = bytecodePatch(
     compatibleWith(PIXEL_WIDGETS)
 
     execute {
-        runCatching {
-            InitializeLicenseCheckFingerprint.method.returnEarly()
-        }
+        InitializeLicenseCheckFingerprint.method.returnEarly()
     }
 }
