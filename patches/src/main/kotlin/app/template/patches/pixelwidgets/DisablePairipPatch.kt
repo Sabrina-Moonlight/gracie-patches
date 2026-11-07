@@ -18,20 +18,16 @@ private val PIXEL_WIDGETS = Compatibility(
     ),
 )
 
-/** Pairip entry after Application attaches the base context. */
+/**
+ * Only skip the real entry. Other creators (hxreborn / morphe shared) do the same:
+ * returnEarly on initializeLicenseCheck. That prevents the error dialog and the close.
+ */
 private object InitializeLicenseCheckFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "initializeLicenseCheck",
     accessFlags = listOf(AccessFlags.PUBLIC),
     returnType = "V",
     parameters = listOf(),
-)
-
-private object CheckLicenseFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
-    name = "checkLicense",
-    returnType = "V",
-    parameters = listOf("Landroid/content/Context;"),
 )
 
 @Suppress("unused")
@@ -43,7 +39,8 @@ val disablePairipPatch = bytecodePatch(
     compatibleWith(PIXEL_WIDGETS)
 
     execute {
-        runCatching { InitializeLicenseCheckFingerprint.method.returnEarly() }
-        runCatching { CheckLicenseFingerprint.method.returnEarly() }
+        runCatching {
+            InitializeLicenseCheckFingerprint.method.returnEarly()
+        }
     }
 }
