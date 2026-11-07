@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.48",
+  "version": "1.0.49",
   "patches": [
     {
       "name": "Clone app",
@@ -272,7 +272,7 @@
     },
     {
       "name": "Hide Ads",
-      "description": "Stops interstitial and rewarded ads from loading or showing, including the ones that ask before applying.",
+      "description": "Stops every ad window: interstitial, rewarded, native, banner, app-open and the ones that ask before applying.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -508,7 +508,7 @@
     },
     {
       "name": "Unlock Local",
-      "description": "Marks icons and themes as already unlocked so the rewarded-ad screen does not appear.",
+      "description": "Marks icons and themes as already unlocked so the rewarded-ad screen does not appear when applying.",
       "default": true,
       "category": null,
       "compatiblePackages": [
