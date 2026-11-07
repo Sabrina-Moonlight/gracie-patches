@@ -22,7 +22,7 @@ private val SOUND_ASSISTANT = Compatibility(
     targets = listOf(AppTarget(version = "8.5.00.2")),
 )
 
-// Force-update / OneUI version check that shows dialog and finishes the activity
+// Force-update check
 private object ForceUpdateCheckFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     returnType = "Z",
@@ -30,7 +30,7 @@ private object ForceUpdateCheckFingerprint : Fingerprint(
     strings = listOf("Force update check: OneUI=", "SAT version : "),
 )
 
-// Method that decides if a package is restricted for multi-sound
+// Restricted multi-sound list
 private object RestrictedDecisionFingerprint : Fingerprint(
     strings = listOf("restrictedPackageForMultiSound"),
 )
@@ -38,18 +38,56 @@ private object RestrictedDecisionFingerprint : Fingerprint(
 @Suppress("unused")
 val fixMultiSoundRestrictedPatch = bytecodePatch(
     name = "Fix Multi Sound Restricted",
-    description = "Disables force-update exit and forces multi-sound restricted checks to allow so ads no longer pause audio.",
+    description = "Local signature spoof + disable force-update + allow multi-sound for all packages.",
     default = true,
 ) {
     compatibleWith(SOUND_ASSISTANT)
 
     execute {
-        // 1. Disable the force-update check that closes the app
+        // 1. Disable force-update that closes the app
         runCatching {
             ForceUpdateCheckFingerprint.method.returnEarly(false)
         }
 
-        // 2. Force every List.contains() of the restricted list to false (not restricted)
+        // 2. Local signature spoof: force Signature.equals to always return true
+        //    inside VolumeStarContentProvider.call
+        runCatching {
+            val providerClass = "Lcom/samsung/systemui/volumestar/provider/VolumeStarContentProvider;"
+            val methods = classDefBy(providerClass).methods
+            methods.forEach { method ->
+                if (method.name != "call") return@forEach
+                val instructions = method.implementation?.instructions ?: return@forEach
+                var i = 0
+                val n = instructions.size
+                while (i < n) {
+                    val insn = instructions[i]
+                    if (insn.opcode == Opcode.INVOKE_VIRTUAL && insn is ReferenceInstruction) {
+                        val ref = insn.reference
+                        if (ref is MethodReference &&
+                            ref.definingClass == "Landroid/content/pm/Signature;" &&
+                            ref.name == "equals" &&
+                            ref.returnType == "Z"
+                        ) {
+                            if (i + 1 < n) {
+                                val next = instructions[i + 1]
+                                if (next.opcode.name.startsWith("move-result") && next is OneRegisterInstruction) {
+                                    val reg = next.registerA
+                                    method.addInstructions(
+                                        i + 2,
+                                        """
+                                            const/4 v$reg, 0x1
+                                        """,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    i++
+                }
+            }
+        }
+
+        // 3. Multi-sound: force restricted contains to false + empty the list load
         RestrictedDecisionFingerprint.matchAll().forEach { match ->
             val method = match.method
             val instructions = method.implementation?.instructions ?: return@forEach
@@ -81,7 +119,6 @@ val fixMultiSoundRestrictedPatch = bytecodePatch(
                 i++
             }
 
-            // Also empty the array load so other paths see no restrictions
             i = 0
             while (i < n) {
                 val insn = instructions[i]
