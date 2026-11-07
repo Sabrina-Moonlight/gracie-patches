@@ -9,6 +9,7 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.Instruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -50,13 +51,13 @@ val fixMultiSoundRestrictedPatch = bytecodePatch(
         }
 
         // 2. Local signature spoof: force Signature.equals to always return true
-        //    inside VolumeStarContentProvider.call
         runCatching {
             val providerClass = "Lcom/samsung/systemui/volumestar/provider/VolumeStarContentProvider;"
             val methods = classDefBy(providerClass).methods
             methods.forEach { method ->
                 if (method.name != "call") return@forEach
-                val instructions = method.implementation?.instructions ?: return@forEach
+                val impl = method.implementation ?: return@forEach
+                val instructions: List<Instruction> = ArrayList(impl.instructions)
                 var i = 0
                 val n = instructions.size
                 while (i < n) {
@@ -90,7 +91,8 @@ val fixMultiSoundRestrictedPatch = bytecodePatch(
         // 3. Multi-sound: force restricted contains to false + empty the list load
         RestrictedDecisionFingerprint.matchAll().forEach { match ->
             val method = match.method
-            val instructions = method.implementation?.instructions ?: return@forEach
+            val impl = method.implementation ?: return@forEach
+            val instructions: List<Instruction> = ArrayList(impl.instructions)
             var i = 0
             val n = instructions.size
             while (i < n) {
