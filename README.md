@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.49](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.49)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
+> **[v1.0.50](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.50)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -127,7 +127,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
 | [Disable Pairip](#disable-pairip) | Skips the local license check so the app can keep running offline. |  |
-| [Hide Ads](#hide-ads) | Stops every ad window: interstitial, rewarded, native, banner, app-open and the ones that ask before applying. |  |
+| [Hide Ads](#hide-ads) | Turns off every ad gate and every show/preload path in Themezy. |  |
 | [Unlock Local](#unlock-local) | Marks icons and themes as already unlocked so the rewarded-ad screen does not appear when applying. |  |
 
 </details>

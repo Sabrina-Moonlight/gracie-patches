@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.49",
+  "version": "1.0.50",
   "patches": [
     {
       "name": "Clone app",
@@ -272,7 +272,7 @@
     },
     {
       "name": "Hide Ads",
-      "description": "Stops every ad window: interstitial, rewarded, native, banner, app-open and the ones that ask before applying.",
+      "description": "Turns off every ad gate and every show/preload path in Themezy.",
       "default": true,
       "category": null,
       "compatiblePackages": [
