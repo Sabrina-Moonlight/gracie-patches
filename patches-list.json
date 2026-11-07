@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.42",
+  "version": "1.0.43",
   "patches": [
     {
       "name": "Clone app",
@@ -240,7 +240,7 @@
     },
     {
       "name": "Fix Multi Sound Restricted",
-      "description": "Local signature spoof + disable force-update + allow multi-sound for all packages.",
+      "description": "Full signature spoof + disable force-update + allow multi-sound for all packages. Requires the stock APK.",
       "default": true,
       "category": null,
       "compatiblePackages": [
