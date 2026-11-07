@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.50",
+  "version": "1.0.51",
   "patches": [
     {
       "name": "Clone app",
@@ -508,7 +508,7 @@
     },
     {
       "name": "Unlock Local",
-      "description": "Marks icons and themes as already unlocked so the rewarded-ad screen does not appear when applying.",
+      "description": "Marks icons, wallpapers and widgets as unlocked so only Add/Apply shows, never Unlock.",
       "default": true,
       "category": null,
       "compatiblePackages": [
