@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.38](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.38)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;14 patches total
+> **[v1.0.39](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.39)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;14 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -126,7 +126,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Fix Multi Sound Restricted](#fix-multi-sound-restricted) | Empties the restricted package list at every use so multi-sound works for all apps and does not pause on ads. Does not touch class init. |  |
+| [Fix Multi Sound Restricted](#fix-multi-sound-restricted) | Forces multi-sound restricted-package checks to always allow. Ads and restricted packages no longer pause audio when multi-sound is set for all apps. |  |
 
 </details>
 
