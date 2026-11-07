@@ -1,2 +1,0 @@
-DisablePairipPatch.kt = patches/src/main/kotlin/app/template/patches/pixelwidgets/DisablePairipPatch.kt
-LocalPreferencePatch.kt = patches/src/main/kotlin/app/template/patches/pixelwidgets/LocalPreferencePatch.kt
