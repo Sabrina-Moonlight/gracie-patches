@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.37",
+  "version": "1.0.38",
   "patches": [
     {
       "name": "Clone app",
@@ -240,7 +240,7 @@
     },
     {
       "name": "Fix Multi Sound Restricted",
-      "description": "Empties the restricted package list so multi-sound works for all apps and does not pause on ads.",
+      "description": "Empties the restricted package list at every use so multi-sound works for all apps and does not pause on ads. Does not touch class init.",
       "default": true,
       "category": null,
       "compatiblePackages": [
