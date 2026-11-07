@@ -37,30 +37,50 @@ public class SpoofSignature extends Application {
 
     private static Object spoofedPackageManager;
 
-    private static final Signature spoofedSignature;
+    private static Signature spoofedSignature;
 
     static {
-        String packageName = "<package-name>";
-        String certificate = "<certificate>";
-
-        spoofedSignature = new Signature(Base64.decode(certificate, Base64.DEFAULT));
+        Signature sig = null;
         try {
-            spoofPackageInfoCreator(packageName, spoofedSignature);
-        } catch (ReflectiveOperationException ex) {
-            spoofPackageManagerBinder(packageName, spoofedSignature);
+            String packageName = "<package-name>";
+            String certificate = "<certificate>";
+            // If placeholders were not replaced, skip spoof instead of crashing
+            if (packageName.contains("<") || certificate.contains("<") || certificate.length() < 20) {
+                android.util.Log.e("SpoofSignature", "Certificate not injected, skipping spoof");
+            } else {
+                sig = new Signature(Base64.decode(certificate, Base64.DEFAULT));
+                try {
+                    spoofPackageInfoCreator(packageName, sig);
+                } catch (Throwable ex) {
+                    try {
+                        spoofPackageManagerBinder(packageName, sig);
+                    } catch (Throwable ex2) {
+                        android.util.Log.e("SpoofSignature", "Binder spoof failed", ex2);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            android.util.Log.e("SpoofSignature", "Static init failed, continuing without spoof", t);
         }
+        spoofedSignature = sig;
     }
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-
-        PackageManager packageManager = base.getPackageManager();
-        if (packageManagerBinder != null) {
-            replacePackageManagerProxy(packageManager);
-            packageManagerBinder.learnPackageInfoTransactionCode(packageManager);
+        try {
+            if (spoofedSignature == null) {
+                return;
+            }
+            PackageManager packageManager = base.getPackageManager();
+            if (packageManagerBinder != null) {
+                replacePackageManagerProxy(packageManager);
+                packageManagerBinder.learnPackageInfoTransactionCode(packageManager);
+            }
+            spoofCachedPackageInfo(packageManager, base.getPackageName());
+        } catch (Throwable t) {
+            android.util.Log.e("SpoofSignature", "attachBaseContext spoof failed", t);
         }
-        spoofCachedPackageInfo(packageManager, base.getPackageName());
     }
 
     private static void spoofPackageInfoCreator(String packageName, Signature spoofed)
