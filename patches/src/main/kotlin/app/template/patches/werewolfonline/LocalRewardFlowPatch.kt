@@ -16,32 +16,35 @@ private val WOLVESVILLE = Compatibility(
 )
 
 /**
- * show(requestId, adUnitId, showOptions, promise)
- * Fire opened + earned + closed, resolve promise, no real ad UI.
+ * FullScreenAdModule.show$lambda$2 — already on the UI thread.
+ * Params: module, requestId, options, activity, promise, adUnitId
+ * Grant reward without showing a real ad.
  */
-private object FullScreenShowFingerprint : Fingerprint(
+private object ShowOnUiThreadFingerprint : Fingerprint(
     definingClass = "Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule;",
-    name = "show",
+    name = "show\$lambda\$2",
     returnType = "V",
     parameters = listOf(
+        "Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule;",
         "I",
-        "Ljava/lang/String;",
         "Lcom/facebook/react/bridge/ReadableMap;",
+        "Landroid/app/Activity;",
         "Lcom/facebook/react/bridge/Promise;",
+        "Ljava/lang/String;",
     ),
 )
 
 @Suppress("unused")
 val localRewardFlowPatch = bytecodePatch(
     name = "Local reward flow",
-    description = "Grants the rewarded-ad reward when show is requested, without a real ad.",
+    description = "Grants the rewarded-ad reward when show runs on the UI thread, without a real ad.",
     default = true,
 ) {
     compatibleWith(WOLVESVILLE)
 
     execute {
-        // show: p0=this, p1=requestId, p2=adUnitId, p3=options, p4=promise
-        FullScreenShowFingerprint.method.addInstructions(
+        // p0=module, p1=requestId, p2=options, p3=activity, p4=promise, p5=adUnitId
+        ShowOnUiThreadFingerprint.method.addInstructions(
             0,
             """
                 invoke-static {}, Lcom/facebook/react/bridge/Arguments;->createMap()Lcom/facebook/react/bridge/WritableMap;
@@ -55,7 +58,7 @@ val localRewardFlowPatch = bytecodePatch(
                 const-string v0, "google_mobile_ads_rewarded_event"
                 move v1, p1
                 const-string v2, "opened"
-                move-object v3, p2
+                move-object v3, p5
                 const/4 v4, 0x0
                 const/4 v5, 0x0
                 invoke-static/range {v0 .. v5}, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsCommon;->sendAdEvent(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Lcom/facebook/react/bridge/WritableMap;Lcom/facebook/react/bridge/WritableMap;)V
@@ -70,13 +73,13 @@ val localRewardFlowPatch = bytecodePatch(
                 const-string v0, "google_mobile_ads_rewarded_event"
                 move v1, p1
                 const-string v2, "rewarded_earned_reward"
-                move-object v3, p2
+                move-object v3, p5
                 const/4 v4, 0x0
                 invoke-static/range {v0 .. v5}, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsCommon;->sendAdEvent(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Lcom/facebook/react/bridge/WritableMap;Lcom/facebook/react/bridge/WritableMap;)V
                 const-string v0, "google_mobile_ads_rewarded_event"
                 move v1, p1
                 const-string v2, "closed"
-                move-object v3, p2
+                move-object v3, p5
                 const/4 v4, 0x0
                 const/4 v5, 0x0
                 invoke-static/range {v0 .. v5}, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsCommon;->sendAdEvent(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Lcom/facebook/react/bridge/WritableMap;Lcom/facebook/react/bridge/WritableMap;)V
