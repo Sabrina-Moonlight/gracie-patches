@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.53",
+  "version": "1.0.54",
   "patches": [
     {
       "name": "Clone app",
@@ -449,7 +449,7 @@
     },
     {
       "name": "Local reward flow",
-      "description": "Confirms the reward as soon as a rewarded ad is requested, without showing a real ad.",
+      "description": "Marks the rewarded ad as loaded and grants the reward when show is requested, without a real ad.",
       "default": true,
       "category": null,
       "compatiblePackages": [
