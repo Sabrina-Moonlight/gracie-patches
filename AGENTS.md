@@ -3,23 +3,25 @@
 ## Protocolo (en este orden)
 2. Antes de la primera edición, escribe en el chat un plan de 3 a 5 líneas: qué archivos tocarás y qué cambiarás. Si no está en el chat, no empieces.
 3. Lee lo mínimo del **proyecto de patches**: `grep` y rangos de líneas. No listes ni abras el repo entero. No releas lo ya leído.
-4. Haz lo pedido **y todo lo necesario para que funcione de verdad**. Si el objetivo es quitar anuncios, unlock, pairip, etc., analiza la APK completa (smali/clases reales, no solo un SDK) antes de editar. No te quedes en el primer corte superficial.
+4. Haz lo pedido **y todo lo necesario** para que el objetivo principal quede resuelto de verdad. No te limites al cambio más pequeño si eso deja el problema a medias.
 5. Tras cada edición, comprueba con `grep` o `sed -n` que quedó en el sitio correcto.
 6. Agrupa ediciones relacionadas.
 7. Pregunta solo si te bloquea. Si puedes seguir con una suposición razonable, hazla y dila en una línea.
 
-Antes de responder revisa: ¿seguiste el plan? ¿el arreglo cubre la causa real, no solo un síntoma? ¿entregas en el formato de "Entrega"? ¿la respuesta es corta (qué hiciste, qué subir, qué probar)? Si incumpliste una regla, dilo en una línea y corrígelo.
+Antes de responder revisa: ¿el arreglo cumple lo que se pidió? ¿cubrió las causas reales? ¿el código no debería dar error de compilación (sintaxis, imports, firmas)? ¿entregas en el formato de "Entrega"? ¿la respuesta es corta? Si incumpliste una regla, dilo en una línea y corrígelo.
 
 ## Análisis de APK (obligatorio cuando el pedido lo requiere)
-- Si pide quitar anuncios, unlock, licencia, pairip, o “revisa toda la APK”: **desensambla y revisa el APK completo** (clases de la app + librerías de ads/license) **antes** de la primera edición de patches.
-- Busca interruptores maestros, implementaciones reales (no solo el SDK de mediación), diálogos, botones y preferencias que controlen el comportamiento.
-- No respondas con un parche a medias. Entrega el corte que cubra todas las rutas encontradas, o di en una línea qué ruta no pudiste confirmar.
+- Si pide quitar anuncios, unlock, licencia, pairip, o “revisa toda la APK”: **desensambla y revisa el APK completo** (clases de la app + librerías) **antes** de la primera edición de patches.
+- Busca interruptores maestros, implementaciones reales, diálogos, botones y preferencias.
+- No entregues un parche a medias. Cubre todas las rutas encontradas, o di en una línea qué no pudiste confirmar.
 - Confirma en el chat, en pocas palabras, qué clases/métodos reales tocaste.
 
 ## Prioridades
-1. Que el objetivo funcione de punta a punta.
-2. Sin extras ni refactors no relacionados.
-3. Tono directo: sin relleno, sin halagos, sin disculpas innecesarias. Sin gritar ni mayúsculas innecesarias.
+1. Resolver el pedido principal de punta a punta.
+2. Revisar que quede bien, cumpla lo pedido y no dé error.
+3. Usar el análisis que haga falta (APK, smali, referencias) hasta lograrlo.
+4. Sin extras ni refactors no relacionados.
+5. Tono directo: sin relleno, sin halagos, sin disculpas innecesarias. Sin gritar ni mayúsculas innecesarias.
 
 ## Honestidad
 - No afirmes que algo funciona si no lo comprobaste en el código.
