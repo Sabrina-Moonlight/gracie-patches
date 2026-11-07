@@ -6,7 +6,7 @@ import java.lang.reflect.Proxy;
 
 /**
  * Runtime OkHttp interceptor via reflection (no okhttp compile dependency).
- * Rewrites golden-wheel related API responses.
+ * Never throws out of intercept; on any failure falls through to the real chain.
  */
 @SuppressWarnings("unused")
 public final class WheelNetworkHook {
@@ -16,7 +16,7 @@ public final class WheelNetworkHook {
     private WheelNetworkHook() {
     }
 
-    /** Injection: returns an okhttp3.Interceptor instance. */
+    /** Always returns a non-null Interceptor proxy. */
     public static Object createInterceptor() {
         try {
             Class<?> interceptorClass = Class.forName("okhttp3.Interceptor");
@@ -26,83 +26,83 @@ public final class WheelNetworkHook {
                     new Handler()
             );
         } catch (Throwable t) {
-            return null;
+            // Last resort: still try with context classloader
+            try {
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                Class<?> interceptorClass = Class.forName("okhttp3.Interceptor", true, cl);
+                return Proxy.newProxyInstance(
+                        cl,
+                        new Class<?>[] {interceptorClass},
+                        new Handler()
+                );
+            } catch (Throwable t2) {
+                return null;
+            }
         }
     }
 
     private static final class Handler implements InvocationHandler {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            String name = method.getName();
-            if ("intercept".equals(name) && args != null && args.length == 1) {
-                return intercept(args[0]);
-            }
-            if ("hashCode".equals(name)) {
-                return System.identityHashCode(proxy);
-            }
-            if ("equals".equals(name)) {
-                return proxy == args[0];
-            }
-            if ("toString".equals(name)) {
-                return "WheelNetworkHook";
+            try {
+                String name = method.getName();
+                if ("intercept".equals(name) && args != null && args.length == 1) {
+                    return interceptSafe(args[0]);
+                }
+                if ("hashCode".equals(name)) {
+                    return System.identityHashCode(proxy);
+                }
+                if ("equals".equals(name)) {
+                    return proxy == (args != null ? args[0] : null);
+                }
+                if ("toString".equals(name)) {
+                    return "WheelNetworkHook";
+                }
+            } catch (Throwable ignored) {
             }
             return null;
         }
     }
 
-    private static Object intercept(Object chain) throws Throwable {
-        Method requestMethod = chain.getClass().getMethod("request");
-        Object request = requestMethod.invoke(chain);
-        Method urlMethod = request.getClass().getMethod("url");
-        Object httpUrl = urlMethod.invoke(request);
-        String url = String.valueOf(httpUrl);
+    private static Object interceptSafe(Object chain) throws Throwable {
+        try {
+            return intercept(chain);
+        } catch (Throwable t) {
+            // Always fall through to real network
+            Object request = chain.getClass().getMethod("request").invoke(chain);
+            Class<?> requestClass = Class.forName("okhttp3.Request");
+            return chain.getClass().getMethod("proceed", requestClass).invoke(chain, request);
+        }
+    }
 
+    private static Object intercept(Object chain) throws Throwable {
         Class<?> requestClass = Class.forName("okhttp3.Request");
         Method proceed = chain.getClass().getMethod("proceed", requestClass);
+        Object request = chain.getClass().getMethod("request").invoke(chain);
+        Object httpUrl = request.getClass().getMethod("url").invoke(request);
+        String url = String.valueOf(httpUrl);
 
         if (!isTarget(url)) {
             return proceed.invoke(chain, request);
         }
 
-        Object upstream = null;
-        try {
-            upstream = proceed.invoke(chain, request);
-        } catch (Throwable ignored) {
-            // still return local body
-        }
-
+        Object upstream = proceed.invoke(chain, request);
         String json = bodyFor(url);
         Object responseBody = createResponseBody(json);
 
-        if (upstream != null) {
-            Method newBuilder = upstream.getClass().getMethod("newBuilder");
-            Object builder = newBuilder.invoke(upstream);
-            builder.getClass().getMethod("code", int.class).invoke(builder, 200);
-            builder.getClass().getMethod("message", String.class).invoke(builder, "OK");
-            Class<?> bodyClass = Class.forName("okhttp3.ResponseBody");
-            builder.getClass().getMethod("body", bodyClass).invoke(builder, responseBody);
-            return builder.getClass().getMethod("build").invoke(builder);
-        }
-
-        Class<?> responseBuilderClass = Class.forName("okhttp3.Response$Builder");
-        Object builder = responseBuilderClass.getConstructor().newInstance();
-        responseBuilderClass.getMethod("request", requestClass).invoke(builder, request);
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        Object protocol = Enum.valueOf((Class<Enum>) Class.forName("okhttp3.Protocol"), "HTTP_1_1");
-        responseBuilderClass.getMethod("protocol", Class.forName("okhttp3.Protocol"))
-                .invoke(builder, protocol);
-        responseBuilderClass.getMethod("code", int.class).invoke(builder, 200);
-        responseBuilderClass.getMethod("message", String.class).invoke(builder, "OK");
+        Method newBuilder = upstream.getClass().getMethod("newBuilder");
+        Object builder = newBuilder.invoke(upstream);
+        builder.getClass().getMethod("code", int.class).invoke(builder, 200);
+        builder.getClass().getMethod("message", String.class).invoke(builder, "OK");
         Class<?> bodyClass = Class.forName("okhttp3.ResponseBody");
-        responseBuilderClass.getMethod("body", bodyClass).invoke(builder, responseBody);
-        return responseBuilderClass.getMethod("build").invoke(builder);
+        builder.getClass().getMethod("body", bodyClass).invoke(builder, responseBody);
+        return builder.getClass().getMethod("build").invoke(builder);
     }
 
     private static boolean isTarget(String url) {
+        // Only the spin (and ads quota). Do not touch conditions/items on startup.
         return url.contains("goldenWheelSpin")
-                || url.contains("rewardVideosAdsToPlay")
-                || url.contains("goldenWheelConditions")
-                || url.contains("goldenWheelItems");
+                || url.contains("rewardVideosAdsToPlay");
     }
 
     private static String bodyFor(String url) {
@@ -130,25 +130,21 @@ public final class WheelNetworkHook {
 
     private static Object createResponseBody(String json) throws Throwable {
         Class<?> mediaTypeClass = Class.forName("okhttp3.MediaType");
-        Method parse = mediaTypeClass.getMethod("parse", String.class);
-        Object mediaType = parse.invoke(null, "application/json; charset=utf-8");
-
+        Object mediaType = mediaTypeClass.getMethod("parse", String.class)
+                .invoke(null, "application/json; charset=utf-8");
         Class<?> responseBodyClass = Class.forName("okhttp3.ResponseBody");
         try {
-            Method create = responseBodyClass.getMethod(
-                    "create", String.class, mediaTypeClass);
-            return create.invoke(null, json, mediaType);
+            return responseBodyClass.getMethod("create", String.class, mediaTypeClass)
+                    .invoke(null, json, mediaType);
         } catch (NoSuchMethodException ignored) {
         }
         try {
-            Method create = responseBodyClass.getMethod(
-                    "create", mediaTypeClass, String.class);
-            return create.invoke(null, mediaType, json);
+            return responseBodyClass.getMethod("create", mediaTypeClass, String.class)
+                    .invoke(null, mediaType, json);
         } catch (NoSuchMethodException ignored) {
         }
         Object companion = responseBodyClass.getField("Companion").get(null);
-        Method create = companion.getClass().getMethod(
-                "create", String.class, mediaTypeClass);
-        return create.invoke(companion, json, mediaType);
+        return companion.getClass().getMethod("create", String.class, mediaTypeClass)
+                .invoke(companion, json, mediaType);
     }
 }

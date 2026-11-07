@@ -2,6 +2,7 @@ package app.template.patches.werewolfonline
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.patch.ApkFileType
 import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
@@ -54,32 +55,35 @@ val localRewardFlowPatch = bytecodePatch(
     extendWith("extensions/extension.mpe")
 
     execute {
-        CreateClientFingerprint.method.addInstructions(
-            0,
-            """
+        val clientHook = """
                 invoke-static {}, Lcom/facebook/react/modules/network/OkHttpClientProvider;->createClientBuilder()Lokhttp3/OkHttpClient${'$'}Builder;
                 move-result-object v0
                 invoke-static {}, Lapp/template/extension/werewolf/WheelNetworkHook;->createInterceptor()Ljava/lang/Object;
                 move-result-object v1
+                if-eqz v1, :no_hook
                 check-cast v1, Lokhttp3/Interceptor;
                 invoke-virtual {v0, v1}, Lokhttp3/OkHttpClient${'$'}Builder;->addInterceptor(Lokhttp3/Interceptor;)Lokhttp3/OkHttpClient${'$'}Builder;
                 move-result-object v0
+                :no_hook
                 invoke-virtual {v0}, Lokhttp3/OkHttpClient${'$'}Builder;->build()Lokhttp3/OkHttpClient;
                 move-result-object v0
                 return-object v0
-            """,
-        )
+            """
 
-        CreateClientContextFingerprint.method.addInstructions(
+        CreateClientFingerprint.method.addInstructionsWithLabels(0, clientHook)
+
+        CreateClientContextFingerprint.method.addInstructionsWithLabels(
             0,
             """
                 invoke-static {p0}, Lcom/facebook/react/modules/network/OkHttpClientProvider;->createClientBuilder(Landroid/content/Context;)Lokhttp3/OkHttpClient${'$'}Builder;
                 move-result-object v0
                 invoke-static {}, Lapp/template/extension/werewolf/WheelNetworkHook;->createInterceptor()Ljava/lang/Object;
                 move-result-object v1
+                if-eqz v1, :no_hook
                 check-cast v1, Lokhttp3/Interceptor;
                 invoke-virtual {v0, v1}, Lokhttp3/OkHttpClient${'$'}Builder;->addInterceptor(Lokhttp3/Interceptor;)Lokhttp3/OkHttpClient${'$'}Builder;
                 move-result-object v0
+                :no_hook
                 invoke-virtual {v0}, Lokhttp3/OkHttpClient${'$'}Builder;->build()Lokhttp3/OkHttpClient;
                 move-result-object v0
                 return-object v0
