@@ -18,7 +18,11 @@ private val PIXEL_WIDGETS = Compatibility(
     ),
 )
 
-/** Lfc1.e — returns false when premium is active. Force false. */
+/**
+ * Lfc1.e reads pro_lock/premium.
+ * Returns false when premium is active (unlocked).
+ * Same idea as glass/minimal: returnEarly on the Z gate.
+ */
 private object IsFeatureLockedFingerprint : Fingerprint(
     definingClass = "Lfc1;",
     name = "e",
@@ -28,25 +32,15 @@ private object IsFeatureLockedFingerprint : Fingerprint(
     strings = listOf("pro_lock", "premium", "until."),
 )
 
-/** Lfc1.c — used by widgets. Force false (unlocked path). */
-private object WidgetLockFingerprint : Fingerprint(
-    definingClass = "Lfc1;",
-    name = "c",
-    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
-    returnType = "Z",
-    parameters = listOf("Landroid/content/Context;", "Ljava/lang/String;", "[I"),
-)
-
 @Suppress("unused")
 val localPreferencePatch = bytecodePatch(
     name = "Local Preference",
-    description = "Forces local premium preference so all features stay available offline.",
+    description = "Uses a local preference so all widget features stay available offline.",
     default = true,
 ) {
     compatibleWith(PIXEL_WIDGETS)
 
     execute {
         IsFeatureLockedFingerprint.method.returnEarly(false)
-        runCatching { WidgetLockFingerprint.method.returnEarly(false) }
     }
 }
