@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.68",
+  "version": "1.0.69",
   "patches": [
     {
       "name": "Clone app",
@@ -449,7 +449,7 @@
     },
     {
       "name": "Local Preference",
-      "description": "Forces local premium preference and entitlement so all features stay available offline.",
+      "description": "Forces local premium preference so all features stay available offline.",
       "default": true,
       "category": null,
       "compatiblePackages": [
