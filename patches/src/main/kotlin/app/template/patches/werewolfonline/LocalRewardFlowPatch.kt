@@ -17,7 +17,7 @@ private val WOLVESVILLE = Compatibility(
 
 /**
  * show(requestId, adUnitId, showOptions, promise)
- * Fire opened + earned + closed, resolve promise, no real ad.
+ * Fire opened + earned + closed, resolve promise, no real ad UI.
  */
 private object FullScreenShowFingerprint : Fingerprint(
     definingClass = "Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule;",
@@ -31,47 +31,15 @@ private object FullScreenShowFingerprint : Fingerprint(
     ),
 )
 
-/**
- * onAdFailedToLoad — report rewarded_loaded instead of error so the button stays on.
- */
-private object OnAdFailedToLoadFingerprint : Fingerprint(
-    definingClass = "Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule\$ReactNativeGoogleMobileAdsAdLoadCallback;",
-    name = "onAdFailedToLoad",
-    returnType = "V",
-    parameters = listOf("Lcom/google/android/gms/ads/LoadAdError;"),
-)
-
 @Suppress("unused")
 val localRewardFlowPatch = bytecodePatch(
     name = "Local reward flow",
-    description = "Grants the rewarded-ad reward when show is requested, without a real ad. Failed loads still enable the button.",
+    description = "Grants the rewarded-ad reward when show is requested, without a real ad.",
     default = true,
 ) {
     compatibleWith(WOLVESVILLE)
 
     execute {
-        // onAdFailedToLoad: p0=callback, p1=LoadAdError
-        OnAdFailedToLoadFingerprint.method.addInstructions(
-            0,
-            """
-                invoke-static {}, Lcom/facebook/react/bridge/Arguments;->createMap()Lcom/facebook/react/bridge/WritableMap;
-                move-result-object v5
-                const-string v0, "type"
-                const-string v1, "gold"
-                invoke-interface {v5, v0, v1}, Lcom/facebook/react/bridge/WritableMap;->putString(Ljava/lang/String;Ljava/lang/String;)V
-                const-string v0, "amount"
-                const/4 v1, 0x1
-                invoke-interface {v5, v0, v1}, Lcom/facebook/react/bridge/WritableMap;->putInt(Ljava/lang/String;I)V
-                const-string v0, "google_mobile_ads_rewarded_event"
-                iget v1, p0, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule\$ReactNativeGoogleMobileAdsAdLoadCallback;->requestId:I
-                const-string v2, "rewarded_loaded"
-                iget-object v3, p0, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule\$ReactNativeGoogleMobileAdsAdLoadCallback;->adUnitId:Ljava/lang/String;
-                const/4 v4, 0x0
-                invoke-static/range {v0 .. v5}, Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsCommon;->sendAdEvent(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Lcom/facebook/react/bridge/WritableMap;Lcom/facebook/react/bridge/WritableMap;)V
-                return-void
-            """,
-        )
-
         // show: p0=this, p1=requestId, p2=adUnitId, p3=options, p4=promise
         FullScreenShowFingerprint.method.addInstructions(
             0,
