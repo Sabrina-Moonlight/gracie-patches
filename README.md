@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.62](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.62)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;18 patches total
+> **[v1.0.63](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.63)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;18 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -109,7 +109,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
 | [Disable Pairip](#disable-pairip) | Skips the local license check so the app can keep running offline. |  |
-| [Local Preference](#local-preference) | Forces the local premium preference so optional widget features stay available offline. |  |
+| [Local Preference](#local-preference) | Uses a local preference so optional widget features stay available offline. |  |
 
 </details>
 
