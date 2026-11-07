@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.55](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.55)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;17 patches total
+> **[v1.0.56](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.56)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;17 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -179,7 +179,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Local reward flow](#local-reward-flow) | Grants the rewarded-ad reward when show is requested, without a real ad. |  |
+| [Local reward flow](#local-reward-flow) | Grants the rewarded-ad reward when show runs on the UI thread, without a real ad. |  |
 
 </details>
 
