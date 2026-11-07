@@ -6,7 +6,6 @@ import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
-import com.android.tools.smali.dexlib2.AccessFlags
 
 private val THEMEZY = Compatibility(
     name = "Themezy",
@@ -17,31 +16,49 @@ private val THEMEZY = Compatibility(
 )
 
 /**
- * Boolean checks that decide if an icon needs a rewarded ad before apply.
- * Returning true skips the "watch ad" window.
+ * Domain models and DB entity gate the Unlock button vs Add/Apply.
+ * Forcing true removes every unlock button and unlock dialog.
  */
-private object IsIconUnlockedFingerprint : Fingerprint(
-    returnType = "Z",
-    strings = listOf("_isIconUnlockedAll"),
-)
-
-private object IsUnlockedFingerprint : Fingerprint(
-    accessFlags = listOf(AccessFlags.PUBLIC),
+private object IconIsUnlocked : Fingerprint(
+    definingClass = "Lcom/themezy/theme/iconwidgets/domain/model/Icon;",
+    name = "isUnlocked",
     returnType = "Z",
     parameters = listOf(),
-    strings = listOf("isUnlocked"),
+)
+
+private object WallpaperIsUnlocked : Fingerprint(
+    definingClass = "Lcom/themezy/theme/iconwidgets/domain/model/Wallpaper;",
+    name = "isUnlocked",
+    returnType = "Z",
+    parameters = listOf(),
+)
+
+private object WidgetIsUnlocked : Fingerprint(
+    definingClass = "Lcom/themezy/theme/iconwidgets/domain/model/Widget;",
+    name = "isUnlocked",
+    returnType = "Z",
+    parameters = listOf(),
+)
+
+private object DownloadEntityIsUnlocked : Fingerprint(
+    definingClass = "Lcom/themezy/theme/iconwidgets/data/local/database/entity/DownloadEntity;",
+    name = "isUnlocked",
+    returnType = "Z",
+    parameters = listOf(),
 )
 
 @Suppress("unused")
 val unlockLocalPatch = bytecodePatch(
     name = "Unlock Local",
-    description = "Marks icons and themes as already unlocked so the rewarded-ad screen does not appear when applying.",
+    description = "Marks icons, wallpapers and widgets as unlocked so only Add/Apply shows, never Unlock.",
     default = true,
 ) {
     compatibleWith(THEMEZY)
 
     execute {
-        runCatching { IsIconUnlockedFingerprint.method.returnEarly(true) }
-        runCatching { IsUnlockedFingerprint.method.returnEarly(true) }
+        IconIsUnlocked.method.returnEarly(true)
+        WallpaperIsUnlocked.method.returnEarly(true)
+        WidgetIsUnlocked.method.returnEarly(true)
+        DownloadEntityIsUnlocked.method.returnEarly(true)
     }
 }
