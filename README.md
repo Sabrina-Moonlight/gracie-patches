@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.46](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.46)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;13 patches total
+> **[v1.0.47](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.47)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -110,6 +110,24 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 |----------|----------------|-----------|
 | [Disable Pairip](#disable-pairip) | Skips the local license and integrity checks so the app can keep running offline. |  |
 | [Pro Options](#pro-options) | Uses a local preference so optional Pro options stay available. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Themezy&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Package name:** `com.themezy.theme.iconwidgets`
+
+**🌻 Supported versions:**
+
+| 1.0.9 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Disable Pairip](#disable-pairip) | Skips the local license check so the app can keep running offline. |  |
+| [Hide Ads](#hide-ads) | Stops interstitial and rewarded ads from loading or showing, including the ones that ask before applying. |  |
 
 </details>
 

@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.46",
+  "version": "1.0.47",
   "patches": [
     {
       "name": "Clone app",
@@ -229,6 +229,70 @@
             {
               "version": "1.11",
               "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Pairip",
+      "description": "Skips the local license check so the app can keep running offline.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.themezy.theme.iconwidgets",
+          "name": "Themezy",
+          "description": null,
+          "apkFileType": "APKS_REQUIRED",
+          "appIconColor": "#7C4DFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.9",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide Ads",
+      "description": "Stops interstitial and rewarded ads from loading or showing, including the ones that ask before applying.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.themezy.theme.iconwidgets",
+          "name": "Themezy",
+          "description": null,
+          "apkFileType": "APKS_REQUIRED",
+          "appIconColor": "#7C4DFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.9",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
               "isExperimental": false,
               "minSdk": null,
               "description": null
