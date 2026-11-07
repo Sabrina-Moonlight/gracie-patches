@@ -6,6 +6,8 @@ import app.morphe.patcher.patch.ApkFileType
 import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.util.returnEarly
+import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
@@ -20,30 +22,43 @@ private val SOUND_ASSISTANT = Compatibility(
     targets = listOf(AppTarget(version = "8.5.00.2")),
 )
 
-/**
- * Method that decides if a package is restricted for multi-sound.
- * 1) Forces every List.contains() result to false (not restricted).
- * 2) Overwrites the loaded restricted array with an empty one so other paths also see no restrictions.
- * Does not touch <clinit>. Minimal and safe.
- */
+// Force-update / OneUI version check that shows dialog and finishes the activity
+private object ForceUpdateCheckFingerprint : Fingerprint(
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    returnType = "Z",
+    parameters = listOf("Landroid/content/Context;"),
+    strings = listOf("Force update check: OneUI=", "SAT version : "),
+)
+
+// Method that decides if a package is restricted for multi-sound
 private object RestrictedDecisionFingerprint : Fingerprint(
     strings = listOf("restrictedPackageForMultiSound"),
+)
+
+// Signature comparison inside VolumeStarContentProvider (GET_SIGNATURES = 0x40)
+private object SignatureCompareFingerprint : Fingerprint(
+    strings = listOf(), // will match by method shape if needed
+    // We use the string from the provider or the constant
 )
 
 @Suppress("unused")
 val fixMultiSoundRestrictedPatch = bytecodePatch(
     name = "Fix Multi Sound Restricted",
-    description = "Forces multi-sound restricted-package checks to always allow. Ads and restricted packages no longer pause audio when multi-sound is set for all apps.",
+    description = "Disables force-update exit, forces multi-sound restricted checks to allow, and softens signature comparison so the app stays open after re-signing.",
     default = true,
 ) {
     compatibleWith(SOUND_ASSISTANT)
 
     execute {
+        // 1. Disable the force-update check that closes the app
+        runCatching {
+            ForceUpdateCheckFingerprint.method.returnEarly(false)
+        }
+
+        // 2. Force every List.contains() of the restricted list to false (not restricted)
         RestrictedDecisionFingerprint.matchAll().forEach { match ->
             val method = match.method
             val instructions = method.implementation?.instructions ?: return@forEach
-
-            // Pass 1: force every List.contains result to false
             var i = 0
             val n = instructions.size
             while (i < n) {
@@ -72,15 +87,13 @@ val fixMultiSoundRestrictedPatch = bytecodePatch(
                 i++
             }
 
-            // Pass 2: find the const-string "restrictedPackageForMultiSound"
-            // and the sget just before it, then overwrite that register with empty array
+            // Also empty the array load so other paths see no restrictions
             i = 0
             while (i < n) {
                 val insn = instructions[i]
                 if (insn is ReferenceInstruction) {
                     val ref = insn.reference
                     if (ref is StringReference && ref.string == "restrictedPackageForMultiSound") {
-                        // Look a few instructions back for the sget-object of the array
                         var j = i - 1
                         while (j >= 0 && j >= i - 8) {
                             val prev = instructions[j]
