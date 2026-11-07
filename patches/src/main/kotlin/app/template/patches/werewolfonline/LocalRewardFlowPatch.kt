@@ -16,9 +16,27 @@ private val WOLVESVILLE = Compatibility(
 )
 
 /**
- * FullScreenAdModule.show$lambda$2 — already on the UI thread.
- * Params: module, requestId, options, activity, promise, adUnitId
- * Grant reward without showing a real ad.
+ * OkHttpClientProvider.createClient() — attach network hook before build.
+ */
+private object CreateClientFingerprint : Fingerprint(
+    definingClass = "Lcom/facebook/react/modules/network/OkHttpClientProvider;",
+    name = "createClient",
+    returnType = "Lokhttp3/OkHttpClient;",
+    parameters = listOf(),
+)
+
+/**
+ * createClient(Context) overload.
+ */
+private object CreateClientContextFingerprint : Fingerprint(
+    definingClass = "Lcom/facebook/react/modules/network/OkHttpClientProvider;",
+    name = "createClient",
+    returnType = "Lokhttp3/OkHttpClient;",
+    parameters = listOf("Landroid/content/Context;"),
+)
+
+/**
+ * show on UI thread lambda — grant ad reward without real ad UI.
  */
 private object ShowOnUiThreadFingerprint : Fingerprint(
     definingClass = "Lio/invertase/googlemobileads/ReactNativeGoogleMobileAdsFullScreenAdModule;",
@@ -37,13 +55,45 @@ private object ShowOnUiThreadFingerprint : Fingerprint(
 @Suppress("unused")
 val localRewardFlowPatch = bytecodePatch(
     name = "Local reward flow",
-    description = "Grants the rewarded-ad reward when show runs on the UI thread, without a real ad.",
+    description = "Grants rewarded ads locally and rewrites golden-wheel API responses so the spin can succeed.",
     default = true,
 ) {
     compatibleWith(WOLVESVILLE)
 
+    extendWith("extensions/extension.mpe")
+
     execute {
-        // p0=module, p1=requestId, p2=options, p3=activity, p4=promise, p5=adUnitId
+        // createClient(): Builder + interceptor + build
+        CreateClientFingerprint.method.addInstructions(
+            0,
+            """
+                invoke-static {}, Lcom/facebook/react/modules/network/OkHttpClientProvider;->createClientBuilder()Lokhttp3/OkHttpClient${'$'}Builder;
+                move-result-object v0
+                sget-object v1, Lapp/template/extension/werewolf/WheelNetworkHook;->INSTANCE:Lapp/template/extension/werewolf/WheelNetworkHook;
+                invoke-virtual {v0, v1}, Lokhttp3/OkHttpClient${'$'}Builder;->addInterceptor(Lokhttp3/Interceptor;)Lokhttp3/OkHttpClient${'$'}Builder;
+                move-result-object v0
+                invoke-virtual {v0}, Lokhttp3/OkHttpClient${'$'}Builder;->build()Lokhttp3/OkHttpClient;
+                move-result-object v0
+                return-object v0
+            """,
+        )
+
+        // createClient(Context): same with context builder
+        CreateClientContextFingerprint.method.addInstructions(
+            0,
+            """
+                invoke-static {p0}, Lcom/facebook/react/modules/network/OkHttpClientProvider;->createClientBuilder(Landroid/content/Context;)Lokhttp3/OkHttpClient${'$'}Builder;
+                move-result-object v0
+                sget-object v1, Lapp/template/extension/werewolf/WheelNetworkHook;->INSTANCE:Lapp/template/extension/werewolf/WheelNetworkHook;
+                invoke-virtual {v0, v1}, Lokhttp3/OkHttpClient${'$'}Builder;->addInterceptor(Lokhttp3/Interceptor;)Lokhttp3/OkHttpClient${'$'}Builder;
+                move-result-object v0
+                invoke-virtual {v0}, Lokhttp3/OkHttpClient${'$'}Builder;->build()Lokhttp3/OkHttpClient;
+                move-result-object v0
+                return-object v0
+            """,
+        )
+
+        // Ad show on UI thread: opened + earned + closed
         ShowOnUiThreadFingerprint.method.addInstructions(
             0,
             """
