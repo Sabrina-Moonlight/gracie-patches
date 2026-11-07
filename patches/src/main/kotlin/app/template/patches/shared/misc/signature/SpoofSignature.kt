@@ -1,6 +1,5 @@
 package app.template.patches.shared.misc.signature
 
-import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.BytecodePatchContext
 import app.morphe.patcher.patch.PatchException
@@ -21,15 +20,26 @@ private const val CERTIFICATE_PLACEHOLDER = "<certificate>"
  * Injects the original signing certificate into SpoofSignature and
  * makes the given Application class extend it.
  * Requires the stock (not re-signed) APK so the original certificate is available.
+ *
+ * signingCertificates is Map<ApkSignatureScheme, List<X509Certificate>>
  */
 internal fun BytecodePatchContext.spoofSignature(applicationClass: String) {
-    val certificates = packageMetadata.signingCertificates
-    if (certificates.isNullOrEmpty()) {
+    val certMap = packageMetadata.signingCertificates
+    if (certMap.isNullOrEmpty()) {
         throw PatchException(
             "No signing certificate found. Use the original (stock) APK, not a re-signed one.",
         )
     }
-    val certificate = certificates.first()
+
+    // Map values are lists of certificates per scheme – take the first available
+    val certificate = certMap.values
+        .asSequence()
+        .flatten()
+        .firstOrNull()
+        ?: throw PatchException(
+            "No signing certificate found. Use the original (stock) APK, not a re-signed one.",
+        )
+
     val certBase64 = Base64.getEncoder().encodeToString(certificate.encoded)
 
     val clinit = mutableClassDefBy(SPOOF_SIGNATURE_CLASS)
@@ -42,10 +52,11 @@ internal fun BytecodePatchContext.spoofSignature(applicationClass: String) {
 }
 
 private fun MutableMethod.replaceString(placeholder: String, value: String) {
-    val instructions = implementation?.instructions ?: throw PatchException("No implementation")
+    val impl = implementation ?: throw PatchException("No implementation")
     var index = -1
     var reg = 0
-    for ((i, insn) in instructions.withIndex()) {
+    var i = 0
+    for (insn in impl.instructions) {
         if (insn is ReferenceInstruction) {
             val ref = insn.reference
             if (ref is StringReference && ref.string == placeholder) {
@@ -56,11 +67,11 @@ private fun MutableMethod.replaceString(placeholder: String, value: String) {
                 break
             }
         }
+        i++
     }
     if (index < 0) {
         throw PatchException("Placeholder \"$placeholder\" not found in SpoofSignature")
     }
-    // Escape quotes in value for smali
     val escaped = value.replace("\\", "\\\\").replace("\"", "\\\"")
     replaceInstruction(index, "const-string v$reg, \"$escaped\"")
 }
