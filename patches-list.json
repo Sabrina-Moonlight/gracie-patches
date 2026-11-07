@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.47",
+  "version": "1.0.48",
   "patches": [
     {
       "name": "Clone app",
@@ -499,6 +499,38 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock Local",
+      "description": "Marks icons and themes as already unlocked so the rewarded-ad screen does not appear.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.themezy.theme.iconwidgets",
+          "name": "Themezy",
+          "description": null,
+          "apkFileType": "APKS_REQUIRED",
+          "appIconColor": "#7C4DFF",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.9",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
+              "isExperimental": false,
+              "minSdk": null,
               "description": null
             }
           ]
