@@ -33,6 +33,11 @@ import android.util.Base64;
 @SuppressWarnings("unused")
 public class SpoofSignature extends Application {
 
+    // Placeholders replaced by the patch – must stay as string constants in the dex
+    private static final String PLACEHOLDER_PACKAGE = "<package-name>";
+    private static final String PLACEHOLDER_CERTIFICATE = "<certificate>";
+
+
     private static PackageManagerBinder packageManagerBinder;
 
     private static Object spoofedPackageManager;
@@ -42,8 +47,8 @@ public class SpoofSignature extends Application {
     static {
         Signature sig = null;
         try {
-            String packageName = "<package-name>";
-            String certificate = "<certificate>";
+            String packageName = PLACEHOLDER_PACKAGE;
+            String certificate = PLACEHOLDER_CERTIFICATE;
             // If placeholders were not replaced, skip spoof instead of crashing
             if (packageName.contains("<") || certificate.contains("<") || certificate.length() < 20) {
                 android.util.Log.e("SpoofSignature", "Certificate not injected, skipping spoof");

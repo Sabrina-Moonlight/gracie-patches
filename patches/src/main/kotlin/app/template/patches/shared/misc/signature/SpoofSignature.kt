@@ -19,61 +19,66 @@ private const val CERTIFICATE_PLACEHOLDER = "<certificate>"
 /**
  * Injects the original signing certificate into SpoofSignature and
  * makes the given Application class extend it.
- * Requires the stock (not re-signed) APK so the original certificate is available.
  *
- * signingCertificates is Map<ApkSignatureScheme, List<X509Certificate>>
+ * If the extension class or placeholders are missing, skips the spoof
+ * instead of failing the whole patch (multi-sound can still apply).
  */
 internal fun BytecodePatchContext.spoofSignature(applicationClass: String) {
-    val certMap = packageMetadata.signingCertificates
-    if (certMap.isNullOrEmpty()) {
-        throw PatchException(
-            "No signing certificate found. Use the original (stock) APK, not a re-signed one.",
-        )
+    val classDef = try {
+        mutableClassDefBy(SPOOF_SIGNATURE_CLASS)
+    } catch (e: Exception) {
+        // Extension not merged – skip spoof
+        return
     }
 
-    // Map values are lists of certificates per scheme – take the first available
+    val certMap = packageMetadata.signingCertificates
+    if (certMap.isNullOrEmpty()) {
+        return
+    }
     val certificate = certMap.values
         .asSequence()
         .flatten()
         .firstOrNull()
-        ?: throw PatchException(
-            "No signing certificate found. Use the original (stock) APK, not a re-signed one.",
-        )
+        ?: return
 
     val certBase64 = Base64.getEncoder().encodeToString(certificate.encoded)
+    val packageName = packageMetadata.packageName
 
-    val clinit = mutableClassDefBy(SPOOF_SIGNATURE_CLASS)
-        .methods.single { it.name == "<clinit>" }
+    var replacedPackage = false
+    var replacedCert = false
 
-    clinit.replaceString(PACKAGE_NAME_PLACEHOLDER, packageMetadata.packageName)
-    clinit.replaceString(CERTIFICATE_PLACEHOLDER, certBase64)
-
-    applicationRoot(applicationClass).setSuperClass(SPOOF_SIGNATURE_CLASS)
-}
-
-private fun MutableMethod.replaceString(placeholder: String, value: String) {
-    val impl = implementation ?: throw PatchException("No implementation")
-    var index = -1
-    var reg = 0
-    var i = 0
-    for (insn in impl.instructions) {
-        if (insn is ReferenceInstruction) {
-            val ref = insn.reference
-            if (ref is StringReference && ref.string == placeholder) {
-                index = i
-                if (insn is OneRegisterInstruction) {
-                    reg = insn.registerA
+    // Search ALL methods (clinit, constructors, etc.) for the placeholders
+    for (method in classDef.methods) {
+        val impl = method.implementation ?: continue
+        var i = 0
+        for (insn in impl.instructions) {
+            if (insn is ReferenceInstruction) {
+                val ref = insn.reference
+                if (ref is StringReference) {
+                    when (ref.string) {
+                        PACKAGE_NAME_PLACEHOLDER -> {
+                            val reg = if (insn is OneRegisterInstruction) insn.registerA else 0
+                            val escaped = packageName.replace("\\", "\\\\").replace("\"", "\\\"")
+                            method.replaceInstruction(i, "const-string v$reg, \"$escaped\"")
+                            replacedPackage = true
+                        }
+                        CERTIFICATE_PLACEHOLDER -> {
+                            val reg = if (insn is OneRegisterInstruction) insn.registerA else 0
+                            val escaped = certBase64.replace("\\", "\\\\").replace("\"", "\\\"")
+                            method.replaceInstruction(i, "const-string v$reg, \"$escaped\"")
+                            replacedCert = true
+                        }
+                    }
                 }
-                break
             }
+            i++
         }
-        i++
     }
-    if (index < 0) {
-        throw PatchException("Placeholder \"$placeholder\" not found in SpoofSignature")
+
+    // Only change Application superclass if both placeholders were found
+    if (replacedPackage && replacedCert) {
+        applicationRoot(applicationClass).setSuperClass(SPOOF_SIGNATURE_CLASS)
     }
-    val escaped = value.replace("\\", "\\\\").replace("\"", "\\\"")
-    replaceInstruction(index, "const-string v$reg, \"$escaped\"")
 }
 
 private fun BytecodePatchContext.applicationRoot(applicationClass: String): MutableClass {
