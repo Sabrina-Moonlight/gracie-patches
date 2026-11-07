@@ -18,10 +18,6 @@ private val PIXEL_WIDGETS = Compatibility(
     ),
 )
 
-/**
- * Only skip the real entry. Other creators (hxreborn / morphe shared) do the same:
- * returnEarly on initializeLicenseCheck. That prevents the error dialog and the close.
- */
 private object InitializeLicenseCheckFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
     name = "initializeLicenseCheck",
