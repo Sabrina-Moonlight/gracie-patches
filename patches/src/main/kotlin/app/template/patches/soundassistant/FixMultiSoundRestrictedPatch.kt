@@ -34,6 +34,17 @@ private object RestrictedDecisionFingerprint : Fingerprint(
     strings = listOf("restrictedPackageForMultiSound"),
 )
 
+// call(String, String, Bundle) – signature comparison lives here
+private object VolumeStarCallFingerprint : Fingerprint(
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    returnType = "Landroid/os/Bundle;",
+    parameters = listOf(
+        "Ljava/lang/String;",
+        "Ljava/lang/String;",
+        "Landroid/os/Bundle;",
+    ),
+)
+
 @Suppress("unused")
 val fixMultiSoundRestrictedPatch = bytecodePatch(
     name = "Fix Multi Sound Restricted",
@@ -50,11 +61,12 @@ val fixMultiSoundRestrictedPatch = bytecodePatch(
 
         // 2. Local signature spoof: force Signature.equals -> true
         runCatching {
-            val providerClass = "Lcom/samsung/systemui/volumestar/provider/VolumeStarContentProvider;"
-            val methods = classDefBy(providerClass).methods
-            for (method in methods) {
-                if (method.name != "call") continue
-                val impl = method.implementation ?: continue
+            VolumeStarCallFingerprint.matchAll().forEach { match ->
+                val method = match.method
+                if (method.definingClass != "Lcom/samsung/systemui/volumestar/provider/VolumeStarContentProvider;") {
+                    return@forEach
+                }
+                val impl = method.implementation ?: return@forEach
                 val instructions = ArrayList<Instruction>()
                 for (insn in impl.instructions) {
                     instructions.add(insn)
