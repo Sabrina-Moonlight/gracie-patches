@@ -17,8 +17,8 @@ private val THEMEZY = Compatibility(
 )
 
 /**
- * Boolean checks that decide if an icon/theme needs a rewarded ad.
- * Returning true marks them already unlocked offline.
+ * Boolean checks that decide if an icon needs a rewarded ad before apply.
+ * Returning true skips the "watch ad" window.
  */
 private object IsIconUnlockedFingerprint : Fingerprint(
     returnType = "Z",
@@ -35,7 +35,7 @@ private object IsUnlockedFingerprint : Fingerprint(
 @Suppress("unused")
 val unlockLocalPatch = bytecodePatch(
     name = "Unlock Local",
-    description = "Marks icons and themes as already unlocked so the rewarded-ad screen does not appear.",
+    description = "Marks icons and themes as already unlocked so the rewarded-ad screen does not appear when applying.",
     default = true,
 ) {
     compatibleWith(THEMEZY)
