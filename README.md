@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.72](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.72)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
+> **[v1.0.73](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.73)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;18 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -129,6 +129,24 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | [Disable Pairip](#disable-pairip) | Skips the local license check so the app can keep running offline. |  |
 | [Hide Ads](#hide-ads) | Turns off every ad gate and every show/preload path in Themezy. |  |
 | [Unlock Local](#unlock-local) | Marks icons, wallpapers and widgets as unlocked so only Add/Apply shows, never Unlock. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Multiple App&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Package name:** `com.multipleapp.clonespace`
+
+**🌻 Supported versions:**
+
+| 1.0.9.260.20 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Hide Ads](#hide-ads) | Removes interstitial and app-open ads that appear when opening a clone. |  |
+| [Prevent Self Close](#prevent-self-close) | Stops the app from force-closing the process on errors after it is modified. |  |
 
 </details>
 

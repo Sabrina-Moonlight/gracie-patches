@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.72",
+  "version": "1.0.73",
   "patches": [
     {
       "name": "Clone app",
@@ -272,6 +272,38 @@
     },
     {
       "name": "Hide Ads",
+      "description": "Removes interstitial and app-open ads that appear when opening a clone.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.multipleapp.clonespace",
+          "name": "Multiple App",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#4CAF50",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.9.260.20",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide Ads",
       "description": "Turns off every ad gate and every show/preload path in Themezy.",
       "default": true,
       "category": null,
@@ -440,6 +472,38 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Prevent Self Close",
+      "description": "Stops the app from force-closing the process on errors after it is modified.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.multipleapp.clonespace",
+          "name": "Multiple App",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#4CAF50",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.9.260.20",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
+              "isExperimental": false,
+              "minSdk": null,
               "description": null
             }
           ]
