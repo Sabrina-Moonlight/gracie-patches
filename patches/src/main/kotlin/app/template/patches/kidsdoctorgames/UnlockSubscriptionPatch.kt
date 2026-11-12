@@ -9,13 +9,16 @@ import app.morphe.patcher.util.returnEarly
 import java.util.logging.Logger
 
 /**
- * Kids doctor games (com.bimiboo.kids.doctor.games) 1.12 / versionCode 466.
+ * Kids doctor games 1.12 (versionCode 466).
  *
- * Forces BB Pass SharedSub gates so the app treats the shared subscription as active:
- * - hasTrustedActiveSharedSubscription / queryPackage / isActive / isTrusted → true
- * - expiry getters → far-future timestamp
+ * Layers:
+ * 1) BB Pass SharedSub + BbId trust gates → always active / trusted
+ * 2) Google Play Billing Purchase.getPurchaseState → PURCHASED (1)
+ * 3) Purchase.isAcknowledged → true
  *
- * This build has no PairIP / VMRunner, so no protection dependsOn are required.
+ * Note: paywalls are also gated in Unity IL2CPP (IsFullAccess). Java-side
+ * unlock covers SharedSub / Billing objects; if Unity still shows the wall,
+ * native IL2CPP work is needed next.
  */
 private val KIDS_DOCTOR_GAMES = Compatibility(
     name = "Kids doctor games",
@@ -30,7 +33,7 @@ private val KIDS_DOCTOR_GAMES = Compatibility(
 @Suppress("unused")
 val unlockSubscriptionPatch = bytecodePatch(
     name = "Unlock subscription",
-    description = "Unlocks BB Pass / shared subscription so all content stays available.",
+    description = "Unlocks BB Pass / shared subscription and forces Play Billing purchases as owned.",
     default = true,
 ) {
     compatibleWith(KIDS_DOCTOR_GAMES)
@@ -38,18 +41,31 @@ val unlockSubscriptionPatch = bytecodePatch(
     execute {
         val logger = Logger.getLogger(this::class.java.name)
 
-        // Boolean gates → always true
+        // --- BB Pass SharedSub ---
         HasTrustedActiveSharedSubscriptionFingerprint.method.returnEarly(true)
         QueryPackageFingerprint.method.returnEarly(true)
         SharedSubStoreIsActiveFingerprint.method.returnEarly(true)
         SharedSubTrustPolicyIsTrustedFingerprint.method.returnEarly(true)
+        runCatching {
+            BbIdCrossAppTrustIsTrustedFingerprint.method.returnEarly(true)
+        }
 
-        // Expiry → far future (~year 2286)
         forceFarExpiry(TrustedActiveSharedSubscriptionExpiryFingerprint.method)
         forceFarExpiry(QueryPackageExpiryFingerprint.method)
         forceFarExpiry(SharedSubStoreExpiresAtFingerprint.method)
 
-        logger.info("Kids doctor games: BB Pass / SharedSub gates unlocked")
+        // --- Play Billing Purchase objects ---
+        // PURCHASED = 1
+        PurchaseGetPurchaseStateFingerprint.method.addInstructions(
+            0,
+            """
+                const/4 v0, 0x1
+                return v0
+            """.trimIndent(),
+        )
+        PurchaseIsAcknowledgedFingerprint.method.returnEarly(true)
+
+        logger.info("Kids doctor games: SharedSub + Purchase state forced owned")
     }
 }
 

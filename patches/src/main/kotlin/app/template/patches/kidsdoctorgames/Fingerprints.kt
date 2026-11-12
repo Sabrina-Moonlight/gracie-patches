@@ -2,11 +2,6 @@ package app.template.patches.kidsdoctorgames
 
 import app.morphe.patcher.Fingerprint
 
-/**
- * BB Pass shared subscription gates (com.bimiboo.pass).
- * Classes are not obfuscated in 1.12.
- */
-
 /** SharedSubClient.hasTrustedActiveSharedSubscription(Context, String[], boolean)Z */
 internal object HasTrustedActiveSharedSubscriptionFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/pass/SharedSubClient;",
@@ -63,7 +58,7 @@ internal object SharedSubStoreExpiresAtFingerprint : Fingerprint(
     parameters = listOf("Landroid/content/Context;"),
 )
 
-/** SharedSubTrustPolicy.isTrusted(Context, String, String[], boolean)Z */
+/** SharedSubTrustPolicy.isTrusted(...)Z */
 internal object SharedSubTrustPolicyIsTrustedFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/pass/SharedSubTrustPolicy;",
     name = "isTrusted",
@@ -74,4 +69,33 @@ internal object SharedSubTrustPolicyIsTrustedFingerprint : Fingerprint(
         "[Ljava/lang/String;",
         "Z",
     ),
+)
+
+/** BbIdCrossAppTrust.isTrusted(...)Z */
+internal object BbIdCrossAppTrustIsTrustedFingerprint : Fingerprint(
+    definingClass = "Lcom/bimiboo/bimibooid/crossapp/BbIdCrossAppTrust;",
+    name = "isTrusted",
+    returnType = "Z",
+    parameters = listOf(
+        "Landroid/content/Context;",
+        "Ljava/lang/String;",
+        "[Ljava/lang/String;",
+        "Z",
+    ),
+)
+
+/** Purchase.getPurchaseState()I — 1 = PURCHASED */
+internal object PurchaseGetPurchaseStateFingerprint : Fingerprint(
+    definingClass = "Lcom/android/billingclient/api/Purchase;",
+    name = "getPurchaseState",
+    returnType = "I",
+    parameters = emptyList(),
+)
+
+/** Purchase.isAcknowledged()Z */
+internal object PurchaseIsAcknowledgedFingerprint : Fingerprint(
+    definingClass = "Lcom/android/billingclient/api/Purchase;",
+    name = "isAcknowledged",
+    returnType = "Z",
+    parameters = emptyList(),
 )
