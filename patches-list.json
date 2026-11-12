@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.90",
+  "version": "1.0.91",
   "patches": [
     {
       "name": "Clone app",
@@ -186,7 +186,7 @@
     },
     {
       "name": "Keep sound during ads",
-      "description": "Prevents media from pausing when ads play.",
+      "description": "Prevents media from pausing when ads play. Also blocks the force-update close.",
       "default": true,
       "category": null,
       "compatiblePackages": [
