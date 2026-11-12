@@ -9,29 +9,34 @@ import android.content.SharedPreferences;
 import java.lang.reflect.Method;
 
 /**
- * Activates Bimi Boo BB Pass / SharedSub local state so Java and Unity see an
- * active shared subscription. Safe no-op if classes are missing.
+ * Activates Bimi Boo BB Pass / SharedSub local state.
+ * Safe no-op if classes or methods are missing.
  */
 @SuppressWarnings("unused")
 public final class BbPassUnlockHelper {
 
-    private static final long FAR_EXPIRY_MS = 4102444800000L; // ~2100-01-01
+    private static final long FAR_EXPIRY_MS = 4102444800000L;
 
     private BbPassUnlockHelper() {
     }
 
-    /** Call from Activity onCreate / onResume with a Context. */
     public static void activate(Context context) {
         if (context == null) {
             return;
         }
-        Context app = context.getApplicationContext();
-        trySetLocalActive(app);
-        trySetStoreActive(app);
-        tryWritePrefs(app);
+        try {
+            Context app = context.getApplicationContext();
+            if (app == null) {
+                app = context;
+            }
+            setLocalActive(app);
+            writePrefs(app);
+        } catch (Throwable ignored) {
+            // Never crash the host app from the extension.
+        }
     }
 
-    private static void trySetLocalActive(Context ctx) {
+    private static void setLocalActive(Context ctx) {
         try {
             Class<?> client = Class.forName("com.bimiboo.pass.SharedSubClient");
             Method m = client.getMethod(
@@ -40,7 +45,7 @@ public final class BbPassUnlockHelper {
                     boolean.class,
                     long.class
             );
-            m.invoke(null, ctx, true, FAR_EXPIRY_MS);
+            m.invoke(null, ctx, Boolean.TRUE, Long.valueOf(FAR_EXPIRY_MS));
         } catch (Throwable ignored) {
             try {
                 Class<?> client = Class.forName("com.bimiboo.pass.SharedSubClient");
@@ -51,65 +56,27 @@ public final class BbPassUnlockHelper {
                         boolean.class,
                         long.class
                 );
-                m.invoke(instance, ctx, true, FAR_EXPIRY_MS);
+                m.invoke(instance, ctx, Boolean.TRUE, Long.valueOf(FAR_EXPIRY_MS));
             } catch (Throwable ignored2) {
             }
         }
     }
 
-    private static void trySetStoreActive(Context ctx) {
+    private static void writePrefs(Context ctx) {
         try {
-            Class<?> store = Class.forName("com.bimiboo.pass.SharedSubStore");
-            Method m = store.getMethod(
-                    "setActive",
-                    Context.class,
-                    boolean.class,
-                    long.class
+            SharedPreferences prefs = ctx.getSharedPreferences(
+                    "bbpass_shared_sub",
+                    Context.MODE_PRIVATE
             );
-            try {
-                m.invoke(null, ctx, true, FAR_EXPIRY_MS);
-            } catch (Throwable notStatic) {
-                Object instance = store.getDeclaredConstructor().newInstance();
-                m.invoke(instance, ctx, true, FAR_EXPIRY_MS);
-            }
+            prefs.edit()
+                    .putBoolean("KEY_ACTIVE", true)
+                    .putBoolean("active", true)
+                    .putBoolean("isActive", true)
+                    .putBoolean("KEY_TRUSTED", true)
+                    .putLong("KEY_EXPIRES", FAR_EXPIRY_MS)
+                    .putLong("expiresAt", FAR_EXPIRY_MS)
+                    .apply();
         } catch (Throwable ignored) {
-        }
-    }
-
-    private static void tryWritePrefs(Context ctx) {
-        String[] prefNames = {
-                "bbpass_shared_sub",
-                "bbpass.sharedsub",
-                ".bbpass.sharedsub",
-                "SharedSubStore",
-                "com.bimiboo.pass.SharedSubStore",
-                "BimiBooPass",
-                "bb_pass",
-                "OfflineAccess",
-                "IAP.OfflineAccess",
-        };
-        for (String name : prefNames) {
-            try {
-                SharedPreferences prefs = ctx.getSharedPreferences(name, Context.MODE_PRIVATE);
-                prefs.edit()
-                        .putBoolean("KEY_ACTIVE", true)
-                        .putBoolean("active", true)
-                        .putBoolean("isActive", true)
-                        .putBoolean("KEY_TRUSTED", true)
-                        .putBoolean("trusted", true)
-                        .putBoolean("HasNonServerAccessGrant", true)
-                        .putBoolean("HasNonServerPassGrant", true)
-                        .putBoolean("_hasOfflineAccess", true)
-                        .putBoolean("_hasOfflinePassAccess", true)
-                        .putBoolean("_hasStoreOfflinePassAccess", true)
-                        .putBoolean("BimiBooPassPurchased", true)
-                        .putBoolean("AppOnlyUnlocked", true)
-                        .putLong("KEY_EXPIRES", FAR_EXPIRY_MS)
-                        .putLong("expiresAt", FAR_EXPIRY_MS)
-                        .putLong("expires_at", FAR_EXPIRY_MS)
-                        .apply();
-            } catch (Throwable ignored) {
-            }
         }
     }
 }
