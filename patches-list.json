@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.86",
+  "version": "1.0.87",
   "patches": [
     {
       "name": "Clone app",
@@ -379,7 +379,7 @@
     },
     {
       "name": "Unlock purchases",
-      "description": "Injects synthetic owned Play purchases and forces PURCHASED/acknowledged so Hamster Escape unlocks No Ads and store offers.",
+      "description": "Unlocks No Ads and store offers via IL2CPP gates plus synthetic Play purchases.",
       "default": true,
       "category": null,
       "compatiblePackages": [
