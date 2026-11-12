@@ -24,22 +24,19 @@ private val SOUND_ASSISTANT = Compatibility(
 
 /**
  * n3.k.H(Context) — force-update gate.
- * Compares OneUI version vs app versionName. If app is "older", MainActivity
- * shows a non-cancelable dialog and calls finish(). Return false always.
+ * Real string in dex: "Force update check: OneUI="
+ * When true, MainActivity shows dialog and calls finish().
  */
 private object ForceUpdateCheckFingerprint : Fingerprint(
     definingClass = "Ln3/k;",
     returnType = "Z",
     parameters = listOf("Landroid/content/Context;"),
-    strings = listOf(
-        "Force update check:",
-        "SAT version : ",
-    ),
+    strings = listOf("Force update check: OneUI="),
 )
 
 /**
- * n3.k.n(Context) — reads Settings.System "multi_audio_focus_enabled".
- * Always return true so dual-app / multi audio focus is considered on.
+ * n3.k.n(Context) — is multi_audio_focus_enabled.
+ * Only the getter has a single Context param and this string.
  */
 private object IsMultiAudioFocusEnabledFingerprint : Fingerprint(
     definingClass = "Ln3/k;",
@@ -49,17 +46,15 @@ private object IsMultiAudioFocusEnabledFingerprint : Fingerprint(
 )
 
 /**
- * BootReceiver.a(Context) restores settings at boot.
- * We also force multi audio focus on via the real enable method.
+ * BootReceiver.a(Context) — restores settings at boot.
  */
 private object BootReceiverInitFingerprint : Fingerprint(
     definingClass = "Lcom/samsung/android/soundassistant/receivers/BootReceiver;",
     returnType = "V",
     parameters = listOf("Landroid/content/Context;"),
     strings = listOf(
-        "soundassistant_ignore_audio_focus_enabled",
-        "soundassistant_ignore_audio_focus_uid",
         "SAT_BootReceiver",
+        "soundassistant_ignore_audio_focus_enabled",
     ),
 )
 
@@ -79,7 +74,7 @@ val keepSoundDuringAdsPatch = bytecodePatch(
     )
 
     execute {
-        // Stop the app from closing on open (force-update dialog → finish).
+        // Stop close-on-open (force-update dialog → finish).
         ForceUpdateCheckFingerprint.method.returnEarly(false)
 
         // Always report multi audio focus as enabled.
