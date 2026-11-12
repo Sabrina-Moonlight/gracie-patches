@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.87](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.87)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
+> **[v1.0.88](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.88)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
 <details open>
 <summary>🌸 Quick Settings&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -168,7 +168,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Unlock purchases](#unlock-purchases) | Unlocks No Ads and store offers via IL2CPP gates plus synthetic Play purchases. |  |
+| [Unlock purchases](#unlock-purchases) | Unlocks No Ads, skins, and trails via IL2CPP ownership gates and synthetic Play purchases. |  |
 
 </details>
 
