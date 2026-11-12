@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.76](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.76)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;17 patches total
+> **[v1.0.77](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.77)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;20 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -167,13 +167,32 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 </details>
 
 <details open>
-<summary>🌼 Universal&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<summary>🌸 Kids doctor games&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Package name:** `com.bimiboo.kids.doctor.games`
+
+**🌻 Supported versions:**
+
+| 1.12 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Unlock subscription](#unlock-subscription) | Unlocks BB Pass / shared subscription so all content stays available. |  |
+
+</details>
+
+<details open>
+<summary>🌼 Universal&nbsp;&nbsp;•&nbsp;&nbsp;4 patches</summary>
 <br>
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
+| [Add battery optimization permission (internal)](#add-battery-optimization-permission-internal) | Adds REQUEST_IGNORE_BATTERY_OPTIMIZATIONS to the manifest. |  |
 | [Clone app](#clone-app) | Changes the app package name and label so you can install several clones. Pick a clone number (1–50). Each number is a different package (app.clone1, app.clone2…). On update, re-apply the same number on each clone. | • Clone number<br>• Custom package (optional)<br>• Update permissions<br>• Update providers |
 | [Randomize device identity](#randomize-device-identity) | Generates random Android ID, Wi-Fi MAC, Bluetooth MAC and serial each time the patch is applied. Useful so every clone has a different identity. |  |
+| [Request unrestricted battery](#request-unrestricted-battery) | On app start, shows the system dialog to allow unrestricted battery (ignore battery optimizations) if it is not already allowed. |  |
 
 </details>
 
