@@ -2,7 +2,6 @@ package app.template.patches.hamsterescape
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.ApkFileType
-import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
@@ -12,44 +11,36 @@ import app.template.patches.shared.firebase.spoofFirebaseCertHashPatch
 import app.template.patches.shared.installer.spoofInstallSourcePatch
 import app.template.patches.shared.signature.spoofSignatureVerificationPatch
 
+/**
+ * Package from AndroidManifest of build 5.2.0: gg.sunday.hamsterescape
+ *
+ * targets = emptyList() → Morphe shows this patch for ANY version of that
+ * package. A pinned AppTarget(version=...) that does not match the APK
+ * versionName exactly makes the patch invisible in the UI.
+ */
 private val HAMSTER_ESCAPE = Compatibility(
     name = "Hamster Escape",
     packageName = "gg.sunday.hamsterescape",
     apkFileType = ApkFileType.APK,
     appIconColor = 0xFF8C42,
-    targets = listOf(
-        AppTarget(version = "5.2.0"),
-    ),
+    targets = emptyList(),
 )
 
-/**
- * com.android.billingclient.api.Purchase#getPurchaseState()I
- *
- * Play Billing states: 0 UNSPECIFIED_STATE, 1 PURCHASED, 2 PENDING.
- * Forcing 1 makes every Purchase object report as owned when Unity IAP
- * (com.unity.purchasing 5.0.2) and Sunday.NoAdsSystem process query/restore results.
- *
- * Verified present in classes5.dex / classes8.dex of build 5.2.0.
- */
+/** Purchase#getPurchaseState()I → force PURCHASED (1) */
 private object PurchaseStateFingerprint : Fingerprint(
     definingClass = "Lcom/android/billingclient/api/Purchase;",
     name = "getPurchaseState",
     returnType = "I",
-    parameters = listOf(),
+    parameters = emptyList(),
     accessFlags = listOf(AccessFlags.PUBLIC),
 )
 
-/**
- * com.android.billingclient.api.Purchase#isAcknowledged()Z
- *
- * Unity Purchasing ignores purchases that are not acknowledged.
- * Returning true keeps restore + entitlement paths complete.
- */
+/** Purchase#isAcknowledged()Z → true */
 private object PurchaseAcknowledgedFingerprint : Fingerprint(
     definingClass = "Lcom/android/billingclient/api/Purchase;",
     name = "isAcknowledged",
     returnType = "Z",
-    parameters = listOf(),
+    parameters = emptyList(),
     accessFlags = listOf(AccessFlags.PUBLIC),
 )
 
@@ -69,10 +60,7 @@ val unlockPurchasesPatch = bytecodePatch(
     )
 
     execute {
-        // getPurchaseState() → 1 (PURCHASED)
         PurchaseStateFingerprint.method.returnEarly(1)
-
-        // isAcknowledged() → true
         PurchaseAcknowledgedFingerprint.method.returnEarly(true)
     }
 }
