@@ -9,21 +9,17 @@ import app.morphe.patcher.util.returnEarly
 import java.util.logging.Logger
 
 /**
- * Kids doctor games 1.12 (versionCode 466) — BB Pass / SharedSub unlock.
+ * Kids doctor games 1.12 (versionCode 466) — BB Pass / SharedSub unlock (Java side).
  *
- * What this covers (Java / JNI side):
+ * Works together with [unlockIl2CppNativePatch] which forces the Unity IL2CPP gates
+ * (HasThisAppPurchase, IsOwnedSharedActive, offline grants, IsFullAccess).
+ *
+ * Java coverage:
  * - SharedSubClient / SharedSubStore / TrustPolicy / BbId trust → always active
  * - Play Billing Purchase state → PURCHASED + acknowledged
- * - On UnityPlayerActivity.onCreate → write local SharedSub active state
- *
- * What still lives in Unity IL2CPP (not patched here):
- * - IsFullAccess / HasThisAppPurchase / ResolveAccessState pure C# logic
- * - Server receipt validation (api.bimiboo.net / api.kodomobi.ru)
- *
- * If the paywall remains after a clean install of this patch, the remaining
- * gate is Unity-native and needs IL2CPP work.
+ * - UnityPlayerActivity.onCreate → write local SharedSub active state via helper
  */
-private val KIDS_DOCTOR_GAMES = Compatibility(
+internal val KIDS_DOCTOR_GAMES = Compatibility(
     name = "Kids doctor games",
     packageName = "com.bimiboo.kids.doctor.games",
     apkFileType = ApkFileType.APKS,
@@ -38,13 +34,16 @@ private const val HELPER =
 
 @Suppress("unused")
 val unlockSubscriptionPatch = bytecodePatch(
-    name = "Unlock subscription",
-    description = "Unlocks BB Pass shared subscription and marks Play purchases as owned. " +
-        "Activates local SharedSub state when the game starts.",
+    name = "Unlock subscription (Java / SharedSub)",
+    description = "Unlocks BB Pass shared subscription on the Java/JNI side and marks " +
+        "Play purchases as owned. Activates local SharedSub state when the game starts. " +
+        "Must be used together with Unlock subscription (IL2CPP native).",
     default = true,
 ) {
     compatibleWith(KIDS_DOCTOR_GAMES)
     extendWith("extensions/extension.mpe")
+    // Native IL2CPP gates are a separate patch (unlockIl2CppNativePatch).
+    // Enable both in Morphe; order does not matter.
 
     execute {
         val logger = Logger.getLogger(this::class.java.name)

@@ -10,7 +10,8 @@ import java.lang.reflect.Method;
 
 /**
  * Activates Bimi Boo BB Pass / SharedSub local state so Unity JNI checks see an
- * active shared subscription. Safe no-op if classes or methods are missing.
+ * active shared subscription. Also best-effort offline grant prefs.
+ * Safe no-op if classes or methods are missing.
  */
 @SuppressWarnings("unused")
 public final class BbPassUnlockHelper {
@@ -76,7 +77,7 @@ public final class BbPassUnlockHelper {
         }
     }
 
-    /** Best-effort write of known preference keys used by SharedSubStore. */
+    /** Best-effort write of known preference keys used by SharedSubStore / offline grants. */
     private static void tryWritePrefs(Context ctx) {
         String[] prefNames = {
                 "bbpass_shared_sub",
@@ -84,6 +85,10 @@ public final class BbPassUnlockHelper {
                 ".bbpass.sharedsub",
                 "SharedSubStore",
                 "com.bimiboo.pass.SharedSubStore",
+                "BimiBooPass",
+                "bb_pass",
+                "OfflineAccess",
+                "IAP.OfflineAccess",
         };
         for (String name : prefNames) {
             try {
@@ -94,6 +99,13 @@ public final class BbPassUnlockHelper {
                         .putBoolean("isActive", true)
                         .putBoolean("KEY_TRUSTED", true)
                         .putBoolean("trusted", true)
+                        .putBoolean("HasNonServerAccessGrant", true)
+                        .putBoolean("HasNonServerPassGrant", true)
+                        .putBoolean("_hasOfflineAccess", true)
+                        .putBoolean("_hasOfflinePassAccess", true)
+                        .putBoolean("_hasStoreOfflinePassAccess", true)
+                        .putBoolean("BimiBooPassPurchased", true)
+                        .putBoolean("AppOnlyUnlocked", true)
                         .putLong("KEY_EXPIRES", FAR_EXPIRY_MS)
                         .putLong("expiresAt", FAR_EXPIRY_MS)
                         .putLong("expires_at", FAR_EXPIRY_MS)
