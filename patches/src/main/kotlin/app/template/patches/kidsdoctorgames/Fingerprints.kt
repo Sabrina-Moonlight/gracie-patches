@@ -82,10 +82,16 @@ internal object PurchaseIsAcknowledgedFingerprint : Fingerprint(
     parameters = emptyList(),
 )
 
-/** Unity main activity — inject BB Pass activate here. */
 internal object UnityPlayerActivityOnCreateFingerprint : Fingerprint(
     definingClass = "Lcom/unity3d/player/UnityPlayerActivity;",
     name = "onCreate",
     returnType = "V",
     parameters = listOf("Landroid/os/Bundle;"),
+)
+
+internal object UnityPlayerActivityOnResumeFingerprint : Fingerprint(
+    definingClass = "Lcom/unity3d/player/UnityPlayerActivity;",
+    name = "onResume",
+    returnType = "V",
+    parameters = emptyList(),
 )

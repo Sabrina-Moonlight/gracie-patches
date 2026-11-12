@@ -9,9 +9,8 @@ import android.content.SharedPreferences;
 import java.lang.reflect.Method;
 
 /**
- * Activates Bimi Boo BB Pass / SharedSub local state so Unity JNI checks see an
- * active shared subscription. Also best-effort offline grant prefs.
- * Safe no-op if classes or methods are missing.
+ * Activates Bimi Boo BB Pass / SharedSub local state so Java and Unity see an
+ * active shared subscription. Safe no-op if classes are missing.
  */
 @SuppressWarnings("unused")
 public final class BbPassUnlockHelper {
@@ -21,7 +20,7 @@ public final class BbPassUnlockHelper {
     private BbPassUnlockHelper() {
     }
 
-    /** Call from Activity/Application onCreate with a Context. */
+    /** Call from Activity onCreate / onResume with a Context. */
     public static void activate(Context context) {
         if (context == null) {
             return;
@@ -77,7 +76,6 @@ public final class BbPassUnlockHelper {
         }
     }
 
-    /** Best-effort write of known preference keys used by SharedSubStore / offline grants. */
     private static void tryWritePrefs(Context ctx) {
         String[] prefNames = {
                 "bbpass_shared_sub",

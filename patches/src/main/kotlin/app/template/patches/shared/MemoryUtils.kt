@@ -3,7 +3,7 @@ package app.template.patches.shared
 import app.morphe.patcher.patch.PatchException
 
 /**
- * Convert a string representing a pattern of hexadecimal bytes to a byte array.
+ * Convert a string of hexadecimal bytes (spaces optional) to a ByteArray.
  */
 fun byteArrayOf(pattern: String): ByteArray {
     val stripped = pattern.replace(Regex("\\s"), "")
@@ -16,8 +16,7 @@ fun byteArrayOf(pattern: String): ByteArray {
             .toByteArray()
     } catch (e: NumberFormatException) {
         throw PatchException(
-            "Could not parse pattern: $pattern. A pattern is a sequence of case insensitive strings " +
-                "representing hexadecimal bytes separated by spaces",
+            "Could not parse pattern: $pattern",
             e,
         )
     }
