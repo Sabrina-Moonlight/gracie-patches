@@ -5,8 +5,6 @@
  *
  * VMRunner fingerprints ported from hoo-dles/morphe-patches:
  * https://github.com/hoo-dles/morphe-patches/commit/d3c02d333b9477ec50039093fc3b3641e3f1cbd0
- * Commit d3c02d333b9477ec50039093fc3b3641e3f1cbd0 (2026-07-24),
- * patches/src/main/kotlin/hoodles/morphe/patches/shared/misc/pairip/Fingerprints.kt
  */
 package app.template.patches.shared.misc.pairip
 
@@ -19,6 +17,35 @@ internal object InitializeLicenseCheckFingerprint : Fingerprint(
     name = "initializeLicenseCheck",
     returnType = "V",
     parameters = emptyList(),
+)
+
+/** Entry called from pairip Application.attachBaseContext. */
+internal object CheckLicenseFingerprint : Fingerprint(
+    definingClass = LICENSE_CLIENT_CLASS,
+    name = "checkLicense",
+    returnType = "V",
+    parameters = listOf("Landroid/content/Context;"),
+)
+
+internal object ProcessResponseFingerprint : Fingerprint(
+    definingClass = LICENSE_CLIENT_CLASS,
+    name = "processResponse",
+    returnType = "V",
+    parameters = listOf("I", "Landroid/os/Bundle;"),
+)
+
+internal object HandleErrorFingerprint : Fingerprint(
+    definingClass = LICENSE_CLIENT_CLASS,
+    name = "handleError",
+    returnType = "V",
+    parameters = listOf("Lcom/pairip/licensecheck/LicenseCheckException;"),
+)
+
+internal object StartPaywallActivityFingerprint : Fingerprint(
+    definingClass = LICENSE_CLIENT_CLASS,
+    name = "startPaywallActivity",
+    returnType = "V",
+    parameters = listOf("Landroid/app/PendingIntent;"),
 )
 
 internal object VMRunnerStaticInitializerFingerprint : Fingerprint(

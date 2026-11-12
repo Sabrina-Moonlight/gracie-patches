@@ -4,20 +4,8 @@ import app.morphe.patcher.Fingerprint
 import com.android.tools.smali.dexlib2.AccessFlags
 
 /**
- * rt.c()Z — "is ad ready to show?" (state >= 2).
- * Stable: class holds ad unit + requestShowInternal log string nearby in g().
- */
-internal object AdReadyFingerprint : Fingerprint(
-    definingClass = "Lcom/multipleapp/clonespace/rt;",
-    name = "c",
-    returnType = "Z",
-    parameters = emptyList(),
-    accessFlags = listOf(AccessFlags.PUBLIC),
-)
-
-/**
- * rt.g(View)V — requestShowInternal: actually shows the loaded interstitial / app-open ad.
- * Fingerprint by unique log strings in the method body.
+ * rt.g(View)V — shows the loaded interstitial / app-open (requestShowInternal).
+ * Only the SHOW path for the host ad gate — does not touch AdMob loaders.
  */
 internal object RequestShowAdFingerprint : Fingerprint(
     definingClass = "Lcom/multipleapp/clonespace/rt;",
@@ -28,9 +16,8 @@ internal object RequestShowAdFingerprint : Fingerprint(
 )
 
 /**
- * rt.h(View, long, Xq, Wn)V — entry used when opening a clone / dialog;
- * may load then show, or continue without ad.
- * Unique error string "ad can not show".
+ * rt.h(View, long, Xq, Wn)V — used when opening a clone / dialog.
+ * Must still call TB.n so the clone opens; we only skip the ad show.
  */
 internal object RequestShowAdWithCallbackFingerprint : Fingerprint(
     definingClass = "Lcom/multipleapp/clonespace/rt;",
@@ -46,33 +33,11 @@ internal object RequestShowAdWithCallbackFingerprint : Fingerprint(
 )
 
 /**
- * t2.uncaughtException — logs and calls System.exit(0).
- * That kills the whole process on any uncaught crash (including after a bad patch).
+ * t2.uncaughtException — System.exit(0) on crashes.
  */
 internal object UncaughtExceptionExitFingerprint : Fingerprint(
     definingClass = "Lcom/multipleapp/clonespace/t2;",
     name = "uncaughtException",
     returnType = "V",
     parameters = listOf("Ljava/lang/Thread;", "Ljava/lang/Throwable;"),
-)
-
-/**
- * Interstitial load entry (sn.d).
- * Belt-and-suspenders: never load interstitial so state never becomes "ready".
- */
-internal object InterstitialLoadFingerprint : Fingerprint(
-    definingClass = "Lcom/multipleapp/clonespace/sn;",
-    name = "d",
-    returnType = "V",
-    parameters = emptyList(),
-)
-
-/**
- * App-open ad load entry (un.d).
- */
-internal object AppOpenLoadFingerprint : Fingerprint(
-    definingClass = "Lcom/multipleapp/clonespace/un;",
-    name = "d",
-    returnType = "V",
-    parameters = emptyList(),
 )
