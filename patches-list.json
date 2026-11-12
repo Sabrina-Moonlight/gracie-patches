@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.84",
+  "version": "1.0.85",
   "patches": [
     {
       "name": "Clone app",
@@ -367,6 +367,33 @@
           "targets": [
             {
               "version": "1.11",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock purchases",
+      "description": "Marks every Play Billing Purchase as PURCHASED and acknowledged so Hamster Escape treats offers as owned on restore and query.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "gg.sunday.hamsterescape",
+          "name": "Hamster Escape",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#FF8C42",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": null,
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
