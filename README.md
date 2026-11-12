@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.77](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.77)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;20 patches total
+> **[v1.0.78](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.78)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;20 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -179,7 +179,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Unlock subscription](#unlock-subscription) | Unlocks BB Pass / shared subscription so all content stays available. |  |
+| [Unlock subscription](#unlock-subscription) | Unlocks BB Pass / shared subscription and forces Play Billing purchases as owned. |  |
 
 </details>
 
