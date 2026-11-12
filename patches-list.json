@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.81",
+  "version": "1.0.82",
   "patches": [
     {
       "name": "Add battery optimization permission (internal)",
@@ -12,7 +12,7 @@
     },
     {
       "name": "Clone app",
-      "description": "Changes the app package name and label so you can install several clones. Pick a clone number (1–50). Each number is a different package (app.clone1, app.clone2…). On update, re-apply the same number on each clone.",
+      "description": "Installs the app as a numbered clone.Pick a clone number (1–50). Each number is a different package (app.clone1, app.clone2…). On update, re-apply the same number on each clone.",
       "default": false,
       "category": null,
       "compatiblePackages": null,
@@ -107,8 +107,43 @@
       ]
     },
     {
-      "name": "Disable Ads",
-      "description": "Removes ads from Orientation Control.",
+      "name": "Fix Firebase after re-signing",
+      "description": "Fixes Firebase after re-signing.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": null,
+      "options": []
+    },
+    {
+      "name": "Hide ads",
+      "description": "Hides ads.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "it.simonesestito.ntiles",
+          "name": "Quick Settings",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#2196F3",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "12.0.3-17888438",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide ads",
+      "description": "Hides ads.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -134,121 +169,8 @@
       "options": []
     },
     {
-      "name": "Disable Pairip",
-      "description": "Restores the normal app entry and recovers offline method bodies so the app can keep running.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.jndapp.glass.widgets",
-          "name": "Glass Widgets",
-          "description": null,
-          "apkFileType": "APKS_REQUIRED",
-          "appIconColor": "#00BCD4",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.2",
-              "versionCodes": {
-                "ARM64_V8A": 12,
-                "ARMEABI_V7A": 12,
-                "X86_64": 12,
-                "X86": 12
-              },
-              "isExperimental": false,
-              "minSdk": 32,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable Pairip",
-      "description": "Skips the local license and integrity checks so the app can keep running offline.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.jndapp.minimal.widgets",
-          "name": "Minimal Widgets",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#607D8B",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "2.2.11",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable Pairip",
-      "description": "Skips the local license and integrity checks so the app can keep running offline.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "it.simonesestito.ntiles",
-          "name": "Quick Settings",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#2196F3",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "12.0.3-17888438",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable Pairip",
-      "description": "Skips the local license and integrity checks so the app can keep running offline.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "de.twokit.screen.recording.app",
-          "name": "Screen Recording App",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#E91E63",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.11",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable Pairip",
-      "description": "Skips the local license check so the app can keep running offline.",
+      "name": "Hide ads",
+      "description": "Hides ads.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -279,212 +201,53 @@
       "options": []
     },
     {
-      "name": "Hide Ads",
-      "description": "Turns off every ad gate and every show/preload path in Themezy.",
-      "default": true,
+      "name": "Provide Original app certificate",
+      "description": "Provides the original app certificate.",
+      "default": false,
       "category": null,
-      "compatiblePackages": [
+      "compatiblePackages": null,
+      "options": [
         {
-          "packageName": "com.themezy.theme.iconwidgets",
-          "name": "Themezy",
-          "description": null,
-          "apkFileType": "APKS_REQUIRED",
-          "appIconColor": "#7C4DFF",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.9",
-              "versionCodes": {
-                "ARM64_V8A": 9,
-                "ARMEABI_V7A": 9,
-                "X86_64": 9,
-                "X86": 9
-              },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Hide Ads Preference",
-      "description": "Uses a local preference so interstitial and banner ads stay off.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
+          "key": "originalApkPath",
+          "title": "Path to original APK (if uninstalled)",
+          "description": "Full path to the original APK or .apks bundle. Example: /sdcard/Download/Waze.apks",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
+        },
         {
-          "packageName": "it.simonesestito.ntiles",
-          "name": "Quick Settings",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#2196F3",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "12.0.3-17888438",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Local Features",
-      "description": "Uses a local preference so optional widget features stay available offline.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
+          "key": "manualCertSha1",
+          "title": "Certificate SHA-1 (manual)",
+          "description": "40-char hex. Found on APKMirror under app signature info.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
+        },
         {
-          "packageName": "com.remi.widget",
-          "name": "Aesthetic Widgets",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#9C27B0",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "85.1.4",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Local Preference",
-      "description": "Uses a local preference so optional widget features stay available offline.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
+          "key": "manualCertSha256",
+          "title": "Certificate SHA-256 (manual)",
+          "description": "64-char hex. Optional companion to SHA-1.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
+        },
         {
-          "packageName": "com.jndapp.glass.widgets",
-          "name": "Glass Widgets",
-          "description": null,
-          "apkFileType": "APKS_REQUIRED",
-          "appIconColor": "#00BCD4",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.2",
-              "versionCodes": {
-                "ARM64_V8A": 12,
-                "ARMEABI_V7A": 12,
-                "X86_64": 12,
-                "X86": 12
-              },
-              "isExperimental": false,
-              "minSdk": 32,
-              "description": null
-            }
-          ]
+          "key": "manualCertBase64",
+          "title": "Certificate Base64 DER (manual)",
+          "description": "Needed only for Signature spoof patch. Get it with: apksigner verify --print-certs original.apk",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
         }
-      ],
-      "options": []
-    },
-    {
-      "name": "Local Preference",
-      "description": "Uses a local preference so optional widget features stay available offline.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.jndapp.minimal.widgets",
-          "name": "Minimal Widgets",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#607D8B",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "2.2.11",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Local Premium",
-      "description": "Uses a local preference so premium widgets and no-ads stay available offline.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.saban.glassy.glasswidgets.themes",
-          "name": "Glassix: Glass Widgets & Theme",
-          "description": null,
-          "apkFileType": "APKS_REQUIRED",
-          "appIconColor": "#00BCD4",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.3",
-              "versionCodes": {
-                "ARM64_V8A": 103,
-                "ARMEABI_V7A": 103,
-                "X86_64": 103,
-                "X86": 103
-              },
-              "isExperimental": false,
-              "minSdk": 32,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Pro Options",
-      "description": "Uses a local preference so optional Pro options stay available.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "de.twokit.screen.recording.app",
-          "name": "Screen Recording App",
-          "description": null,
-          "apkFileType": "APK",
-          "appIconColor": "#E53935",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.11",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
+      ]
     },
     {
       "name": "Randomize device identity",
-      "description": "Generates random Android ID, Wi-Fi MAC, Bluetooth MAC and serial each time the patch is applied. Useful so every clone has a different identity.",
+      "description": "Gives each clone a random device identity.each time the patch is applied. Useful so every clone has a different identity.",
       "default": false,
       "category": null,
       "compatiblePackages": null,
@@ -524,15 +287,176 @@
     },
     {
       "name": "Request unrestricted battery",
-      "description": "On app start, shows the system dialog to allow unrestricted battery (ignore battery optimizations) if it is not already allowed.",
+      "description": "Asks for unrestricted battery on start.(ignore battery optimizations) if it is not already allowed.",
       "default": false,
       "category": null,
       "compatiblePackages": null,
       "options": []
     },
     {
-      "name": "Unlock Local",
-      "description": "Marks icons, wallpapers and widgets as unlocked so only Add/Apply shows, never Unlock.",
+      "name": "Spoof app signature",
+      "description": "Spoofs the app signature.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": null,
+      "options": [
+        {
+          "key": "packageName",
+          "title": "Package name override (optional)",
+          "description": "Leave blank — read automatically from the app.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": null,
+          "values": null
+        }
+      ]
+    },
+    {
+      "name": "Spoof install source",
+      "description": "Reports install source as Play Store.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": null,
+      "options": [
+        {
+          "key": "installerPackageName",
+          "title": "Store to impersonate",
+          "description": "Most apps only check for the Google Play Store, so the default is usually correct.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "com.android.vending",
+          "values": {
+            "Google Play Store": "com.android.vending",
+            "Samsung Galaxy Store": "com.sec.android.app.samsungapps",
+            "Huawei AppGallery": "com.huawei.appmarket",
+            "Amazon Appstore": "com.amazon.venezia",
+            "Xiaomi GetApps": "com.xiaomi.mipicks",
+            "F-Droid": "org.fdroid.fdroid"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unlock premium",
+      "description": "Unlocks premium features.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.remi.widget",
+          "name": "Aesthetic Widgets",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#9C27B0",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "85.1.4",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock premium",
+      "description": "Unlocks premium features.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.saban.glassy.glasswidgets.themes",
+          "name": "Glassix: Glass Widgets & Theme",
+          "description": null,
+          "apkFileType": "APKS_REQUIRED",
+          "appIconColor": "#00BCD4",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.3",
+              "versionCodes": {
+                "ARM64_V8A": 103,
+                "ARMEABI_V7A": 103,
+                "X86_64": 103,
+                "X86": 103
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock premium",
+      "description": "Unlocks premium features.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.jndapp.glass.widgets",
+          "name": "Glass Widgets",
+          "description": null,
+          "apkFileType": "APKS_REQUIRED",
+          "appIconColor": "#00BCD4",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.2",
+              "versionCodes": {
+                "ARM64_V8A": 12,
+                "ARMEABI_V7A": 12,
+                "X86_64": 12,
+                "X86": 12
+              },
+              "isExperimental": false,
+              "minSdk": 32,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock premium",
+      "description": "Unlocks premium features.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.jndapp.minimal.widgets",
+          "name": "Minimal Widgets",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#607D8B",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "2.2.11",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock premium",
+      "description": "Unlocks premium content.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -563,8 +487,35 @@
       "options": []
     },
     {
-      "name": "Unlock subscription (IL2CPP native)",
-      "description": "Forces Unity IL2CPP access getters (HasThisAppPurchase, IsOwnedSharedActive, offline grants, IsFullAccess, IsActive) to true in lib/arm64-v8a/libil2cpp.so. Required together with Unlock subscription (Java / SharedSub).",
+      "name": "Unlock pro",
+      "description": "Unlocks pro features.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "de.twokit.screen.recording.app",
+          "name": "Screen Recording App",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#E53935",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.11",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock subscription",
+      "description": "Unlocks the full subscription.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -595,8 +546,8 @@
       "options": []
     },
     {
-      "name": "Unlock subscription (Java / SharedSub)",
-      "description": "Unlocks BB Pass shared subscription on the Java/JNI side and marks Play purchases as owned. Activates local SharedSub state when the game starts. Must be used together with Unlock subscription (IL2CPP native).",
+      "name": "Unlock subscription (IL2CPP native)",
+      "description": "Forces Unity IL2CPP access getters (HasThisAppPurchase, IsOwnedSharedActive, offline grants, IsFullAccess, IsActive) to true in lib/arm64-v8a/libil2cpp.so. Required together with Unlock subscription (Java / SharedSub).",
       "default": true,
       "category": null,
       "compatiblePackages": [
