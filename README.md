@@ -22,8 +22,8 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.80](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.80)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;20 patches total
-<details open>
+> **[v1.0.81](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.81)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;21 patches total
+<details>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
 
@@ -40,7 +40,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 </details>
 
-<details open>
+<details>
 <summary>🌸 Glass Widgets&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
@@ -59,7 +59,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 </details>
 
-<details open>
+<details>
 <summary>🌸 Minimal Widgets&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
@@ -77,7 +77,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 </details>
 
-<details open>
+<details>
 <summary>🌸 Quick Settings&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
@@ -95,7 +95,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 </details>
 
-<details open>
+<details>
 <summary>🌸 Screen Recording App&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
@@ -113,7 +113,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 </details>
 
-<details open>
+<details>
 <summary>🌸 Themezy&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
@@ -132,7 +132,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 </details>
 
-<details open>
+<details>
 <summary>🌸 Aesthetic Widgets&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
 
@@ -149,7 +149,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 </details>
 
-<details open>
+<details>
 <summary>🌸 Glassix: Glass Widgets & Theme&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
 
@@ -166,8 +166,8 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 </details>
 
-<details open>
-<summary>🌸 Kids doctor games&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<details>
+<summary>🌸 Kids doctor games&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
 **Package name:** `com.bimiboo.kids.doctor.games`
@@ -179,11 +179,12 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Unlock subscription](#unlock-subscription) | Unlocks BB Pass shared subscription and marks Play purchases as owned. Activates local SharedSub state when the game starts. |  |
+| [Unlock subscription (IL2CPP native)](#unlock-subscription-il2cpp-native) | Forces Unity IL2CPP access getters (HasThisAppPurchase, IsOwnedSharedActive, offline grants, IsFullAccess, IsActive) to true in lib/arm64-v8a/libil2cpp.so. Required together with Unlock subscription (Java / SharedSub). |  |
+| [Unlock subscription (Java / SharedSub)](#unlock-subscription-java-sharedsub) | Unlocks BB Pass shared subscription on the Java/JNI side and marks Play purchases as owned. Activates local SharedSub state when the game starts. Must be used together with Unlock subscription (IL2CPP native). |  |
 
 </details>
 
-<details open>
+<details>
 <summary>🌼 Universal&nbsp;&nbsp;•&nbsp;&nbsp;4 patches</summary>
 <br>
 
