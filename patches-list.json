@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.89",
+  "version": "1.0.90",
   "patches": [
     {
       "name": "Clone app",
@@ -175,6 +175,33 @@
                 "X86_64": 9,
                 "X86": 9
               },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Keep sound during ads",
+      "description": "Prevents media from pausing when ads play.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.samsung.android.soundassistant",
+          "name": "Sound Assistant",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#2196F3",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "8.5.00.2",
+              "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
               "description": null

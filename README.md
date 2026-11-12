@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.89](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.89)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
+> **[v1.0.90](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.90)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
 <details open>
 <summary>🌸 Quick Settings&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -72,6 +72,23 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 |----------|----------------|-----------|
 | [Hide ads](#hide-ads) | Hides ads. |  |
 | [Unlock premium](#unlock-premium) | Unlocks premium content. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Sound Assistant&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Package name:** `com.samsung.android.soundassistant`
+
+**🌻 Supported versions:**
+
+| 8.5.00.2 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Keep sound during ads](#keep-sound-during-ads) | Prevents media from pausing when ads play. |  |
 
 </details>
 
