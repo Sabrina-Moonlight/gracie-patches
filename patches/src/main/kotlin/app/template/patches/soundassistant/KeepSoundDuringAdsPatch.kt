@@ -23,6 +23,21 @@ private val SOUND_ASSISTANT = Compatibility(
 )
 
 /**
+ * n3.k.H(Context) — force-update gate.
+ * Compares OneUI version vs app versionName. If app is "older", MainActivity
+ * shows a non-cancelable dialog and calls finish(). Return false always.
+ */
+private object ForceUpdateCheckFingerprint : Fingerprint(
+    definingClass = "Ln3/k;",
+    returnType = "Z",
+    parameters = listOf("Landroid/content/Context;"),
+    strings = listOf(
+        "Force update check:",
+        "SAT version : ",
+    ),
+)
+
+/**
  * n3.k.n(Context) — reads Settings.System "multi_audio_focus_enabled".
  * Always return true so dual-app / multi audio focus is considered on.
  */
@@ -34,8 +49,8 @@ private object IsMultiAudioFocusEnabledFingerprint : Fingerprint(
 )
 
 /**
- * BootReceiver restores ignore-audio-focus for one uid.
- * We also force multi audio focus on at boot via the same flow.
+ * BootReceiver.a(Context) restores settings at boot.
+ * We also force multi audio focus on via the real enable method.
  */
 private object BootReceiverInitFingerprint : Fingerprint(
     definingClass = "Lcom/samsung/android/soundassistant/receivers/BootReceiver;",
@@ -51,7 +66,7 @@ private object BootReceiverInitFingerprint : Fingerprint(
 @Suppress("unused")
 val keepSoundDuringAdsPatch = bytecodePatch(
     name = "Keep sound during ads",
-    description = "Prevents media from pausing when ads play.",
+    description = "Prevents media from pausing when ads play. Also blocks the force-update close.",
     default = true,
 ) {
     compatibleWith(SOUND_ASSISTANT)
@@ -64,11 +79,13 @@ val keepSoundDuringAdsPatch = bytecodePatch(
     )
 
     execute {
-        // Always report multi audio focus as enabled (so the UI and logic treat it as on).
+        // Stop the app from closing on open (force-update dialog → finish).
+        ForceUpdateCheckFingerprint.method.returnEarly(false)
+
+        // Always report multi audio focus as enabled.
         IsMultiAudioFocusEnabledFingerprint.method.returnEarly(true)
 
-        // At boot force multi audio focus on via the real enable method.
-        // p0 = Context (static method a(Context)).
+        // At boot force multi audio focus on (third arg true skips write-settings prompt).
         BootReceiverInitFingerprint.method.addInstructions(
             0,
             """
