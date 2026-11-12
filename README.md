@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.82](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.82)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;20 patches total
+> **[v1.0.83](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.83)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;14 patches total
 <details open>
 <summary>🌸 Quick Settings&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -76,24 +76,6 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 </details>
 
 <details open>
-<summary>🌸 Glass Widgets&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
-<br>
-
-**Package name:** `com.jndapp.glass.widgets`
-
-**🌻 Supported versions:**
-
-| 1.0.2 |
-| :---: |
-
-| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
-|----------|----------------|-----------|
-| [Remove Pairip Protection](#remove-pairip-protection) | Skips PairIP license checks and the delayed process exit. |  |
-| [Unlock premium](#unlock-premium) | Unlocks premium features. |  |
-
-</details>
-
-<details open>
 <summary>🌸 Aesthetic Widgets&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
 
@@ -119,6 +101,23 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 **🌻 Supported versions:**
 
 | 1.0.3 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Unlock premium](#unlock-premium) | Unlocks premium features. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Glass Widgets&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Package name:** `com.jndapp.glass.widgets`
+
+**🌻 Supported versions:**
+
+| 1.0.2 |
 | :---: |
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
@@ -180,19 +179,14 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 </details>
 
 <details open>
-<summary>🌼 Universal&nbsp;&nbsp;•&nbsp;&nbsp;8 patches</summary>
+<summary>🌼 Universal&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Add battery optimization permission (internal)](#add-battery-optimization-permission-internal) | Adds REQUEST_IGNORE_BATTERY_OPTIMIZATIONS to the manifest. |  |
 | [Clone app](#clone-app) | Installs the app as a numbered clone.Pick a clone number (1–50). Each number is a different package (app.clone1, app.clone2…). On update, re-apply the same number on each clone. | • Clone number<br>• Custom package (optional)<br>• Update permissions<br>• Update providers |
-| [Fix Firebase after re-signing](#fix-firebase-after-re-signing) | Fixes Firebase after re-signing. |  |
-| [Provide Original app certificate](#provide-original-app-certificate) | Provides the original app certificate. | • Path to original APK (if uninstalled)<br>• Certificate SHA-1 (manual)<br>• Certificate SHA-256 (manual)<br>• Certificate Base64 DER (manual) |
 | [Randomize device identity](#randomize-device-identity) | Gives each clone a random device identity.each time the patch is applied. Useful so every clone has a different identity. |  |
-| [Request unrestricted battery](#request-unrestricted-battery) | Asks for unrestricted battery on start.(ignore battery optimizations) if it is not already allowed. |  |
-| [Spoof app signature](#spoof-app-signature) | Spoofs the app signature. | • Package name override (optional) |
-| [Spoof install source](#spoof-install-source) | Reports install source as Play Store. | • Store to impersonate |
+| [Request unrestricted battery](#request-unrestricted-battery) | Asks for unrestricted battery when the app starts. |  |
 
 </details>
 
