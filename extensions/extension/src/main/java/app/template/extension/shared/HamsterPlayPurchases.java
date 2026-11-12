@@ -11,10 +11,6 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/**
- * Injects synthetic Play Billing purchases for Hamster Escape product IDs so
- * Unity IAP restore/query sees owned offers (No Ads, subscription, care bundle).
- */
 @SuppressWarnings("unused")
 public final class HamsterPlayPurchases {
 
@@ -22,7 +18,6 @@ public final class HamsterPlayPurchases {
     private static final String PURCHASE_CLASS = "com.android.billingclient.api.Purchase";
     private static final String PACKAGE_NAME = "gg.sunday.hamsterescape";
 
-    // Product IDs recovered from global-metadata.dat of build 5.2.0
     private static final String[] PRODUCT_IDS = new String[] {
         "no_ads_purchase",
         "remove_ads",
@@ -33,10 +28,6 @@ public final class HamsterPlayPurchases {
     private HamsterPlayPurchases() {
     }
 
-    /**
-     * Prepends synthetic owned purchases to the list passed to
-     * PurchasesResponseListener.onQueryPurchasesResponse.
-     */
     public static List<Object> withSyntheticPurchases(List<Object> purchases) {
         try {
             List<Object> result = new ArrayList<>();
@@ -58,7 +49,6 @@ public final class HamsterPlayPurchases {
     }
 
     private static String purchaseJson(String productId, long purchaseTime) throws Exception {
-        // purchaseState 0 in the JSON constructor maps to owned in BillingClient 6/8 parse path
         return new JSONObject()
             .put("orderId", "GPA.3370-" + Math.abs(productId.hashCode()))
             .put("packageName", PACKAGE_NAME)
