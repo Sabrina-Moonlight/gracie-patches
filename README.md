@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.91](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.91)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
+> **[v1.0.92](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.92)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
 <details open>
 <summary>🌸 Quick Settings&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
