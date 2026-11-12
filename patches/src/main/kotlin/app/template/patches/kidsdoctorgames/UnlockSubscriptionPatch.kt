@@ -9,16 +9,19 @@ import app.morphe.patcher.util.returnEarly
 import java.util.logging.Logger
 
 /**
- * Kids doctor games 1.12 (versionCode 466).
+ * Kids doctor games 1.12 (versionCode 466) — BB Pass / SharedSub unlock.
  *
- * Layers:
- * 1) BB Pass SharedSub + BbId trust gates → always active / trusted
- * 2) Google Play Billing Purchase.getPurchaseState → PURCHASED (1)
- * 3) Purchase.isAcknowledged → true
+ * What this covers (Java / JNI side):
+ * - SharedSubClient / SharedSubStore / TrustPolicy / BbId trust → always active
+ * - Play Billing Purchase state → PURCHASED + acknowledged
+ * - On UnityPlayerActivity.onCreate → write local SharedSub active state
  *
- * Note: paywalls are also gated in Unity IL2CPP (IsFullAccess). Java-side
- * unlock covers SharedSub / Billing objects; if Unity still shows the wall,
- * native IL2CPP work is needed next.
+ * What still lives in Unity IL2CPP (not patched here):
+ * - IsFullAccess / HasThisAppPurchase / ResolveAccessState pure C# logic
+ * - Server receipt validation (api.bimiboo.net / api.kodomobi.ru)
+ *
+ * If the paywall remains after a clean install of this patch, the remaining
+ * gate is Unity-native and needs IL2CPP work.
  */
 private val KIDS_DOCTOR_GAMES = Compatibility(
     name = "Kids doctor games",
@@ -30,32 +33,35 @@ private val KIDS_DOCTOR_GAMES = Compatibility(
     ),
 )
 
+private const val HELPER =
+    "Lapp/template/extension/shared/BbPassUnlockHelper;"
+
 @Suppress("unused")
 val unlockSubscriptionPatch = bytecodePatch(
     name = "Unlock subscription",
-    description = "Unlocks BB Pass / shared subscription and forces Play Billing purchases as owned.",
+    description = "Unlocks BB Pass shared subscription and marks Play purchases as owned. " +
+        "Activates local SharedSub state when the game starts.",
     default = true,
 ) {
     compatibleWith(KIDS_DOCTOR_GAMES)
+    extendWith("extensions/extension.mpe")
 
     execute {
         val logger = Logger.getLogger(this::class.java.name)
 
-        // --- BB Pass SharedSub ---
+        // Boolean gates
         HasTrustedActiveSharedSubscriptionFingerprint.method.returnEarly(true)
         QueryPackageFingerprint.method.returnEarly(true)
         SharedSubStoreIsActiveFingerprint.method.returnEarly(true)
         SharedSubTrustPolicyIsTrustedFingerprint.method.returnEarly(true)
-        runCatching {
-            BbIdCrossAppTrustIsTrustedFingerprint.method.returnEarly(true)
-        }
+        runCatching { BbIdCrossAppTrustIsTrustedFingerprint.method.returnEarly(true) }
 
+        // Expiry far future
         forceFarExpiry(TrustedActiveSharedSubscriptionExpiryFingerprint.method)
         forceFarExpiry(QueryPackageExpiryFingerprint.method)
         forceFarExpiry(SharedSubStoreExpiresAtFingerprint.method)
 
-        // --- Play Billing Purchase objects ---
-        // PURCHASED = 1
+        // Billing Purchase
         PurchaseGetPurchaseStateFingerprint.method.addInstructions(
             0,
             """
@@ -65,7 +71,15 @@ val unlockSubscriptionPatch = bytecodePatch(
         )
         PurchaseIsAcknowledgedFingerprint.method.returnEarly(true)
 
-        logger.info("Kids doctor games: SharedSub + Purchase state forced owned")
+        // Activate SharedSub when Unity activity starts (p0 = Activity extends Context)
+        UnityPlayerActivityOnCreateFingerprint.method.addInstructions(
+            0,
+            """
+                invoke-static {p0}, $HELPER->activate(Landroid/content/Context;)V
+            """.trimIndent(),
+        )
+
+        logger.info("Kids doctor games: SharedSub + Purchase + startup activate applied")
     }
 }
 

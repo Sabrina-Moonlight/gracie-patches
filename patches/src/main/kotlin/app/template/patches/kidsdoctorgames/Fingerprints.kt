@@ -2,19 +2,13 @@ package app.template.patches.kidsdoctorgames
 
 import app.morphe.patcher.Fingerprint
 
-/** SharedSubClient.hasTrustedActiveSharedSubscription(Context, String[], boolean)Z */
 internal object HasTrustedActiveSharedSubscriptionFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/pass/SharedSubClient;",
     name = "hasTrustedActiveSharedSubscription",
     returnType = "Z",
-    parameters = listOf(
-        "Landroid/content/Context;",
-        "[Ljava/lang/String;",
-        "Z",
-    ),
+    parameters = listOf("Landroid/content/Context;", "[Ljava/lang/String;", "Z"),
 )
 
-/** SharedSubClient.queryPackage(Context, String)Z */
 internal object QueryPackageFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/pass/SharedSubClient;",
     name = "queryPackage",
@@ -22,19 +16,13 @@ internal object QueryPackageFingerprint : Fingerprint(
     parameters = listOf("Landroid/content/Context;", "Ljava/lang/String;"),
 )
 
-/** SharedSubClient.trustedActiveSharedSubscriptionExpiry(Context, String[], boolean)J */
 internal object TrustedActiveSharedSubscriptionExpiryFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/pass/SharedSubClient;",
     name = "trustedActiveSharedSubscriptionExpiry",
     returnType = "J",
-    parameters = listOf(
-        "Landroid/content/Context;",
-        "[Ljava/lang/String;",
-        "Z",
-    ),
+    parameters = listOf("Landroid/content/Context;", "[Ljava/lang/String;", "Z"),
 )
 
-/** SharedSubClient.queryPackageExpiry(Context, String)J */
 internal object QueryPackageExpiryFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/pass/SharedSubClient;",
     name = "queryPackageExpiry",
@@ -42,7 +30,6 @@ internal object QueryPackageExpiryFingerprint : Fingerprint(
     parameters = listOf("Landroid/content/Context;", "Ljava/lang/String;"),
 )
 
-/** SharedSubStore.isActive(Context)Z */
 internal object SharedSubStoreIsActiveFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/pass/SharedSubStore;",
     name = "isActive",
@@ -50,7 +37,6 @@ internal object SharedSubStoreIsActiveFingerprint : Fingerprint(
     parameters = listOf("Landroid/content/Context;"),
 )
 
-/** SharedSubStore.expiresAt(Context)J */
 internal object SharedSubStoreExpiresAtFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/pass/SharedSubStore;",
     name = "expiresAt",
@@ -58,7 +44,6 @@ internal object SharedSubStoreExpiresAtFingerprint : Fingerprint(
     parameters = listOf("Landroid/content/Context;"),
 )
 
-/** SharedSubTrustPolicy.isTrusted(...)Z */
 internal object SharedSubTrustPolicyIsTrustedFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/pass/SharedSubTrustPolicy;",
     name = "isTrusted",
@@ -71,7 +56,6 @@ internal object SharedSubTrustPolicyIsTrustedFingerprint : Fingerprint(
     ),
 )
 
-/** BbIdCrossAppTrust.isTrusted(...)Z */
 internal object BbIdCrossAppTrustIsTrustedFingerprint : Fingerprint(
     definingClass = "Lcom/bimiboo/bimibooid/crossapp/BbIdCrossAppTrust;",
     name = "isTrusted",
@@ -84,7 +68,6 @@ internal object BbIdCrossAppTrustIsTrustedFingerprint : Fingerprint(
     ),
 )
 
-/** Purchase.getPurchaseState()I — 1 = PURCHASED */
 internal object PurchaseGetPurchaseStateFingerprint : Fingerprint(
     definingClass = "Lcom/android/billingclient/api/Purchase;",
     name = "getPurchaseState",
@@ -92,10 +75,17 @@ internal object PurchaseGetPurchaseStateFingerprint : Fingerprint(
     parameters = emptyList(),
 )
 
-/** Purchase.isAcknowledged()Z */
 internal object PurchaseIsAcknowledgedFingerprint : Fingerprint(
     definingClass = "Lcom/android/billingclient/api/Purchase;",
     name = "isAcknowledged",
     returnType = "Z",
     parameters = emptyList(),
+)
+
+/** Unity main activity — inject BB Pass activate here. */
+internal object UnityPlayerActivityOnCreateFingerprint : Fingerprint(
+    definingClass = "Lcom/unity3d/player/UnityPlayerActivity;",
+    name = "onCreate",
+    returnType = "V",
+    parameters = listOf("Landroid/os/Bundle;"),
 )
