@@ -1,6 +1,7 @@
 package app.template.patches.hamsterescape
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.patch.ApkFileType
 import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
@@ -12,12 +13,6 @@ import app.template.patches.shared.firebase.spoofFirebaseCertHashPatch
 import app.template.patches.shared.installer.spoofInstallSourcePatch
 import app.template.patches.shared.signature.spoofSignatureVerificationPatch
 
-/**
- * Package from AndroidManifest of build 5.2.0: gg.sunday.hamsterescape
- *
- * AppTarget(version = null) = any version of this package (required by Compatibility:
- * empty targets list throws "Must declare at least one app target").
- */
 private val HAMSTER_ESCAPE = Compatibility(
     name = "Hamster Escape",
     packageName = "gg.sunday.hamsterescape",
@@ -26,7 +21,22 @@ private val HAMSTER_ESCAPE = Compatibility(
     targets = listOf(AppTarget(version = null)),
 )
 
-/** Purchase#getPurchaseState()I → force PURCHASED (1) */
+private const val EXTENSION_CLASS =
+    "Lapp/template/extension/shared/HamsterPlayPurchases;"
+
+/**
+ * BillingClient / Unity GPBL callback:
+ * onQueryPurchasesResponse(BillingResult, List<Purchase>)
+ * Inject synthetic purchases before the listener body runs.
+ */
+private object QueryPurchasesResponseFingerprint : Fingerprint(
+    accessFlags = listOf(AccessFlags.PUBLIC),
+    returnType = "V",
+    parameters = listOf("L", "Ljava/util/List;"),
+    name = "onQueryPurchasesResponse",
+)
+
+/** Purchase#getPurchaseState()I → 1 PURCHASED */
 private object PurchaseStateFingerprint : Fingerprint(
     definingClass = "Lcom/android/billingclient/api/Purchase;",
     name = "getPurchaseState",
@@ -47,7 +57,7 @@ private object PurchaseAcknowledgedFingerprint : Fingerprint(
 @Suppress("unused")
 val unlockPurchasesPatch = bytecodePatch(
     name = "Unlock purchases",
-    description = "Marks every Play Billing Purchase as PURCHASED and acknowledged so Hamster Escape treats offers as owned on restore and query.",
+    description = "Injects synthetic owned Play purchases and forces PURCHASED/acknowledged so Hamster Escape unlocks No Ads and store offers.",
     default = true,
 ) {
     compatibleWith(HAMSTER_ESCAPE)
@@ -59,7 +69,19 @@ val unlockPurchasesPatch = bytecodePatch(
         spoofSignatureVerificationPatch,
     )
 
+    extendWith("extensions/extension.mpe")
+
     execute {
+        // Fill empty query results with synthetic owned products.
+        // p2 = List<Purchase> on onQueryPurchasesResponse(BillingResult, List)
+        QueryPurchasesResponseFingerprint.method.addInstructions(
+            0,
+            """
+                invoke-static { p2 }, $EXTENSION_CLASS->withSyntheticPurchases(Ljava/util/List;)Ljava/util/List;
+                move-result-object p2
+            """.trimIndent(),
+        )
+
         PurchaseStateFingerprint.method.returnEarly(1)
         PurchaseAcknowledgedFingerprint.method.returnEarly(true)
     }
