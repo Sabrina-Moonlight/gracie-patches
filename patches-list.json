@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.75",
+  "version": "1.0.76",
   "patches": [
     {
       "name": "Clone app",
@@ -186,38 +186,6 @@
     },
     {
       "name": "Disable Pairip",
-      "description": "Disables PairIP license checks so the app keeps running after it is modified.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.multipleapp.clonespace",
-          "name": "Multiple App",
-          "description": null,
-          "apkFileType": "APKS",
-          "appIconColor": "#4CAF50",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.9.260.20",
-              "versionCodes": {
-                "ARM64_V8A": 9,
-                "ARMEABI_V7A": 9,
-                "X86_64": 9,
-                "X86": 9
-              },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Disable Pairip",
       "description": "Skips the local license and integrity checks so the app can keep running offline.",
       "default": true,
       "category": null,
@@ -362,38 +330,6 @@
       "options": []
     },
     {
-      "name": "Hide Entry Ads",
-      "description": "Skips the full-screen ad when opening a clone. Ads inside the cloned apps still work.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.multipleapp.clonespace",
-          "name": "Multiple App",
-          "description": null,
-          "apkFileType": "APKS",
-          "appIconColor": "#4CAF50",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.9.260.20",
-              "versionCodes": {
-                "ARM64_V8A": 9,
-                "ARMEABI_V7A": 9,
-                "X86_64": 9,
-                "X86": 9
-              },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Local Features",
       "description": "Uses a local preference so optional widget features stay available offline.",
       "default": true,
@@ -512,38 +448,6 @@
       "options": []
     },
     {
-      "name": "Prevent Self Close",
-      "description": "Stops the app from force-closing the process on errors after it is modified.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.multipleapp.clonespace",
-          "name": "Multiple App",
-          "description": null,
-          "apkFileType": "APKS",
-          "appIconColor": "#4CAF50",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.9.260.20",
-              "versionCodes": {
-                "ARM64_V8A": 9,
-                "ARMEABI_V7A": 9,
-                "X86_64": 9,
-                "X86": 9
-              },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Pro Options",
       "description": "Uses a local preference so optional Pro options stay available.",
       "default": true,
@@ -571,6 +475,14 @@
       "options": []
     },
     {
+      "name": "Randomize device identity",
+      "description": "Generates random Android ID, Wi-Fi MAC, Bluetooth MAC and serial each time the patch is applied. Useful so every clone has a different identity.",
+      "default": false,
+      "category": null,
+      "compatiblePackages": null,
+      "options": []
+    },
+    {
       "name": "Remove Pairip Protection",
       "description": "Skips PairIP license checks and the delayed process exit.",
       "default": true,
@@ -595,29 +507,6 @@
               },
               "isExperimental": false,
               "minSdk": 32,
-              "description": null
-            }
-          ]
-        },
-        {
-          "packageName": "com.multipleapp.clonespace",
-          "name": "Multiple App",
-          "description": null,
-          "apkFileType": "APKS",
-          "appIconColor": "#4CAF50",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.9.260.20",
-              "versionCodes": {
-                "ARM64_V8A": 9,
-                "ARMEABI_V7A": 9,
-                "X86_64": 9,
-                "X86": 9
-              },
-              "isExperimental": false,
-              "minSdk": null,
               "description": null
             }
           ]
