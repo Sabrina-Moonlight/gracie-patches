@@ -50,12 +50,7 @@ internal val FirebaseFingerprintHashFingerprint = Fingerprint(
 
 // ─── Patch ────────────────────────────────────────────────────────────────────
 
-@Suppress("unused")
-val spoofFirebaseCertHashPatch = bytecodePatch(
-    name = "Fix Firebase after re-signing",
-    description = "Fixes Firebase after re-signing.",
-    default = false,
-) {
+internal val spoofFirebaseCertHashPatch = bytecodePatch {
     dependsOn(extractApkCertificatePatch)
 
     execute {

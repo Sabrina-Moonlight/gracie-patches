@@ -99,12 +99,7 @@ private val ApplicationOnCreateFingerprint = Fingerprint(
     },
 )
 
-@Suppress("unused")
-val spoofInstallSourcePatch = bytecodePatch(
-    name = "Spoof install source",
-    description = "Reports install source as Play Store.",
-    default = false,
-) {
+internal val spoofInstallSourcePatch = bytecodePatch {
     val installerPackageName by stringOption(
         key = "installerPackageName",
         default = "com.android.vending",

@@ -106,12 +106,7 @@ internal val injectSignatureHookAppPatch = resourcePatch {
  * - `replaceSubApplicationPatch` referenced adobo's own manifest constants. Rewritten with `document()`.
  * - `getReference<T>()` extension used in Firebase patch is adobo-specific — not needed here.
  */
-@Suppress("unused")
-val spoofSignatureVerificationPatch = bytecodePatch(
-    name = "Spoof app signature",
-    description = "Spoofs the app signature.",
-    default = false,
-) {
+internal val spoofSignatureVerificationPatch = bytecodePatch {
 val packageNameOption by stringOption(
         key = "packageName",
         default = null,

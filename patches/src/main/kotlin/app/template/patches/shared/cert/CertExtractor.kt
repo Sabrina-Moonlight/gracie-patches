@@ -144,11 +144,7 @@ internal fun extractFromFile(file: File, source: String = "extracted"): Boolean 
  * You can also paste cert values directly if you already have them
  * (e.g. from APKMirror or apksigner).
  */
-val extractApkCertificatePatch = rawResourcePatch(
-    name = "Provide Original app certificate",
-    description = "Provides the original app certificate.",
-    default = false,
-) {
+internal val extractApkCertificatePatch = rawResourcePatch {
     val originalApkPath by stringOption(
         key = "originalApkPath",
         default = null,
