@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.74",
+  "version": "1.0.75",
   "patches": [
     {
       "name": "Clone app",
@@ -572,7 +572,7 @@
     },
     {
       "name": "Remove Pairip Protection",
-      "description": "Skips the local license check entry point and closes that would kill the app.",
+      "description": "Skips PairIP license checks and the delayed process exit.",
       "default": true,
       "category": null,
       "compatiblePackages": [

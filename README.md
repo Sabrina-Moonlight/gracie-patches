@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.74](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.74)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;20 patches total
+> **[v1.0.75](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.75)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;20 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -55,7 +55,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 |----------|----------------|-----------|
 | [Disable Pairip](#disable-pairip) | Restores the normal app entry and recovers offline method bodies so the app can keep running. |  |
 | [Local Preference](#local-preference) | Uses a local preference so optional widget features stay available offline. |  |
-| [Remove Pairip Protection](#remove-pairip-protection) | Skips the local license check entry point and closes that would kill the app. |  |
+| [Remove Pairip Protection](#remove-pairip-protection) | Skips PairIP license checks and the delayed process exit. |  |
 
 </details>
 
@@ -93,7 +93,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | [Disable Pairip](#disable-pairip) | Disables PairIP license checks so the app keeps running after it is modified. |  |
 | [Hide Entry Ads](#hide-entry-ads) | Skips the full-screen ad when opening a clone. Ads inside the cloned apps still work. |  |
 | [Prevent Self Close](#prevent-self-close) | Stops the app from force-closing the process on errors after it is modified. |  |
-| [Remove Pairip Protection](#remove-pairip-protection) | Skips the local license check entry point and closes that would kill the app. |  |
+| [Remove Pairip Protection](#remove-pairip-protection) | Skips PairIP license checks and the delayed process exit. |  |
 
 </details>
 
