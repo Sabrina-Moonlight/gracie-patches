@@ -18,9 +18,8 @@ import java.io.RandomAccessFile
 import java.util.logging.Logger
 
 /**
- * Hamster Escape 5.2.0 — No Ads + closet skins/trails.
- * IL2CPP offsets from Il2CppDumper (this build's libil2cpp.so + metadata v31).
- * Must patch the APK/split that contains lib/arm64-v8a/libil2cpp.so.
+ * Hamster Escape 5.2.0 — No Ads, closet, suppress subscription "SAVE ME" paywall.
+ * Offsets from Il2CppDumper on this build's libil2cpp.so + metadata v31.
  */
 private val HAMSTER_ESCAPE = Compatibility(
     name = "Hamster Escape",
@@ -34,10 +33,14 @@ private const val LIB = "lib/arm64-v8a/libil2cpp.so"
 private const val EXTENSION_CLASS =
     "Lapp/template/extension/shared/HamsterPlayPurchases;"
 
-/** ARM64: mov w0, #1 ; ret */
 private val RETURN_TRUE = hexBytes("20 00 80 52 c0 03 5f d6")
+private val RETURN_FALSE = hexBytes("00 00 80 52 c0 03 5f d6")
 
-private data class Il2CppGate(val label: String, val offset: Long)
+private data class Il2CppGate(
+    val label: String,
+    val offset: Long,
+    val replacement: ByteArray = RETURN_TRUE,
+)
 
 private val IL2CPP_GATES = listOf(
     // No Ads
@@ -45,13 +48,22 @@ private val IL2CPP_GATES = listOf(
     Il2CppGate("IsNoAdsUnlocked", 0x22E1874),
     Il2CppGate("HasAnyNoAdsOfferBought", 0x22E1CCC),
     Il2CppGate("HasPurchasedNoAds", 0x3DAB508),
-    // Store entitlement
+    // IAP ownership
     Il2CppGate("IsProductPurchased", 0x3D5EA34),
     Il2CppGate("IsProductPurchasedRaw", 0x3D5F04C),
-    // Closet / cosmetics (skins + trails show unlocked)
+    // Closet
     Il2CppGate("IsUnlocked_Cosmetic", 0x23BE754),
     Il2CppGate("IsAnyProductUnlocked", 0x2317240),
     Il2CppGate("IsAllProductsUnlocked", 0x2317434),
+    // Subscription treated as active (hides SAVE ME paywall)
+    Il2CppGate("get_IsSubscribed", 0x22AA60C),
+    Il2CppGate("IsPayingUser", 0x3D50FFC),
+    // Do not enqueue / show offer popups
+    Il2CppGate("ShouldShowOfferPopup", 0x2317108, RETURN_FALSE),
+    Il2CppGate("CanShowAppLaunchPopup", 0x3D8CF50, RETURN_FALSE),
+    Il2CppGate("IsAutomaticOfferPopupsEnabled", 0x3D8D988, RETURN_FALSE),
+    Il2CppGate("TryAddSubscriptionToAppLaunch", 0x3D51AF4, RETURN_FALSE),
+    Il2CppGate("TryAddSubscriptionToLevelLoad", 0x3D5224C, RETURN_FALSE),
 )
 
 private fun hexBytes(pattern: String): ByteArray =
@@ -62,16 +74,16 @@ private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
         val logger = Logger.getLogger("hamsterescape.il2cpp")
         val target = get(LIB, true)
         if (!target.exists()) {
-            logger.warning("$LIB missing — native gates skipped (use the arm64 split APK)")
+            logger.warning("$LIB missing — native gates skipped")
             return@execute
         }
         RandomAccessFile(target, "rw").use { raf ->
             for (gate in IL2CPP_GATES) {
-                if (gate.offset + RETURN_TRUE.size > raf.length()) {
+                if (gate.offset + gate.replacement.size > raf.length()) {
                     throw PatchException("${gate.label}: offset past EOF")
                 }
                 raf.seek(gate.offset)
-                raf.write(RETURN_TRUE)
+                raf.write(gate.replacement)
                 logger.info("patched ${gate.label} @ 0x${gate.offset.toString(16)}")
             }
         }
@@ -104,7 +116,7 @@ private object PurchaseAcknowledgedFingerprint : Fingerprint(
 @Suppress("unused")
 val unlockPurchasesPatch = bytecodePatch(
     name = "Unlock purchases",
-    description = "Unlocks No Ads, skins, and trails via IL2CPP ownership gates and synthetic Play purchases.",
+    description = "Unlocks No Ads, skins, and trails; suppresses the weekly subscription paywall.",
     default = true,
 ) {
     compatibleWith(HAMSTER_ESCAPE)
