@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.85",
+  "version": "1.0.86",
   "patches": [
     {
       "name": "Clone app",
@@ -379,7 +379,7 @@
     },
     {
       "name": "Unlock purchases",
-      "description": "Marks every Play Billing Purchase as PURCHASED and acknowledged so Hamster Escape treats offers as owned on restore and query.",
+      "description": "Injects synthetic owned Play purchases and forces PURCHASED/acknowledged so Hamster Escape unlocks No Ads and store offers.",
       "default": true,
       "category": null,
       "compatiblePackages": [

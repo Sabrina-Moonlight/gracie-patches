@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.85](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.85)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
+> **[v1.0.86](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.86)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
 <details open>
 <summary>🌸 Quick Settings&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -168,7 +168,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Unlock purchases](#unlock-purchases) | Marks every Play Billing Purchase as PURCHASED and acknowledged so Hamster Escape treats offers as owned on restore and query. |  |
+| [Unlock purchases](#unlock-purchases) | Injects synthetic owned Play purchases and forces PURCHASED/acknowledged so Hamster Escape unlocks No Ads and store offers. |  |
 
 </details>
 
