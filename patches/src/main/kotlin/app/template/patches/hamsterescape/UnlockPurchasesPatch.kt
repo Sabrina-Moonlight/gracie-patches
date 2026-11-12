@@ -18,8 +18,9 @@ import java.io.RandomAccessFile
 import java.util.logging.Logger
 
 /**
- * Build 5.2.0 split APKs: base (assets/dex) + config.arm64_v8a (libil2cpp.so).
- * IL2CPP offsets from Il2CppDumper on this exact SO + metadata v31.
+ * Hamster Escape 5.2.0 — No Ads + closet skins/trails.
+ * IL2CPP offsets from Il2CppDumper (this build's libil2cpp.so + metadata v31).
+ * Must patch the APK/split that contains lib/arm64-v8a/libil2cpp.so.
  */
 private val HAMSTER_ESCAPE = Compatibility(
     name = "Hamster Escape",
@@ -39,12 +40,18 @@ private val RETURN_TRUE = hexBytes("20 00 80 52 c0 03 5f d6")
 private data class Il2CppGate(val label: String, val offset: Long)
 
 private val IL2CPP_GATES = listOf(
+    // No Ads
     Il2CppGate("get_NoAdsUnlocked", 0x22E1678),
     Il2CppGate("IsNoAdsUnlocked", 0x22E1874),
     Il2CppGate("HasAnyNoAdsOfferBought", 0x22E1CCC),
     Il2CppGate("HasPurchasedNoAds", 0x3DAB508),
+    // Store entitlement
     Il2CppGate("IsProductPurchased", 0x3D5EA34),
     Il2CppGate("IsProductPurchasedRaw", 0x3D5F04C),
+    // Closet / cosmetics (skins + trails show unlocked)
+    Il2CppGate("IsUnlocked_Cosmetic", 0x23BE754),
+    Il2CppGate("IsAnyProductUnlocked", 0x2317240),
+    Il2CppGate("IsAllProductsUnlocked", 0x2317434),
 )
 
 private fun hexBytes(pattern: String): ByteArray =
@@ -55,13 +62,13 @@ private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
         val logger = Logger.getLogger("hamsterescape.il2cpp")
         val target = get(LIB, true)
         if (!target.exists()) {
-            logger.warning("$LIB not in this APK — skipping native gates (patch the arm64 split too)")
+            logger.warning("$LIB missing — native gates skipped (use the arm64 split APK)")
             return@execute
         }
         RandomAccessFile(target, "rw").use { raf ->
             for (gate in IL2CPP_GATES) {
                 if (gate.offset + RETURN_TRUE.size > raf.length()) {
-                    throw PatchException("${gate.label}: offset ${gate.offset} past EOF")
+                    throw PatchException("${gate.label}: offset past EOF")
                 }
                 raf.seek(gate.offset)
                 raf.write(RETURN_TRUE)
@@ -97,7 +104,7 @@ private object PurchaseAcknowledgedFingerprint : Fingerprint(
 @Suppress("unused")
 val unlockPurchasesPatch = bytecodePatch(
     name = "Unlock purchases",
-    description = "Unlocks No Ads and store offers via IL2CPP gates plus synthetic Play purchases.",
+    description = "Unlocks No Ads, skins, and trails via IL2CPP ownership gates and synthetic Play purchases.",
     default = true,
 ) {
     compatibleWith(HAMSTER_ESCAPE)
