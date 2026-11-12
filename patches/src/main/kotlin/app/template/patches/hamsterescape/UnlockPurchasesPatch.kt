@@ -2,6 +2,7 @@ package app.template.patches.hamsterescape
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.patch.ApkFileType
+import app.morphe.patcher.patch.AppTarget
 import app.morphe.patcher.patch.Compatibility
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.returnEarly
@@ -14,16 +15,15 @@ import app.template.patches.shared.signature.spoofSignatureVerificationPatch
 /**
  * Package from AndroidManifest of build 5.2.0: gg.sunday.hamsterescape
  *
- * targets = emptyList() → Morphe shows this patch for ANY version of that
- * package. A pinned AppTarget(version=...) that does not match the APK
- * versionName exactly makes the patch invisible in the UI.
+ * AppTarget(version = null) = any version of this package (required by Compatibility:
+ * empty targets list throws "Must declare at least one app target").
  */
 private val HAMSTER_ESCAPE = Compatibility(
     name = "Hamster Escape",
     packageName = "gg.sunday.hamsterescape",
     apkFileType = ApkFileType.APK,
     appIconColor = 0xFF8C42,
-    targets = emptyList(),
+    targets = listOf(AppTarget(version = null)),
 )
 
 /** Purchase#getPurchaseState()I → force PURCHASED (1) */
