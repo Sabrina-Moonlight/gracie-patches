@@ -63,7 +63,7 @@ val addBatteryOptimizationPermissionPatch = resourcePatch(
 @Suppress("unused")
 val requestUnrestrictedBatteryPatch = bytecodePatch(
     name = "Request unrestricted battery",
-    description = "On app start, shows the system dialog to allow unrestricted battery " +
+    description = "Asks for unrestricted battery on start." +
         "(ignore battery optimizations) if it is not already allowed.",
     default = false,
 ) {
