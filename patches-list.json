@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.88",
+  "version": "1.0.89",
   "patches": [
     {
       "name": "Clone app",
@@ -379,7 +379,7 @@
     },
     {
       "name": "Unlock purchases",
-      "description": "Unlocks No Ads, skins, and trails via IL2CPP ownership gates and synthetic Play purchases.",
+      "description": "Unlocks No Ads, skins, and trails; suppresses the weekly subscription paywall.",
       "default": true,
       "category": null,
       "compatiblePackages": [
