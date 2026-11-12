@@ -18,11 +18,8 @@ import java.io.RandomAccessFile
 import java.util.logging.Logger
 
 /**
- * Build 5.2.0 ships as split APKs:
- * - base: assets + dex (no native)
- * - config.arm64_v8a: libil2cpp.so
- * Patch both (or a merged APKS). libil2cpp offsets from Il2CppDumper
- * Metadata v31 + SO of this exact build.
+ * Build 5.2.0 split APKs: base (assets/dex) + config.arm64_v8a (libil2cpp.so).
+ * IL2CPP offsets from Il2CppDumper on this exact SO + metadata v31.
  */
 private val HAMSTER_ESCAPE = Compatibility(
     name = "Hamster Escape",
@@ -37,35 +34,27 @@ private const val EXTENSION_CLASS =
     "Lapp/template/extension/shared/HamsterPlayPurchases;"
 
 /** ARM64: mov w0, #1 ; ret */
-private val RETURN_TRUE = byteArrayOf(
-    0x20, 0x00, 0x80.toByte(), 0x52,
-    0xc0.toByte(), 0x03, 0x5f, 0xd6,
-)
+private val RETURN_TRUE = hexBytes("20 00 80 52 c0 03 5f d6")
 
-/**
- * File offsets (Offset: field from Il2CppDumper dump.cs) for build 5.2.0.
- * Verified prologue bytes present at each address before patch.
- */
 private data class Il2CppGate(val label: String, val offset: Long)
 
 private val IL2CPP_GATES = listOf(
-    // EscapeGames.NoAdsSystem
     Il2CppGate("get_NoAdsUnlocked", 0x22E1678),
     Il2CppGate("IsNoAdsUnlocked", 0x22E1874),
     Il2CppGate("HasAnyNoAdsOfferBought", 0x22E1CCC),
-    // Ad / persistence layer (SundayNoAdsPurchased flag)
     Il2CppGate("HasPurchasedNoAds", 0x3DAB508),
-    // Sunday.Purchasing.IAPSystem
     Il2CppGate("IsProductPurchased", 0x3D5EA34),
     Il2CppGate("IsProductPurchasedRaw", 0x3D5F04C),
 )
+
+private fun hexBytes(pattern: String): ByteArray =
+    pattern.trim().split(Regex("\\s+")).map { it.toInt(16).toByte() }.toByteArray()
 
 private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
     execute {
         val logger = Logger.getLogger("hamsterescape.il2cpp")
         val target = get(LIB, true)
         if (!target.exists()) {
-            // Base APK without natives: Java layer still runs; native skipped.
             logger.warning("$LIB not in this APK — skipping native gates (patch the arm64 split too)")
             return@execute
         }
@@ -124,7 +113,6 @@ val unlockPurchasesPatch = bytecodePatch(
     extendWith("extensions/extension.mpe")
 
     execute {
-        // Java: inject synthetic purchases when query returns empty.
         QueryPurchasesResponseFingerprint.method.addInstructions(
             0,
             """
