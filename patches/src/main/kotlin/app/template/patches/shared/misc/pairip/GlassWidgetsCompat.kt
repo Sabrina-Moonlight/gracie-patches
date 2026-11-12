@@ -14,14 +14,3 @@ internal val GLASS_WIDGETS = Compatibility(
         AppTarget(version = "1.0.2", versionCode = 12, minSdk = 32),
     ),
 )
-
-/** Multiple App (clone space) 1.0.9.260.20 — PairIP license-only, no VMRunner. */
-internal val MULTIPLE_APP = Compatibility(
-    name = "Multiple App",
-    packageName = "com.multipleapp.clonespace",
-    apkFileType = ApkFileType.APKS,
-    appIconColor = 0x4CAF50,
-    targets = listOf(
-        AppTarget(version = "1.0.9.260.20", versionCode = 9),
-    ),
-)

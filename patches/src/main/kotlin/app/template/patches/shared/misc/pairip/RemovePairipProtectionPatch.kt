@@ -17,7 +17,7 @@ val removePairipProtectionPatch = bytecodePatch(
     description = "Skips PairIP license checks and the delayed process exit.",
     default = true,
 ) {
-    compatibleWith(GLASS_WIDGETS, MULTIPLE_APP)
+    compatibleWith(GLASS_WIDGETS)
 
     execute {
         if (classDefByOrNull(LICENSE_CLIENT_CLASS) == null) return@execute
