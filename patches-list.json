@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.78",
+  "version": "1.0.79",
   "patches": [
     {
       "name": "Add battery optimization permission (internal)",
@@ -564,7 +564,7 @@
     },
     {
       "name": "Unlock subscription",
-      "description": "Unlocks BB Pass / shared subscription and forces Play Billing purchases as owned.",
+      "description": "Unlocks BB Pass shared subscription and marks Play purchases as owned. Activates local SharedSub state when the game starts.",
       "default": true,
       "category": null,
       "compatiblePackages": [
