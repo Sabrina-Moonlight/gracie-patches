@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.73",
+  "version": "1.0.74",
   "patches": [
     {
       "name": "Clone app",
@@ -186,6 +186,38 @@
     },
     {
       "name": "Disable Pairip",
+      "description": "Disables PairIP license checks so the app keeps running after it is modified.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.multipleapp.clonespace",
+          "name": "Multiple App",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#4CAF50",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.9.260.20",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Pairip",
       "description": "Skips the local license and integrity checks so the app can keep running offline.",
       "default": true,
       "category": null,
@@ -272,38 +304,6 @@
     },
     {
       "name": "Hide Ads",
-      "description": "Removes interstitial and app-open ads that appear when opening a clone.",
-      "default": true,
-      "category": null,
-      "compatiblePackages": [
-        {
-          "packageName": "com.multipleapp.clonespace",
-          "name": "Multiple App",
-          "description": null,
-          "apkFileType": "APKS",
-          "appIconColor": "#4CAF50",
-          "signatures": null,
-          "formFactor": "MOBILE",
-          "targets": [
-            {
-              "version": "1.0.9.260.20",
-              "versionCodes": {
-                "ARM64_V8A": 9,
-                "ARMEABI_V7A": 9,
-                "X86_64": 9,
-                "X86": 9
-              },
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Hide Ads",
       "description": "Turns off every ad gate and every show/preload path in Themezy.",
       "default": true,
       "category": null,
@@ -352,6 +352,38 @@
             {
               "version": "12.0.3-17888438",
               "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Hide Entry Ads",
+      "description": "Skips the full-screen ad when opening a clone. Ads inside the cloned apps still work.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.multipleapp.clonespace",
+          "name": "Multiple App",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#4CAF50",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.9.260.20",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
               "isExperimental": false,
               "minSdk": null,
               "description": null
@@ -540,7 +572,7 @@
     },
     {
       "name": "Remove Pairip Protection",
-      "description": "Skips the local license check entry point.",
+      "description": "Skips the local license check entry point and closes that would kill the app.",
       "default": true,
       "category": null,
       "compatiblePackages": [
@@ -563,6 +595,29 @@
               },
               "isExperimental": false,
               "minSdk": 32,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.multipleapp.clonespace",
+          "name": "Multiple App",
+          "description": null,
+          "apkFileType": "APKS",
+          "appIconColor": "#4CAF50",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "1.0.9.260.20",
+              "versionCodes": {
+                "ARM64_V8A": 9,
+                "ARMEABI_V7A": 9,
+                "X86_64": 9,
+                "X86": 9
+              },
+              "isExperimental": false,
+              "minSdk": null,
               "description": null
             }
           ]

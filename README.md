@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.73](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.73)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;18 patches total
+> **[v1.0.74](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.74)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;20 patches total
 <details open>
 <summary>🌸 Orientation Control&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -55,7 +55,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 |----------|----------------|-----------|
 | [Disable Pairip](#disable-pairip) | Restores the normal app entry and recovers offline method bodies so the app can keep running. |  |
 | [Local Preference](#local-preference) | Uses a local preference so optional widget features stay available offline. |  |
-| [Remove Pairip Protection](#remove-pairip-protection) | Skips the local license check entry point. |  |
+| [Remove Pairip Protection](#remove-pairip-protection) | Skips the local license check entry point and closes that would kill the app. |  |
 
 </details>
 
@@ -74,6 +74,26 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 |----------|----------------|-----------|
 | [Disable Pairip](#disable-pairip) | Skips the local license and integrity checks so the app can keep running offline. |  |
 | [Local Preference](#local-preference) | Uses a local preference so optional widget features stay available offline. |  |
+
+</details>
+
+<details open>
+<summary>🌸 Multiple App&nbsp;&nbsp;•&nbsp;&nbsp;4 patches</summary>
+<br>
+
+**Package name:** `com.multipleapp.clonespace`
+
+**🌻 Supported versions:**
+
+| 1.0.9.260.20 |
+| :---: |
+
+| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
+|----------|----------------|-----------|
+| [Disable Pairip](#disable-pairip) | Disables PairIP license checks so the app keeps running after it is modified. |  |
+| [Hide Entry Ads](#hide-entry-ads) | Skips the full-screen ad when opening a clone. Ads inside the cloned apps still work. |  |
+| [Prevent Self Close](#prevent-self-close) | Stops the app from force-closing the process on errors after it is modified. |  |
+| [Remove Pairip Protection](#remove-pairip-protection) | Skips the local license check entry point and closes that would kill the app. |  |
 
 </details>
 
@@ -129,24 +149,6 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 | [Disable Pairip](#disable-pairip) | Skips the local license check so the app can keep running offline. |  |
 | [Hide Ads](#hide-ads) | Turns off every ad gate and every show/preload path in Themezy. |  |
 | [Unlock Local](#unlock-local) | Marks icons, wallpapers and widgets as unlocked so only Add/Apply shows, never Unlock. |  |
-
-</details>
-
-<details open>
-<summary>🌸 Multiple App&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
-<br>
-
-**Package name:** `com.multipleapp.clonespace`
-
-**🌻 Supported versions:**
-
-| 1.0.9.260.20 |
-| :---: |
-
-| 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
-|----------|----------------|-----------|
-| [Hide Ads](#hide-ads) | Removes interstitial and app-open ads that appear when opening a clone. |  |
-| [Prevent Self Close](#prevent-self-close) | Stops the app from force-closing the process on errors after it is modified. |  |
 
 </details>
 
