@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.97",
+  "version": "1.0.98",
   "patches": [
     {
       "name": "Clone app",
@@ -320,7 +320,7 @@
     },
     {
       "name": "Unlock premium",
-      "description": "Forces GameData isFullVersion/isAdFree, kills paywall/ads, real IAP product ids.",
+      "description": "Unlocks Full Version / No Ads; signature spoof; stable IL2CPP gates.",
       "default": true,
       "category": null,
       "compatiblePackages": [
