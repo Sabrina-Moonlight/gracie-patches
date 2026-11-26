@@ -18,16 +18,20 @@ import java.io.RandomAccessFile
 import java.util.logging.Logger
 
 /**
- * Puzzles Kids — Animal Jigsaw (com.gamesforkids.animals.puzzles.jigsaw)
+ * Puzzles Kids — full unlock (Il2CppDumper offsets for this build).
  *
- * Full unlock from Il2CppDumper v31 on this build's libil2cpp.so:
- *   GameData.isFullVersion / isAdFree
- *   Product IDs: full_version, full_version_playpass, remove_ads, upgrade_version
- *   GameManager.ShowIAPCanvas / ShowInterstitial / ShowBanner
- *   GooglePurchase.IsPurchased, Product.get_hasReceipt
- *   PurchaserIAP.IsInitialized / ProcessPurchase
+ * Root cause of v06 still showing paywall:
+ *  - ProcessPurchase early-RET skipped GameData flag writes
+ *  - isFullVersion/isAdFree never forced on the live GameData instance
+ *  - shop UI can open without ShowIAPCanvas
  *
- * File offsets = RVA - 0x4000 (confirmed against dump.cs Offset field).
+ * v07:
+ *  - ARM64 shellcode at LoadLevel + Awake: gameData.isFullVersion/isAdFree = 1
+ *  - IAPFullVersionComplete / IAPRemoveAdsComplete → same flag write + RET
+ *  - ShowIAPCanvas / OpenIapCanvas / DesignIAP → RET
+ *  - ads methods → RET
+ *  - IsPurchased / hasReceipt / IsInitialized → true
+ *  - DEX: synthetic products (real ids) + Purchase state + prefs onCreate
  */
 private val PUZZLES_KIDS = Compatibility(
     name = "Puzzles Kids",
@@ -41,10 +45,30 @@ private const val LIB = "lib/arm64-v8a/libil2cpp.so"
 private const val HELPER =
     "Lapp/template/extension/shared/PuzzlesKidsUnlockHelper;"
 
-private val RET = hexBytes("c0 03 5f d6")                 // RET
-private val RETURN_TRUE = hexBytes("20 00 80 52 c0 03 5f d6") // MOV W0,#1 ; RET
-private val RETURN_FALSE = hexBytes("00 00 80 52 c0 03 5f d6") // MOV W0,#0 ; RET
-private val RETURN_COMPLETE = hexBytes("00 00 80 52 c0 03 5f d6") // ProcessPurchase Complete=0
+private val RET = hexBytes("c0 03 5f d6")
+private val RETURN_TRUE = hexBytes("20 00 80 52 c0 03 5f d6")
+
+/**
+ * LDR X8,[X0,#0x20] ; CBZ X8,+3 ; MOV W9,#1 ; STRB W9,[X8,#0x16] ; STRB W9,[X8,#0x17]
+ * Then execution falls into the original instruction that lived at +0x14.
+ */
+private val FORCE_FLAGS_THEN_FALLTHROUGH = hexBytes(
+    "08 10 40 f9" + // LDR X8, [X0, #0x20]   gameData
+    "88 00 00 b4" + // CBZ X8, +4 ins (to +0x14)
+    "29 00 80 52" + // MOV W9, #1
+    "09 59 00 39" + // STRB W9, [X8, #0x16] isFullVersion
+    "09 5d 00 39", // STRB W9, [X8, #0x17] isAdFree
+)
+
+/** Same flag write then RET (for IAP*Complete replacements). */
+private val FORCE_FLAGS_RET = hexBytes(
+    "08 10 40 f9" + // LDR X8, [X0, #0x20]
+    "88 00 00 b4" + // CBZ X8, +4 → RET
+    "29 00 80 52" + // MOV W9, #1
+    "09 59 00 39" + // STRB isFullVersion
+    "09 5d 00 39" + // STRB isAdFree
+    "c0 03 5f d6", // RET
+)
 
 private data class Il2CppGate(
     val label: String,
@@ -52,38 +76,46 @@ private data class Il2CppGate(
     val replacement: ByteArray,
 )
 
-/**
- * Offsets from Il2CppDumper script.json Address (RVA) minus 0x4000.
- * Verified prologues match dump before write.
- */
 private val IL2CPP_GATES = listOf(
-    // Hide paywall
+    // Force flags on every level load + at boot
+    Il2CppGate("GameManager$$LoadLevel/forceFlags", 0x10c4394, FORCE_FLAGS_THEN_FALLTHROUGH),
+    Il2CppGate("GameManager$$Awake/forceFlags", 0x10d27e0, FORCE_FLAGS_THEN_FALLTHROUGH),
+    // Completes only set flags (idempotent)
+    Il2CppGate("GameManager$$IAPFullVersionComplete", 0x10d346c, FORCE_FLAGS_RET),
+    Il2CppGate("GameManager$$IAPRemoveAdsComplete", 0x10d31e4, FORCE_FLAGS_RET),
+    Il2CppGate("GameManager$$IAPComplete", 0x10d32d0, FORCE_FLAGS_RET),
+    Il2CppGate("GameManager$$IAPUpgradeComplete", 0x10d3584, FORCE_FLAGS_RET),
+    // Kill paywall entry points
     Il2CppGate("GameManager$$ShowIAPCanvas", 0x10c4ca4, RET),
-    // Kill ads
+    Il2CppGate("BalloonPopNew.Buttons$$OpenIapCanvas", 0x10fafac, RET),
+    Il2CppGate("UnlockIAP$$DesignIAP", 0x10f9734, RET),
+    Il2CppGate("UnlockIAP$$Start", 0x10f9730, RET),
+    Il2CppGate("IapCanvas$$OnEnable", 0x109be20, RET),
+    Il2CppGate("IapCanvas$$CheckPurchaseStatus", 0x109bf74, RET),
+    // Ads off
     Il2CppGate("GameManager$$ShowInterstitial", 0x10c7808, RET),
     Il2CppGate("GameManager$$ShowBanner", 0x10c8238, RET),
     Il2CppGate("GameManager$$RequestInterstitial", 0x10c7944, RET),
     Il2CppGate("GameManager$$ShowUnityBanner", 0x10d39a8, RET),
     Il2CppGate("GameManager$$ShowUnityAd", 0x10d3a48, RET),
-    // Ownership
+    // Ownership helpers
     Il2CppGate("GooglePurchase$$IsPurchased", 0x2159ee0, RETURN_TRUE),
     Il2CppGate("Product$$get_hasReceipt", 0x2125194, RETURN_TRUE),
     Il2CppGate("PurchaserIAP$$IsInitialized", 0x10df2ac, RETURN_TRUE),
-    // Finish any purchase flow as success without failing
-    Il2CppGate("PurchaserIAP$$ProcessPurchase", 0x10dff3c, RETURN_COMPLETE),
-    // IAP canvas status: do not open locked shop logic
-    Il2CppGate("IapCanvas$$CheckPurchaseStatus", 0x109bf74, RET),
 )
 
 private fun hexBytes(pattern: String): ByteArray =
-    pattern.trim().split(Regex("\\s+")).map { it.toInt(16).toByte() }.toByteArray()
+    pattern.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+        .map { it.toInt(16).toByte() }.toByteArray()
 
 private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
     execute {
         val logger = Logger.getLogger("puzzleskids.il2cpp")
         val target = get(LIB, true)
         if (!target.exists()) {
-            throw PatchException("$LIB missing — apply patch to the APKS that contains arm64-v8a")
+            throw PatchException(
+                "$LIB missing. Patch the full APKS (base + arm64 split), not base.apk alone.",
+            )
         }
         RandomAccessFile(target, "rw").use { raf ->
             for (gate in IL2CPP_GATES) {
@@ -138,7 +170,7 @@ private object UnityPlayerActivityOnResumeFingerprint : Fingerprint(
 @Suppress("unused")
 val unlockPremiumPatch = bytecodePatch(
     name = "Unlock premium",
-    description = "Full unlock: IL2CPP paywall/ads/ownership gates + real product ids + prefs.",
+    description = "Forces GameData isFullVersion/isAdFree, kills paywall/ads, real IAP product ids.",
     default = true,
 ) {
     compatibleWith(PUZZLES_KIDS)
