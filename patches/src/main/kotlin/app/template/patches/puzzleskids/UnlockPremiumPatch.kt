@@ -18,16 +18,12 @@ import java.io.RandomAccessFile
 import java.util.logging.Logger
 
 /**
- * Puzzles Kids — unlock levels (not only hide shop).
+ * Puzzles Kids — unlock levels + hide Rate Us / More Apps / in-house promo.
  *
- * MenuLoad.Start always runs into RemoveLocks, which does:
- *   LDRB W8, [X8, #22]  ; GameData.isFullVersion
- *   CBZ  W8, skip       ; leave locks if false
- * Replace every isFullVersion load (LDRB W8,[X8,#0x16]) in the game code
- * range with MOV W8,#1 so RemoveLocks / CheckLock / loaders treat premium as on.
+ * Premium: force GameData.isFullVersion loads (LDRB W8,[X8,#0x16] -> MOV W8,#1)
+ * in game code range so MenuLoad.RemoveLocks clears lock icons.
  *
- * Also: LockedClick → RET, safe ads/paywall RETs, synthetic IAP, signature spoof.
- * Single file — no cross-file dependsOn.
+ * Promo: RET on Rate Us, More Apps panel, in-house ad canvas, bottom strip spawners.
  */
 private val PUZZLES_KIDS = Compatibility(
     name = "Puzzles Kids",
@@ -43,9 +39,7 @@ private const val HELPER =
 
 private val RET = hexBytes("c0 03 5f d6")
 private val RETURN_TRUE = hexBytes("20 00 80 52 c0 03 5f d6")
-private val MOV_W8_1 = hexBytes("28 00 80 52") // MOV W8, #1
-
-/** LDRB W8, [X8, #0x16] — GameData.isFullVersion field load */
+private val MOV_W8_1 = hexBytes("28 00 80 52")
 private val LDRB_W8_X8_0x16 = hexBytes("08 59 40 39")
 
 private data class Il2CppGate(
@@ -55,19 +49,51 @@ private data class Il2CppGate(
 )
 
 private val IL2CPP_GATES = listOf(
-    // Level lock clicks → no-op (lock icons still cleared by RemoveLocks)
+    // --- Level locks ---
     Il2CppGate("CloudBurst.LockedClick", 0x10c4b5c, RET),
     Il2CppGate("TouchColorChange.LockedClick", 0x10f7d64, RET),
     Il2CppGate("TouchScript.LockedClick", 0x10f86b0, RET),
     Il2CppGate("TouchSound.LockedClick", 0x10f88fc, RET),
     Il2CppGate("TouchSoundAnimals.LockedClick", 0x10f8ba8, RET),
-    // Ads
+    // --- Ads (rewarded/banner from GameManager) ---
     Il2CppGate("GameManager.ShowInterstitial", 0x10c7808, RET),
     Il2CppGate("GameManager.ShowBanner", 0x10c8238, RET),
     Il2CppGate("GameManager.RequestInterstitial", 0x10c7944, RET),
     Il2CppGate("GameManager.ShowUnityBanner", 0x10d39a8, RET),
     Il2CppGate("GameManager.ShowUnityAd", 0x10d3a48, RET),
-    // Ownership
+    // --- Rate Us ---
+    Il2CppGate("RateAndReviewManager.ShowIngameReview", 0x10be8f4, RET),
+    Il2CppGate("RateAndReviewManager.ShowIngameReviewPopup", 0x10bea48, RET),
+    Il2CppGate("RateAndReviewManager.OnEnable", 0x10be950, RET),
+    Il2CppGate("RateUsStarClick.Start", 0x10e340c, RET),
+    Il2CppGate("RateUsStarClick.OnEnable", 0x10e3460, RET),
+    Il2CppGate("RateUsStarClick.ShowStars", 0x10e351c, RET),
+    Il2CppGate("SceneManagerHome.ShowRateButton", 0x10e5524, RET),
+    Il2CppGate("SceneManagerHome.ShowRateUsCanvas", 0x10e55a8, RET),
+    Il2CppGate("SettingPop.RateUs", 0x10e880c, RET),
+    // --- More Apps / recommended strip / cross-promo ---
+    Il2CppGate("SceneManagerHome.ShowMoreAppsPanel", 0x10e51b4, RET),
+    Il2CppGate("SceneManagerHome.ShowMoreAppsCanvas", 0x10de254, RET),
+    Il2CppGate("SceneManagerHome.MoreAppsButtonClick", 0x10e5858, RET),
+    Il2CppGate("SceneManagerHome.ShowInhouseAds", 0x10e5a54, RET),
+    Il2CppGate("SceneManagerHome.DownloadInhouseAd", 0x10e5c18, RET),
+    Il2CppGate("MoreAppsCanvas.Start", 0x109ecd8, RET),
+    Il2CppGate("MoreAppsController.Awake", 0x1106afc, RET),
+    Il2CppGate("MoreAppsController.Start", 0x1106bf4, RET),
+    Il2CppGate("MoreAppsController.EnableDisablePanel", 0x1106b78, RET),
+    Il2CppGate("MoreAppsController.LoadData", 0x1106e10, RET),
+    Il2CppGate("MoreAppsView.SpawnLogo", 0x11075b0, RET),
+    Il2CppGate("MoreAppsView.EnableScrollView", 0x1107bcc, RET),
+    // --- In-house "Try our new Game" ---
+    Il2CppGate("AdInHouse.ShowInHouseAdCanvas", 0x10c0760, RET),
+    Il2CppGate("AdInHouse.LoadAd", 0x10c0654, RET),
+    Il2CppGate("AdInHouseCanvas.Start", 0x10c1090, RET),
+    Il2CppGate("InHouseAdsManager.LoadInhouseAds", 0x1107ee4, RET),
+    Il2CppGate("InHouseAdsManager.ShowInhouseAds", 0x110815c, RET),
+    Il2CppGate("InHouseAdsManager.InstantiateAdsCanvas", 0x11082e8, RET),
+    Il2CppGate("InHouseAdsUIController.Start", 0x1108a78, RET),
+    Il2CppGate("InHouseAdsUIController.ShowData", 0x11084a0, RET),
+    // --- IAP ownership helpers ---
     Il2CppGate("GooglePurchase.IsPurchased", 0x2159ee0, RETURN_TRUE),
     Il2CppGate("Product.get_hasReceipt", 0x2125194, RETURN_TRUE),
     Il2CppGate("PurchaserIAP.IsInitialized", 0x10df2ac, RETURN_TRUE),
@@ -87,7 +113,6 @@ private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
             )
         }
         RandomAccessFile(target, "rw").use { raf ->
-            // 1) Force isFullVersion loads to true (unblocks RemoveLocks / CheckLock / menus)
             val needle = LDRB_W8_X8_0x16
             val repl = MOV_W8_1
             val start = 0x1000000L
@@ -116,9 +141,6 @@ private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
                             raf.seek(abs)
                             raf.write(repl)
                             hits++
-                            logger.info(
-                                "isFullVersion load -> MOV W8,#1 @ 0x${abs.toString(16)}",
-                            )
                         }
                         i += needle.size
                     } else {
@@ -129,10 +151,9 @@ private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
             }
             logger.info("isFullVersion sites patched: $hits")
             if (hits < 1) {
-                throw PatchException("No isFullVersion LDRB sites found — wrong libil2cpp build")
+                throw PatchException("No isFullVersion LDRB sites found")
             }
 
-            // 2) Explicit gates
             for (gate in IL2CPP_GATES) {
                 if (gate.offset + gate.replacement.size > raf.length()) {
                     throw PatchException("${gate.label}: offset past EOF")
@@ -182,26 +203,10 @@ private object UnityPlayerActivityOnResumeFingerprint : Fingerprint(
     parameters = emptyList(),
 )
 
-private object PairipInitializeLicenseCheckFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
-    name = "initializeLicenseCheck",
-    accessFlags = listOf(AccessFlags.PUBLIC),
-    returnType = "V",
-    parameters = listOf(),
-)
-
-private object PairipVerifyIntegrityFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/SignatureCheck;",
-    name = "verifyIntegrity",
-    returnType = "V",
-    parameters = listOf("Landroid/content/Context;"),
-    strings = listOf("Apk signature is invalid."),
-)
-
 @Suppress("unused")
 val unlockPremiumPatch = bytecodePatch(
     name = "Unlock premium",
-    description = "Unlocks levels (forces isFullVersion), removes lock UI, no ads.",
+    description = "Unlocks levels, hides Rate Us / More Apps / in-house promos, no ads.",
     default = true,
 ) {
     compatibleWith(PUZZLES_KIDS)
@@ -217,9 +222,6 @@ val unlockPremiumPatch = bytecodePatch(
     extendWith("extensions/extension.mpe")
 
     execute {
-        runCatching { PairipInitializeLicenseCheckFingerprint.method.returnEarly() }
-        runCatching { PairipVerifyIntegrityFingerprint.method.returnEarly() }
-
         QueryPurchasesResponseFingerprint.method.addInstructions(
             0,
             """
