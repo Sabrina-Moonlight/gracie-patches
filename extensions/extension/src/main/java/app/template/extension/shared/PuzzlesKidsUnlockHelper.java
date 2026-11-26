@@ -16,10 +16,6 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/**
- * Forces Full Version + Ad-Free for com.gamesforkids.animals.puzzles.jigsaw.
- * GameData fields: isFullVersion, isAdFree (Unity PlayerPrefs).
- */
 @SuppressWarnings("unused")
 public final class PuzzlesKidsUnlockHelper {
 
@@ -27,24 +23,12 @@ public final class PuzzlesKidsUnlockHelper {
     private static final String PKG = "com.gamesforkids.animals.puzzles.jigsaw";
     private static final String PURCHASE_CLASS = "com.android.billingclient.api.Purchase";
 
-    /** Likely store product ids + constant names seen in metadata. */
+    /** Real product ids from global-metadata string literals. */
     private static final String[] PRODUCT_IDS = new String[] {
         "full_version",
+        "full_version_playpass",
         "remove_ads",
-        "fullversion",
-        "removeads",
-        "no_ads",
-        "noads",
         "upgrade_version",
-        "playpass",
-        "kProductIDNonConsumableFullVersion",
-        "kProductIDNonConsumableRemoveAds",
-        "kProductIDNonConsumableUpgradeVersion",
-        "kProductIDNonConsumablePlaypass",
-        PKG + ".full_version",
-        PKG + ".remove_ads",
-        PKG + ".fullversion",
-        PKG + ".removeads",
     };
 
     private static final String[] BOOL_KEYS = new String[] {
@@ -64,12 +48,12 @@ public final class PuzzlesKidsUnlockHelper {
         "isUnlocked",
         "hasFullVersion",
         "hasRemoveAds",
+        "full_version",
     };
 
     private PuzzlesKidsUnlockHelper() {
     }
 
-    /** Called from UnityPlayerActivity.onCreate / onResume. */
     public static void activate(Context ctx) {
         if (ctx == null) {
             return;
@@ -80,10 +64,6 @@ public final class PuzzlesKidsUnlockHelper {
         Log.i(TAG, "activate: prefs written");
     }
 
-    /**
-     * Inject synthetic owned purchases into BillingClient query results.
-     * Same pattern as HamsterPlayPurchases.
-     */
     public static List<Object> withSyntheticPurchases(List<Object> purchases) {
         try {
             List<Object> result = new ArrayList<>();
@@ -128,10 +108,6 @@ public final class PuzzlesKidsUnlockHelper {
         }
     }
 
-    /**
-     * Unity sometimes persists PlayerPrefs as a plain XML under shared_prefs.
-     * Writing both int=1 and the classic Unity format covers more builds.
-     */
     private static void writeUnityPlayerPrefsXml(Context app) {
         try {
             File dir = new File(app.getApplicationInfo().dataDir, "shared_prefs");
@@ -154,7 +130,6 @@ public final class PuzzlesKidsUnlockHelper {
     }
 
     private static String purchaseJson(String productId, long purchaseTime) throws Exception {
-        // purchaseState 0 = purchased in legacy JSON; getPurchaseState() is also forced to 1 in DEX
         return new JSONObject()
                 .put("orderId", "GPA.3370-" + Math.abs(productId.hashCode()))
                 .put("packageName", PKG)
