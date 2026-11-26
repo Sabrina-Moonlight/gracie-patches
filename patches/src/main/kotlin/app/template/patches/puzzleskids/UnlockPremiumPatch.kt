@@ -18,12 +18,16 @@ import java.io.RandomAccessFile
 import java.util.logging.Logger
 
 /**
- * Puzzles Kids unlock — single-file, no cross-file dependsOn (avoids NPE in PatchLoader).
+ * Puzzles Kids — unlock levels (not only hide shop).
  *
- * - Signature / cert / Firebase / install-source: shared universal patches
- * - PairIP: optional fingerprints, runCatching only (no separate patch val)
- * - IL2CPP: safe entry RET / return-true + IAP complete flag writes
- * - DEX: synthetic purchases + Purchase state + prefs helper
+ * MenuLoad.Start always runs into RemoveLocks, which does:
+ *   LDRB W8, [X8, #22]  ; GameData.isFullVersion
+ *   CBZ  W8, skip       ; leave locks if false
+ * Replace every isFullVersion load (LDRB W8,[X8,#0x16]) in the game code
+ * range with MOV W8,#1 so RemoveLocks / CheckLock / loaders treat premium as on.
+ *
+ * Also: LockedClick → RET, safe ads/paywall RETs, synthetic IAP, signature spoof.
+ * Single file — no cross-file dependsOn.
  */
 private val PUZZLES_KIDS = Compatibility(
     name = "Puzzles Kids",
@@ -39,15 +43,10 @@ private const val HELPER =
 
 private val RET = hexBytes("c0 03 5f d6")
 private val RETURN_TRUE = hexBytes("20 00 80 52 c0 03 5f d6")
+private val MOV_W8_1 = hexBytes("28 00 80 52") // MOV W8, #1
 
-private val FORCE_FLAGS_RET = hexBytes(
-    "08 10 40 f9" +
-        "88 00 00 b4" +
-        "29 00 80 52" +
-        "09 59 00 39" +
-        "09 5d 00 39" +
-        "c0 03 5f d6",
-)
+/** LDRB W8, [X8, #0x16] — GameData.isFullVersion field load */
+private val LDRB_W8_X8_0x16 = hexBytes("08 59 40 39")
 
 private data class Il2CppGate(
     val label: String,
@@ -56,27 +55,28 @@ private data class Il2CppGate(
 )
 
 private val IL2CPP_GATES = listOf(
-    Il2CppGate("GameManager.ShowIAPCanvas", 0x10c4ca4, RET),
+    // Level lock clicks → no-op (lock icons still cleared by RemoveLocks)
+    Il2CppGate("CloudBurst.LockedClick", 0x10c4b5c, RET),
+    Il2CppGate("TouchColorChange.LockedClick", 0x10f7d64, RET),
+    Il2CppGate("TouchScript.LockedClick", 0x10f86b0, RET),
+    Il2CppGate("TouchSound.LockedClick", 0x10f88fc, RET),
+    Il2CppGate("TouchSoundAnimals.LockedClick", 0x10f8ba8, RET),
+    // Ads
     Il2CppGate("GameManager.ShowInterstitial", 0x10c7808, RET),
     Il2CppGate("GameManager.ShowBanner", 0x10c8238, RET),
     Il2CppGate("GameManager.RequestInterstitial", 0x10c7944, RET),
     Il2CppGate("GameManager.ShowUnityBanner", 0x10d39a8, RET),
     Il2CppGate("GameManager.ShowUnityAd", 0x10d3a48, RET),
-    Il2CppGate("IapCanvas.CheckPurchaseStatus", 0x109bf74, RET),
+    // Ownership
     Il2CppGate("GooglePurchase.IsPurchased", 0x2159ee0, RETURN_TRUE),
     Il2CppGate("Product.get_hasReceipt", 0x2125194, RETURN_TRUE),
     Il2CppGate("PurchaserIAP.IsInitialized", 0x10df2ac, RETURN_TRUE),
-    Il2CppGate("GameManager.IAPFullVersionComplete", 0x10d346c, FORCE_FLAGS_RET),
-    Il2CppGate("GameManager.IAPRemoveAdsComplete", 0x10d31e4, FORCE_FLAGS_RET),
-    Il2CppGate("GameManager.IAPComplete", 0x10d32d0, FORCE_FLAGS_RET),
-    Il2CppGate("GameManager.IAPUpgradeComplete", 0x10d3584, FORCE_FLAGS_RET),
 )
 
 private fun hexBytes(pattern: String): ByteArray =
     pattern.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
         .map { it.toInt(16).toByte() }.toByteArray()
 
-// Defined in THIS file before unlockPremiumPatch so dependsOn is never null.
 private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
     execute {
         val logger = Logger.getLogger("puzzleskids.il2cpp")
@@ -87,6 +87,52 @@ private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
             )
         }
         RandomAccessFile(target, "rw").use { raf ->
+            // 1) Force isFullVersion loads to true (unblocks RemoveLocks / CheckLock / menus)
+            val needle = LDRB_W8_X8_0x16
+            val repl = MOV_W8_1
+            val start = 0x1000000L
+            val end = 0x1200000L
+            var pos = start
+            var hits = 0
+            val fileLen = raf.length()
+            val bufSize = 0x10000
+            val buf = ByteArray(bufSize + needle.size)
+            while (pos < end && pos < fileLen) {
+                raf.seek(pos)
+                val read = raf.read(buf)
+                if (read < needle.size) break
+                var i = 0
+                while (i <= read - needle.size) {
+                    var match = true
+                    for (k in needle.indices) {
+                        if (buf[i + k] != needle[k]) {
+                            match = false
+                            break
+                        }
+                    }
+                    if (match) {
+                        val abs = pos + i
+                        if (abs in start until end) {
+                            raf.seek(abs)
+                            raf.write(repl)
+                            hits++
+                            logger.info(
+                                "isFullVersion load -> MOV W8,#1 @ 0x${abs.toString(16)}",
+                            )
+                        }
+                        i += needle.size
+                    } else {
+                        i++
+                    }
+                }
+                pos += (read - needle.size + 1).toLong()
+            }
+            logger.info("isFullVersion sites patched: $hits")
+            if (hits < 1) {
+                throw PatchException("No isFullVersion LDRB sites found — wrong libil2cpp build")
+            }
+
+            // 2) Explicit gates
             for (gate in IL2CPP_GATES) {
                 if (gate.offset + gate.replacement.size > raf.length()) {
                     throw PatchException("${gate.label}: offset past EOF")
@@ -98,49 +144,6 @@ private val unlockIl2CppNativeInternalPatch = rawResourcePatch {
         }
     }
 }
-
-// --- optional PairIP (inline, not a separate patch val) ---
-
-private object PairipInitializeLicenseCheckFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
-    name = "initializeLicenseCheck",
-    accessFlags = listOf(AccessFlags.PUBLIC),
-    returnType = "V",
-    parameters = listOf(),
-)
-
-private object PairipConnectLicensingFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
-    accessFlags = listOf(AccessFlags.PRIVATE),
-    returnType = "V",
-    parameters = listOf(),
-    strings = listOf("Connecting to the licensing service..."),
-)
-
-private object PairipVerifyIntegrityFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/SignatureCheck;",
-    name = "verifyIntegrity",
-    returnType = "V",
-    parameters = listOf("Landroid/content/Context;"),
-    strings = listOf("Apk signature is invalid."),
-)
-
-private object PairipStartupLauncherFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/StartupLauncher;",
-    name = "launch",
-    isStatic = true,
-    returnType = "V",
-    parameters = listOf(),
-)
-
-private object PairipScheduleAppShutdownFingerprint : Fingerprint(
-    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
-    name = "scheduleAppShutdown",
-    returnType = "V",
-    parameters = listOf(),
-)
-
-// --- billing / unity ---
 
 private object QueryPurchasesResponseFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC),
@@ -179,15 +182,30 @@ private object UnityPlayerActivityOnResumeFingerprint : Fingerprint(
     parameters = emptyList(),
 )
 
+private object PairipInitializeLicenseCheckFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
+    name = "initializeLicenseCheck",
+    accessFlags = listOf(AccessFlags.PUBLIC),
+    returnType = "V",
+    parameters = listOf(),
+)
+
+private object PairipVerifyIntegrityFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/SignatureCheck;",
+    name = "verifyIntegrity",
+    returnType = "V",
+    parameters = listOf("Landroid/content/Context;"),
+    strings = listOf("Apk signature is invalid."),
+)
+
 @Suppress("unused")
 val unlockPremiumPatch = bytecodePatch(
     name = "Unlock premium",
-    description = "Unlocks Full Version / No Ads; signature spoof; stable IL2CPP gates.",
+    description = "Unlocks levels (forces isFullVersion), removes lock UI, no ads.",
     default = true,
 ) {
     compatibleWith(PUZZLES_KIDS)
 
-    // Only shared patches that other apps already use successfully + native patch in this file.
     dependsOn(
         extractApkCertificatePatch,
         spoofFirebaseCertHashPatch,
@@ -199,12 +217,8 @@ val unlockPremiumPatch = bytecodePatch(
     extendWith("extensions/extension.mpe")
 
     execute {
-        // Optional PairIP — skip if classes absent (no NPE, no extra patch val)
         runCatching { PairipInitializeLicenseCheckFingerprint.method.returnEarly() }
-        runCatching { PairipConnectLicensingFingerprint.method.returnEarly() }
         runCatching { PairipVerifyIntegrityFingerprint.method.returnEarly() }
-        runCatching { PairipStartupLauncherFingerprint.method.returnEarly() }
-        runCatching { PairipScheduleAppShutdownFingerprint.method.returnEarly() }
 
         QueryPurchasesResponseFingerprint.method.addInstructions(
             0,

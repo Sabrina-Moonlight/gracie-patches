@@ -24,10 +24,7 @@ public final class PuzzlesKidsUnlockHelper {
     private static final String PURCHASE_CLASS = "com.android.billingclient.api.Purchase";
 
     private static final String[] PRODUCT_IDS = new String[] {
-        "full_version",
-        "full_version_playpass",
-        "remove_ads",
-        "upgrade_version",
+        "full_version", "full_version_playpass", "remove_ads", "upgrade_version",
     };
 
     private static final String[] BOOL_KEYS = new String[] {
@@ -42,8 +39,33 @@ public final class PuzzlesKidsUnlockHelper {
     public static void activate(Context ctx) {
         if (ctx == null) return;
         Context app = ctx.getApplicationContext();
-        writeSharedPrefs(app);
-        writeUnityPlayerPrefsXml(app);
+        for (String name : new String[] {
+            PKG + ".v2.playerprefs", PKG, "GameData", "Unity", "unity", "IAP", "iap"
+        }) {
+            try {
+                SharedPreferences.Editor ed =
+                        app.getSharedPreferences(name, Context.MODE_PRIVATE).edit();
+                for (String key : BOOL_KEYS) {
+                    ed.putInt(key, 1);
+                    ed.putBoolean(key, true);
+                }
+                ed.apply();
+            } catch (Throwable ignored) {}
+        }
+        try {
+            File dir = new File(app.getApplicationInfo().dataDir, "shared_prefs");
+            if (!dir.exists()) dir.mkdirs();
+            File f = new File(dir, PKG + ".v2.playerprefs.xml");
+            StringBuilder sb = new StringBuilder();
+            sb.append("<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n");
+            for (String key : BOOL_KEYS) {
+                sb.append("    <int name=\"").append(key).append("\" value=\"1\" />\n");
+            }
+            sb.append("</map>\n");
+            try (FileOutputStream out = new FileOutputStream(f)) {
+                out.write(sb.toString().getBytes(StandardCharsets.UTF_8));
+            }
+        } catch (Throwable ignored) {}
         Log.i(TAG, "activate ok");
     }
 
@@ -63,39 +85,6 @@ public final class PuzzlesKidsUnlockHelper {
             Log.w(TAG, "synthetic failed", t);
             return purchases;
         }
-    }
-
-    private static void writeSharedPrefs(Context app) {
-        for (String name : new String[] {
-            PKG + ".v2.playerprefs", PKG, "GameData", "Unity", "unity", "IAP", "iap"
-        }) {
-            try {
-                SharedPreferences.Editor ed =
-                        app.getSharedPreferences(name, Context.MODE_PRIVATE).edit();
-                for (String key : BOOL_KEYS) {
-                    ed.putInt(key, 1);
-                    ed.putBoolean(key, true);
-                }
-                ed.apply();
-            } catch (Throwable ignored) {}
-        }
-    }
-
-    private static void writeUnityPlayerPrefsXml(Context app) {
-        try {
-            File dir = new File(app.getApplicationInfo().dataDir, "shared_prefs");
-            if (!dir.exists() && !dir.mkdirs()) return;
-            File f = new File(dir, PKG + ".v2.playerprefs.xml");
-            StringBuilder sb = new StringBuilder();
-            sb.append("<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\n<map>\n");
-            for (String key : BOOL_KEYS) {
-                sb.append("    <int name=\"").append(key).append("\" value=\"1\" />\n");
-            }
-            sb.append("</map>\n");
-            try (FileOutputStream out = new FileOutputStream(f)) {
-                out.write(sb.toString().getBytes(StandardCharsets.UTF_8));
-            }
-        } catch (Throwable ignored) {}
     }
 
     private static String purchaseJson(String productId, long purchaseTime) throws Exception {
