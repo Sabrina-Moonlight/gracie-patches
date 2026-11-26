@@ -20,18 +20,9 @@ import java.util.logging.Logger
 /**
  * Puzzles Kids — full unlock (Il2CppDumper offsets for this build).
  *
- * Root cause of v06 still showing paywall:
- *  - ProcessPurchase early-RET skipped GameData flag writes
- *  - isFullVersion/isAdFree never forced on the live GameData instance
- *  - shop UI can open without ShowIAPCanvas
- *
- * v07:
- *  - ARM64 shellcode at LoadLevel + Awake: gameData.isFullVersion/isAdFree = 1
- *  - IAPFullVersionComplete / IAPRemoveAdsComplete → same flag write + RET
- *  - ShowIAPCanvas / OpenIapCanvas / DesignIAP → RET
- *  - ads methods → RET
- *  - IsPurchased / hasReceipt / IsInitialized → true
- *  - DEX: synthetic products (real ids) + Purchase state + prefs onCreate
+ * Forces GameData.isFullVersion / isAdFree, kills paywall and ads,
+ * synthetic IAP with real product ids: full_version, full_version_playpass,
+ * remove_ads, upgrade_version.
  */
 private val PUZZLES_KIDS = Compatibility(
     name = "Puzzles Kids",
@@ -50,24 +41,24 @@ private val RETURN_TRUE = hexBytes("20 00 80 52 c0 03 5f d6")
 
 /**
  * LDR X8,[X0,#0x20] ; CBZ X8,+3 ; MOV W9,#1 ; STRB W9,[X8,#0x16] ; STRB W9,[X8,#0x17]
- * Then execution falls into the original instruction that lived at +0x14.
+ * Then falls into the original instruction at +0x14.
  */
 private val FORCE_FLAGS_THEN_FALLTHROUGH = hexBytes(
-    "08 10 40 f9" + // LDR X8, [X0, #0x20]   gameData
-    "88 00 00 b4" + // CBZ X8, +4 ins (to +0x14)
-    "29 00 80 52" + // MOV W9, #1
-    "09 59 00 39" + // STRB W9, [X8, #0x16] isFullVersion
-    "09 5d 00 39", // STRB W9, [X8, #0x17] isAdFree
+    "08 10 40 f9" +
+        "88 00 00 b4" +
+        "29 00 80 52" +
+        "09 59 00 39" +
+        "09 5d 00 39",
 )
 
-/** Same flag write then RET (for IAP*Complete replacements). */
+/** Flag write then RET (IAP complete replacements). */
 private val FORCE_FLAGS_RET = hexBytes(
-    "08 10 40 f9" + // LDR X8, [X0, #0x20]
-    "88 00 00 b4" + // CBZ X8, +4 → RET
-    "29 00 80 52" + // MOV W9, #1
-    "09 59 00 39" + // STRB isFullVersion
-    "09 5d 00 39" + // STRB isAdFree
-    "c0 03 5f d6", // RET
+    "08 10 40 f9" +
+        "88 00 00 b4" +
+        "29 00 80 52" +
+        "09 59 00 39" +
+        "09 5d 00 39" +
+        "c0 03 5f d6",
 )
 
 private data class Il2CppGate(
@@ -76,32 +67,28 @@ private data class Il2CppGate(
     val replacement: ByteArray,
 )
 
+// Labels must NOT contain $ — Kotlin string templates treat $Name as a reference.
 private val IL2CPP_GATES = listOf(
-    // Force flags on every level load + at boot
-    Il2CppGate("GameManager$$LoadLevel/forceFlags", 0x10c4394, FORCE_FLAGS_THEN_FALLTHROUGH),
-    Il2CppGate("GameManager$$Awake/forceFlags", 0x10d27e0, FORCE_FLAGS_THEN_FALLTHROUGH),
-    // Completes only set flags (idempotent)
-    Il2CppGate("GameManager$$IAPFullVersionComplete", 0x10d346c, FORCE_FLAGS_RET),
-    Il2CppGate("GameManager$$IAPRemoveAdsComplete", 0x10d31e4, FORCE_FLAGS_RET),
-    Il2CppGate("GameManager$$IAPComplete", 0x10d32d0, FORCE_FLAGS_RET),
-    Il2CppGate("GameManager$$IAPUpgradeComplete", 0x10d3584, FORCE_FLAGS_RET),
-    // Kill paywall entry points
-    Il2CppGate("GameManager$$ShowIAPCanvas", 0x10c4ca4, RET),
-    Il2CppGate("BalloonPopNew.Buttons$$OpenIapCanvas", 0x10fafac, RET),
-    Il2CppGate("UnlockIAP$$DesignIAP", 0x10f9734, RET),
-    Il2CppGate("UnlockIAP$$Start", 0x10f9730, RET),
-    Il2CppGate("IapCanvas$$OnEnable", 0x109be20, RET),
-    Il2CppGate("IapCanvas$$CheckPurchaseStatus", 0x109bf74, RET),
-    // Ads off
-    Il2CppGate("GameManager$$ShowInterstitial", 0x10c7808, RET),
-    Il2CppGate("GameManager$$ShowBanner", 0x10c8238, RET),
-    Il2CppGate("GameManager$$RequestInterstitial", 0x10c7944, RET),
-    Il2CppGate("GameManager$$ShowUnityBanner", 0x10d39a8, RET),
-    Il2CppGate("GameManager$$ShowUnityAd", 0x10d3a48, RET),
-    // Ownership helpers
-    Il2CppGate("GooglePurchase$$IsPurchased", 0x2159ee0, RETURN_TRUE),
-    Il2CppGate("Product$$get_hasReceipt", 0x2125194, RETURN_TRUE),
-    Il2CppGate("PurchaserIAP$$IsInitialized", 0x10df2ac, RETURN_TRUE),
+    Il2CppGate("GameManager.LoadLevel forceFlags", 0x10c4394, FORCE_FLAGS_THEN_FALLTHROUGH),
+    Il2CppGate("GameManager.Awake forceFlags", 0x10d27e0, FORCE_FLAGS_THEN_FALLTHROUGH),
+    Il2CppGate("GameManager.IAPFullVersionComplete", 0x10d346c, FORCE_FLAGS_RET),
+    Il2CppGate("GameManager.IAPRemoveAdsComplete", 0x10d31e4, FORCE_FLAGS_RET),
+    Il2CppGate("GameManager.IAPComplete", 0x10d32d0, FORCE_FLAGS_RET),
+    Il2CppGate("GameManager.IAPUpgradeComplete", 0x10d3584, FORCE_FLAGS_RET),
+    Il2CppGate("GameManager.ShowIAPCanvas", 0x10c4ca4, RET),
+    Il2CppGate("BalloonPop.OpenIapCanvas", 0x10fafac, RET),
+    Il2CppGate("UnlockIAP.DesignIAP", 0x10f9734, RET),
+    Il2CppGate("UnlockIAP.Start", 0x10f9730, RET),
+    Il2CppGate("IapCanvas.OnEnable", 0x109be20, RET),
+    Il2CppGate("IapCanvas.CheckPurchaseStatus", 0x109bf74, RET),
+    Il2CppGate("GameManager.ShowInterstitial", 0x10c7808, RET),
+    Il2CppGate("GameManager.ShowBanner", 0x10c8238, RET),
+    Il2CppGate("GameManager.RequestInterstitial", 0x10c7944, RET),
+    Il2CppGate("GameManager.ShowUnityBanner", 0x10d39a8, RET),
+    Il2CppGate("GameManager.ShowUnityAd", 0x10d3a48, RET),
+    Il2CppGate("GooglePurchase.IsPurchased", 0x2159ee0, RETURN_TRUE),
+    Il2CppGate("Product.get_hasReceipt", 0x2125194, RETURN_TRUE),
+    Il2CppGate("PurchaserIAP.IsInitialized", 0x10df2ac, RETURN_TRUE),
 )
 
 private fun hexBytes(pattern: String): ByteArray =
