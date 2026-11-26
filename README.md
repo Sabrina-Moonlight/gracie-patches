@@ -22,7 +22,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 ## 🌷 Available patches
 
 <!-- PATCHES_START -->
-> **[v1.0.98](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.98)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
+> **[v1.0.99](https://github.com/Sabrina-Moonlight/gracie-patches/releases/tag/v1.0.99)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
 <details open>
 <summary>🌸 Quick Settings&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
@@ -151,7 +151,7 @@ https://github.com/Sabrina-Moonlight/gracie-patches
 
 | 🌷&nbsp;Patch | 💐&nbsp;Description | 🪻&nbsp;Options |
 |----------|----------------|-----------|
-| [Unlock premium](#unlock-premium) | Unlocks Full Version / No Ads; signature spoof; stable IL2CPP gates. |  |
+| [Unlock premium](#unlock-premium) | Unlocks levels (forces isFullVersion), removes lock UI, no ads. |  |
 
 </details>
 
